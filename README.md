@@ -76,7 +76,12 @@ Execute 4 Http requests in parallel and for each result print
 					.inParallel(http.get(GIT_HUB_URL))
 				.queue();
 				
-	/** for each result -> Print the contents **/
+	
+```
+
+For each result -> Print the contents
+
+```java 
 	results.forEach(Functions.PRINT_STRING_FUNCTION);
 ```
 
