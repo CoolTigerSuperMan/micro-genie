@@ -1,9 +1,6 @@
 Micro Genie
 =======
 
-
-# What is Micro Genie
-
 A library built on top of Guava's ListenableFuture for composing a pipeline of asynchronous function calls, both dependent and independent calls in parallel.
 
 # Use Case

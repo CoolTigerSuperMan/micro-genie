@@ -2,23 +2,9 @@ Micro Genie Commands
 =======
 
 
-# Under Development
-
-Micro Genie is currently under development in a non released stage
-
-The APIs are not completed and will change. Sufficient test coverage does not exist and some methods are currently only stubbed out. 
-
-
-# What is Micro Genie
-
-A library built on top of Guava's ListenableFuture for composing a pipeline of asynchronous function calls, both dependent and independent calls in parallel.
-
 # Use Case
 
 The primary use case is for composing multiple service calls in a Micro Service Architecture, asynchronously while offering the ability to transform / reduce results, provide fallback values, command chaining, short circuiting and bounded thread pool groups modeled after HystrixThreadPools.   
-
-# Comparison
-Micro Genie commands are somewhat of a hybrid between Hystrix and Trickle, from Netflix and Spotify respectively. Hystrix and Trickle are mature libraries and used in real production environments. If you're looking for an async command framework for use now, it's highly encouraged to check those out.   
 
 
 #Examples
@@ -80,3 +66,16 @@ The reduce function implements the abstract ```ReduceFunction<I,O>``` that is pa
 			return from.size();
 		}};
 ```
+
+
+
+# Under Development
+
+Micro Genie is currently under development in a non released stage
+
+The APIs are not completed and will change. Sufficient test coverage does not exist and some methods are currently only stubbed out. 
+
+
+
+# Comparison
+Micro Genie commands are somewhat of a hybrid between Hystrix and Trickle, from Netflix and Spotify respectively. Hystrix and Trickle are mature libraries and used in real production environments. If you're looking for an async command framework for use now, it's highly encouraged to check those out.   
