@@ -49,11 +49,7 @@ The Function ```ADDITION_FUNCTION``` is defined as:
 			System.out.println("ADDITION_FUNCTION result: " + result);
 			return result;
 		}
-		@SuppressWarnings("unchecked")
-		@Override
-		public Integer run(Input input) {
-			return this.run((Input2<Integer,Integer>)input);
-		}};
+	};
 
 ```
 
