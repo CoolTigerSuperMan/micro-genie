@@ -15,7 +15,7 @@ __Note - Work in progress__
 * Default Fallback Values
 * Result Callbacks - onSuccess and onFailure
 * Custom functions applied to results
-* Thread Pool Groups - Isolation for Group Commands (Hystrix) - Useful for isolation against backend service failure
+* Thread Pool Groups - Isolation for Group Commands (Think Hystrix) - Useful for isolation against backend service failure
 * A Fluent interface
 
 
