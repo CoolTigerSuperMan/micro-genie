@@ -31,7 +31,6 @@ public class CommandExamples {
 	private static URL GIT_HUB_URL;
 
 	
-	
 	private static URL BAD_GOOGLE_URL;
 	private static URL BAD_LINKED_IN_URL;
 	

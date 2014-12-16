@@ -1,7 +1,23 @@
 Micro Genie
 =======
 
-A library built on top of Guava's ListenableFuture for composing a pipeline of asynchronous function calls, both dependent and independent calls in parallel.
+A library built on top of Guava's ListenableFuture for composing a pipeline of asynchronous function calls, with both dependent and independent calls in parallel. 
+
+Genie includes the ability to execute asynchronous pipelines with the following benefits:
+
+__Note - Work in progress__
+
+* Typed input parameters (Variable Lengths)
+* Chained Commands - Forcing an async call to return and submitting it's result to dependent commands
+* Parallel Execution of many commands
+* Running batches of commands async. Where batch one must complete before batch2 begins
+* Command Timeouts
+* Default Fallback Values
+* Result Callbacks - onSuccess and onFailure
+* Custom functions applied to results
+* Thread Pool Groups - Isolation for Group Commands (Hystrix) - Useful for isolation against backend service failure
+* A Fluent interface
+
 
 # Use Case
 
