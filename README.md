@@ -17,6 +17,7 @@ The first call will add 10 + 10 asynchronously. The results will be applied as i
 
 The reduce function will accumulate all results and output the number of results obtained   
 
+
 ```java
 		int resultCount = commands()
 					.withFunction(Functions.ADDITION_FUNCTION, Input.with(10, 10))
@@ -36,7 +37,9 @@ The reduce function will accumulate all results and output the number of results
 	System.out.println("Results Found: " + resultCount);
 ```
 
+
 The Function ```ADDITION_FUNCTION``` is defined as:
+
 
 ```java
 	/***
@@ -49,15 +52,13 @@ The Function ```ADDITION_FUNCTION``` is defined as:
 			System.out.println("ADDITION_FUNCTION result: " + result);
 			return result;
 		}
-		@SuppressWarnings("unchecked")
-		@Override
-		public Integer run(Input input) {
-			return this.run((Input2<Integer,Integer>)input);
-		}};
 
 ```
 
+
 The reduce function implements the abstract ```ReduceFunction<I,O>``` that is part of micro-genie-commands and is defined as: 
+
+
 
 ```java
 	public static final ReduceFunction<Object,Integer> COUNT_RESULTS_FUNCTION = new ReduceFunction<Object, Integer>(){
@@ -69,6 +70,8 @@ The reduce function implements the abstract ```ReduceFunction<I,O>``` that is pa
 
 
 Execute 4 Http requests in parallel and for each result print
+
+
 ```java
 	CommandResult<String> results = http.get(GOOGLE_URL)
 					.inParallel(http.get(CNN_URL))
