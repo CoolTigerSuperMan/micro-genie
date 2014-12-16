@@ -1,15 +1,9 @@
 package io.microgenie.commands.examples;
 
-import static io.microgenie.commands.core.Genie.*;
-import io.microgenie.commands.application.ApplicationCommandFactory;
+import static io.microgenie.commands.core.Genie.Genie;
+import static io.microgenie.commands.core.Genie.commands;
 import io.microgenie.commands.core.CommandResult;
-import io.microgenie.commands.core.FunctionCommands.Func1;
-import io.microgenie.commands.core.FunctionCommands.Func2;
-import io.microgenie.commands.core.FunctionCommands.FunctionalCommand2;
-import io.microgenie.commands.core.Functions.ReduceFunction;
 import io.microgenie.commands.core.Inputs.Input;
-import io.microgenie.commands.core.Inputs.Input1;
-import io.microgenie.commands.core.Inputs.Input2;
 import io.microgenie.commands.http.HttpCommandFactory;
 import io.microgenie.commands.mocks.Functions;
 import io.microgenie.commands.mocks.Functions.TRANSFORM_FUNCTION;
@@ -17,24 +11,17 @@ import io.microgenie.commands.mocks.Functions.TRANSFORM_FUNCTION;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.client.methods.HttpUriRequest;
-
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 
 
 
 /**
  * Command Examples
  * @author shawn
- *
  */
-@SuppressWarnings("unused")
 public class CommandExamples {
 
 
@@ -42,11 +29,10 @@ public class CommandExamples {
 	private static URL CNN_URL;
 	private static URL LINKED_IN_URL;
 	private static URL GIT_HUB_URL;
-	private static URL SHAGWOOD_URL;
+
 	
 	
 	private static URL BAD_GOOGLE_URL;
-	private static URL BAD_CNN_URL;
 	private static URL BAD_LINKED_IN_URL;
 	
 	
@@ -60,8 +46,7 @@ public class CommandExamples {
 	 * final String url = "http://www.google.com";
 	 * final String fallbackValue = "Google is Unavailable";
 	 * 
-	 * final HttpCommands http = COMMANDS.http();
-	 * final CommandResult<String> google = http.get(url, fallbackValue).queue();
+	 * final CommandResult<String> google = commands().http().get(url, fallbackValue).queue();
 	 * 
 	 * //print the google web page to the console
 	 * System.out.println(google.get());
@@ -79,11 +64,10 @@ public class CommandExamples {
 	 * final String url = "http://www.google.com";
 	 * final String fallbackValue = "Google is Unavailable";
 	 * 
-	 * final HttpCommands http = COMMANDS.http();
-	 * final String google = http.get(url, fallbackValue).execute()
+	 * final String google = commands().http().get(url, fallbackValue).execute()
 	 * 
 	 * //print the google web page to the console
-	 * System.out.println(google.get());
+	 * System.out.println(google);
 	 * 
 	 * </code>
 	 * 
@@ -98,25 +82,25 @@ public class CommandExamples {
 		
 		CommandExamples.initUrls();
 
-//		int resultCount = commands()
-//					.withFunction(Functions.ADDITION_FUNCTION, Input.with(10, 10))
-//					.asInputTo(Functions.INTEGER_TO_STRING_FUNCTION)
-//					.inParallel(commands().http().get(CNN_URL, "CNN Not Available"))
-//					.inParallel(commands().http().get(LINKED_IN_URL, "LinkedIn Not Available"))
-//					.inParallel(commands().http().get(GOOGLE_URL, "Google Not Available"))	
-//				.queue()
-//				.reduce(Functions.COUNT_RESULTS_FUNCTION);
-//		
-//		System.out.println("Results: " + resultCount);
-//		
+		int resultCount = commands()
+					.withFunction(Functions.ADDITION_FUNCTION, Input.with(10, 10))
+					.asInputTo(Functions.INTEGER_TO_STRING_FUNCTION)
+					.inParallel(commands().http().get(CNN_URL, "CNN Not Available"))
+					.inParallel(commands().http().get(LINKED_IN_URL, "LinkedIn Not Available"))
+					.inParallel(commands().http().get(GOOGLE_URL, "Google Not Available"))	
+				.queue()
+				.reduce(Functions.COUNT_RESULTS_FUNCTION);
+		
+		System.out.println("Results: " + resultCount);
+		
 
 		try{
 			
-			//CommandExamples.runSyncronousCommands(commands().http());
-			//CommandExamples.runAsyncronousCommands(commands().http());
+			CommandExamples.runSyncronousCommands(commands().http());
+			CommandExamples.runAsyncronousCommands(commands().http());
 			CommandExamples.runList(commands().http());
-			//CommandExamples.runDependentList(commands().http());
-			//CommandExamples.runInputCommands();
+			CommandExamples.runDependentList(commands().http());
+			CommandExamples.runInputCommands();
 		
 		}catch(Exception ex){
 			System.err.println(ex.getMessage());
@@ -176,7 +160,7 @@ public class CommandExamples {
 		CommandExamples.printPages(true, google, cnn, linkedin);
 	}
 
-	private static ListeningExecutorService DEFAULT_EXECUTOR = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+
 
 	
 	/***
@@ -218,9 +202,6 @@ public class CommandExamples {
 	 */
 	private static void runDependentList(HttpCommandFactory<HttpUriRequest, String> http) throws TimeoutException, ExecutionException{
 		
-		int customerId = 234;
-		String firstName = "Shawn";
-		String lastName= "Hagwood";
 		
 		
 		final String resultsPage = http.get(GOOGLE_URL)
@@ -293,10 +274,8 @@ public class CommandExamples {
 		CNN_URL =  new URL("http://www.cnn.com");
 		LINKED_IN_URL =  new URL("http://www.linkedin.com");
 		GIT_HUB_URL =  new URL("http://www.github.com");
-		SHAGWOOD_URL =  new URL("http://www.shagwood.com");
 
 		BAD_GOOGLE_URL = new URL("http://www.g2sdfdoogle.com");
-		BAD_CNN_URL = new URL("http://www.csdfdsnn.com");
 		BAD_LINKED_IN_URL = new URL("http://www.linsdfkedin.com");
 	}		
 }
