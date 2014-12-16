@@ -10,7 +10,7 @@ __Note - Work in progress__
 * Typed input parameters (Variable Lengths)
 * Chained Commands - Forcing an async call to return and submitting it's result to dependent commands
 * Parallel Execution of many commands
-* Running batches of commands async. Where batch one must complete before batch2 begins
+* Running batches of commands async. Where batch one must complete before batch two begins
 * Command Timeouts
 * Default Fallback Values
 * Result Callbacks - onSuccess and onFailure
