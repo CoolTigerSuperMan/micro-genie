@@ -23,6 +23,25 @@ import com.google.common.base.Function;
 public class Functions{
 
 	
+	
+	/***
+	 * A function to print a submitted String
+	 */
+	public final static Func1<String, String> PRINT_STRING_FUNCTION = new Func1<String, String>(){
+		@SuppressWarnings("unchecked")
+		@Override
+		public String run(Input input) {
+			return this.run((Input1<String>)input);
+		}
+		@Override
+		public String run(Input1<String> input) {
+			System.out.println("printing page");
+			System.out.println("===============");
+			System.out.println(input.a);
+			return input.a;
+		}
+	};
+	
 	/***
 	 * Add Two input values and return the result as a string
 	 */

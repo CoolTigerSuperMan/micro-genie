@@ -1,5 +1,6 @@
 package io.microgenie.commands.core;
 
+import io.microgenie.commands.core.FunctionCommands.Func1;
 import io.microgenie.commands.core.Functions.MapResults;
 import io.microgenie.commands.core.Functions.ReduceFunction;
 import io.microgenie.commands.core.Functions.TransformFunction;
@@ -145,11 +146,30 @@ public class CommandResult<R> {
 	}
 
 
+	/**
+	 * Apply the given function for each result
+	 * @param function
+	 */
+	public <O> void forEach(Func1<R, O> function){
+		
+		final MapResults<R,O> map = new MapResults<R,O>();
+		final List<O> fromList = map.run(Input1.with(this));
+		for(O item : fromList){
+			function.run(Input.with(item));	
+		}
+	}
+	
+	
+	/***
+	 * Get all results as a combined list
+	 * @return
+	 */
 	public <O> List<O> allResults(){
 		final MapResults<R,O> map = new MapResults<R,O>();
 		List<O> fromList = map.run(Input1.with(this));
 		return fromList;
 	}
+	
 	
 	/***
 	 * Reduce this command result to a single output

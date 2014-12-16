@@ -68,6 +68,19 @@ The reduce function implements the abstract ```ReduceFunction<I,O>``` that is pa
 ```
 
 
+Execute 4 Http requests in parallel and for each result print
+```java
+	CommandResult<String> results = http.get(GOOGLE_URL)
+					.inParallel(http.get(CNN_URL))
+					.inParallel(http.get(LINKED_IN_URL))
+					.inParallel(http.get(GIT_HUB_URL))
+				.queue();
+				
+	/** for each result -> Print the contents **/
+	results.forEach(Functions.PRINT_STRING_FUNCTION);
+```
+
+
 # Comparison
 Micro Genie commands are somewhat of a hybrid between Hystrix and Trickle, from Netflix and Spotify respectively. Hystrix and Trickle are mature libraries and used in real production environments. If you're looking for an async command framework for use now, it's highly encouraged to check those out.   
 

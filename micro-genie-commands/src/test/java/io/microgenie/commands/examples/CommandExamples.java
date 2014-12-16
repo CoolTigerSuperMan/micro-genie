@@ -3,10 +3,12 @@ package io.microgenie.commands.examples;
 import static io.microgenie.commands.core.Genie.*;
 import io.microgenie.commands.application.ApplicationCommandFactory;
 import io.microgenie.commands.core.CommandResult;
+import io.microgenie.commands.core.FunctionCommands.Func1;
 import io.microgenie.commands.core.FunctionCommands.Func2;
 import io.microgenie.commands.core.FunctionCommands.FunctionalCommand2;
 import io.microgenie.commands.core.Functions.ReduceFunction;
 import io.microgenie.commands.core.Inputs.Input;
+import io.microgenie.commands.core.Inputs.Input1;
 import io.microgenie.commands.core.Inputs.Input2;
 import io.microgenie.commands.http.HttpCommandFactory;
 import io.microgenie.commands.mocks.Functions;
@@ -96,25 +98,25 @@ public class CommandExamples {
 		
 		CommandExamples.initUrls();
 
-		int resultCount = commands()
-					.withFunction(Functions.ADDITION_FUNCTION, Input.with(10, 10))
-					.asInputTo(Functions.INTEGER_TO_STRING_FUNCTION)
-					.inParallel(commands().http().get(CNN_URL, "CNN Not Available"))
-					.inParallel(commands().http().get(LINKED_IN_URL, "LinkedIn Not Available"))
-					.inParallel(commands().http().get(GOOGLE_URL, "Google Not Available"))	
-				.queue()
-				.reduce(Functions.COUNT_RESULTS_FUNCTION);
-		
-		System.out.println("Results: " + resultCount);
-		
+//		int resultCount = commands()
+//					.withFunction(Functions.ADDITION_FUNCTION, Input.with(10, 10))
+//					.asInputTo(Functions.INTEGER_TO_STRING_FUNCTION)
+//					.inParallel(commands().http().get(CNN_URL, "CNN Not Available"))
+//					.inParallel(commands().http().get(LINKED_IN_URL, "LinkedIn Not Available"))
+//					.inParallel(commands().http().get(GOOGLE_URL, "Google Not Available"))	
+//				.queue()
+//				.reduce(Functions.COUNT_RESULTS_FUNCTION);
+//		
+//		System.out.println("Results: " + resultCount);
+//		
 
 		try{
 			
-			CommandExamples.runSyncronousCommands(commands().http());
-			CommandExamples.runAsyncronousCommands(commands().http());
+			//CommandExamples.runSyncronousCommands(commands().http());
+			//CommandExamples.runAsyncronousCommands(commands().http());
 			CommandExamples.runList(commands().http());
-			CommandExamples.runDependentList(commands().http());
-			CommandExamples.runInputCommands();
+			//CommandExamples.runDependentList(commands().http());
+			//CommandExamples.runInputCommands();
 		
 		}catch(Exception ex){
 			System.err.println(ex.getMessage());
@@ -186,18 +188,19 @@ public class CommandExamples {
 	 */
 	private static void runList(HttpCommandFactory<HttpUriRequest, String> http) throws TimeoutException, ExecutionException{
 		
-		CommandResult<String> result = http.get(GOOGLE_URL)
+		CommandResult<String> results = http.get(GOOGLE_URL)
 					.inParallel(http.get(CNN_URL))
 					.inParallel(http.get(LINKED_IN_URL))
 					.inParallel(http.get(GIT_HUB_URL))
 				.queue();
 		
-		/** Print the result pages (truncated) **/
-		CommandExamples.printPages(true, result.allResults().toArray(new String[]{}));
+		/** for each result -> Print the contents **/
+		results.forEach(Functions.PRINT_STRING_FUNCTION);
 		
 		
 		/** Run a custom reduce function against the results **/
-		int resultCount = result.reduce(Functions.COUNT_RESULTS_FUNCTION);
+		int resultCount = results.reduce(Functions.COUNT_RESULTS_FUNCTION);
+		
 		
 		System.out.println("run List Result Count: " + resultCount);
 	}
