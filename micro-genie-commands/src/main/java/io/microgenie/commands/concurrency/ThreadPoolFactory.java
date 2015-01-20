@@ -61,7 +61,7 @@ public class ThreadPoolFactory {
 					protected final AtomicInteger threadNumber = new AtomicInteger(0);
 					@Override
 					public Thread newThread(Runnable r) {
-						return new Thread(r, String.format("%s-%s-%d",prefix, key,threadNumber.incrementAndGet()));
+						return new Thread(r, String.format("%s-%s-%d", prefix, key, threadNumber.incrementAndGet()));
 					}
 				});
 	}
@@ -76,6 +76,6 @@ public class ThreadPoolFactory {
 	 public synchronized ListeningExecutorService create(final ExecutorProperties properties){
 		 final BlockingQueue<Runnable> queue = this.createBlockingQueue(properties.getMaxQueueSize());
 		 final ThreadPoolExecutor executor = this.createExecutor(properties, queue);
-		return MoreExecutors.listeningDecorator(executor);
+		 return MoreExecutors.listeningDecorator(executor);
 	 }
 }

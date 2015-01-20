@@ -12,10 +12,7 @@ public class Inputs {
 	 * Marker interface for all Input types
 	 */
 	public static abstract class Input{
-		public static  <A> Input with(A a){
-			return new Input1<A>(a);
-		}
-		public static  <A> Input1<A> with1(A a){
+		public static  <A> Input1<A> with(A a){
 			return new Input1<A>(a);
 		}
 		public static  <A, B> Input2<A, B> with(A a, B b){

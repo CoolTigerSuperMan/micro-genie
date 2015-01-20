@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /***
  * Contains Configuration classes for {@link ExecutorProperties} and {@link CommandProperties}
- * which are used to configure {@link ExecutorService} and {@link AbstractCommand} implementations, respectively
+ * which are used to configure {@link ExecutorService} and {@link GenieContainer} implementations, respectively
  * 
  * @author shawn
  */
@@ -98,7 +98,7 @@ public class CommandConfiguration {
 	     * Queue size rejection threshold is an artificial "max" size at which rejections will occur even if {@link #maxQueueSize} has not been reached. This is done because the {@link #maxQueueSize} of a
 	     * {@link BlockingQueue} can not be dynamically changed and we want to support dynamically changing the queue size that affects rejections.
 	     * <p>
-	     * This is used by {@link AbstractCommand} when queuing a thread for execution.
+	     * This is used by {@link GenieContainer} when queuing a thread for execution.
 	     * 
 	     * @return {@code Integer}
 	     */
@@ -227,11 +227,9 @@ public class CommandConfiguration {
 	 * @author shawn
 	 */
 	public static class CommandProperties extends ExecutorProperties {
-	
-		
+
 		private final static TimeoutMillis DEFAULT_COMMAND_TIMEOUT = Timeout.inMilliseconds(60 * 1000);
-		private TimeoutMillis timeout = DEFAULT_COMMAND_TIMEOUT;
-		
+		private TimeoutMillis timeout = DEFAULT_COMMAND_TIMEOUT;		
 		private final String commandKey;
 		
 	

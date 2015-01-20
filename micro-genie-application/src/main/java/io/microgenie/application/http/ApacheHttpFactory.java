@@ -1,0 +1,339 @@
+package io.microgenie.application.http;
+
+import io.microgenie.commands.util.CloseableUtils;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
+
+
+
+/***
+ * HttpFactory Implementation - Using the Apache Http Client
+ * 
+ * @author shawn
+ *
+ */
+public class ApacheHttpFactory extends HttpFactory<String> {
+
+	
+	private CloseableHttpClient httpClient;
+	private final ObjectMapper mapper;
+	private final ResponseHandler<String> responseHandler;
+	
+	
+	
+	/***
+	 * The default Response Handler used if no handler is provided
+	 */
+	private static final ResponseHandler<String> DEFAULT_RESPONSE_HANDLER = new ResponseHandler<String>(){
+		@Override
+		public String handleResponse(HttpResponse response)throws ClientProtocolException, IOException {
+			if(response !=null){
+				final HttpEntity entity = response.getEntity();
+				if(entity!=null){
+					try{
+						return EntityUtils.toString(entity, Charsets.UTF_8);		
+					}finally{
+						EntityUtils.consume(entity);
+					}
+				}				
+			}
+			return null;
+		}
+	};
+
+	
+	
+	
+	public ApacheHttpFactory() {
+		this(new ObjectMapper(), DEFAULT_RESPONSE_HANDLER);
+	}
+
+	public ApacheHttpFactory(final ObjectMapper mapper) {
+		this(mapper, DEFAULT_RESPONSE_HANDLER);
+	}
+	
+	public ApacheHttpFactory(final ObjectMapper mapper, final ResponseHandler<String> responseHandler) {
+		this.mapper = mapper;
+		this.responseHandler = responseHandler;
+	}
+	
+
+	
+	
+	/***
+	 * Execute HTTP GET against the given URL
+	 */
+	@Override
+	public String get(final URL url) throws URISyntaxException {
+		final HttpUriRequest request = new HttpGet(url.toURI());
+		return this.execute(request);
+	}
+
+	
+
+	/***
+	 * Execute HTTP PUT with the provided payload
+	 */
+	@Override
+	public String put(final URL url, final Object payload) throws URISyntaxException {
+
+		final HttpPut request = new HttpPut(url.toURI());
+		final HttpEntity entity = this.toHttpEntity(payload);
+		request.setEntity(entity);
+		return this.execute(request);
+	}
+
+
+	
+	/***
+	 * Execute HTTP POST with the provided entity payload
+	 */
+	@Override
+	public String post(final URL url, final Object payload) throws URISyntaxException {
+		final HttpPost request = new HttpPost(url.toURI());
+		final HttpEntity entity = this.toHttpEntity(payload);
+		request.setEntity(entity);
+		return this.execute(request);
+	}
+
+
+	/***
+	 * Execute HTTP Delete
+	 */
+	@Override
+	public String delete(final URL url) throws URISyntaxException {
+		final HttpDelete request = new HttpDelete(url.toURI());
+		return this.execute(request);
+	}
+	
+	
+	
+	/***
+	 * Convert the payload to an HttpEntity where the contents are JSON encoded and stored as a byte array
+	 * @param payload
+	 * @return httpEntity
+	 */
+	private HttpEntity toHttpEntity(final Object payload){
+		final byte[] bytes = this.encodeEntity(payload);
+		final HttpEntity entity = new ByteArrayEntity(bytes, ContentType.APPLICATION_JSON);
+		return entity;
+	}
+	
+	
+	/***
+	 * Helper function to convert the payload to a byte array encoded as JSON
+	 * @param payload
+	 * @return bytes - JSON represented as a byte array
+	 */
+	private byte[] encodeEntity(final Object payload){
+		try {
+			return mapper.writeValueAsBytes(payload);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+	
+	
+	/***
+	 * Execute the Http Request
+	 * @param uriRequest
+	 * @return entityContents - As a String
+	 */
+	private String execute(final HttpUriRequest uriRequest){
+		final HttpUriRequest request = Preconditions.checkNotNull(uriRequest, "An instance of HttpUriRequest is required");
+		try {
+			final  String response  = httpClient.execute(request, this.responseHandler);
+			return response;
+		} catch (Exception  e) {
+			throw new RuntimeException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+
+
+	@Override
+	public void initialize() {
+		this.httpClient = HttpClientBuilder.create().build();
+	}
+	@Override
+	public void close() throws IOException {
+		CloseableUtils.closeQuietly(this.httpClient);
+	}
+	
+//
+//	/***
+//	 * @param url
+//	 * @return getCommand
+//	 */
+//	public HttpGetCommand get(final URL url){
+//		return new ApacheGetCommand(HTTP_EXECUTOR, url);
+//	}
+//	/***
+//	 * @param url
+//	 * @return getCommand
+//	 */
+//	public HttpGetCommand get(final URL url, final String defaultValue){
+//		return new ApacheGetCommand(HTTP_EXECUTOR, url, defaultValue);
+//	}
+//	
+//	/***
+//	 * @param url
+//	 * @return putCommand
+//	 */
+//	public HttpPutCommand put(final URL url){
+//		return new ApacheHttpPutCommand(HTTP_EXECUTOR, url);
+//	}
+//	
+//	/***
+//	 * @param url
+//	 * @return postCommand
+//	 */
+//	public HttpPostCommand post(final URL url){
+//		return new ApacheHttpPostCommand(HTTP_EXECUTOR, url);
+//	}
+//	
+//	/***
+//	 * @param url
+//	 * @return deleteCommand
+//	 */
+//	public HttpDeleteCommand delete(final URL url){
+//		return new ApacheHttpDeleteCommand(HTTP_EXECUTOR, url);
+//	}
+
+//
+//	
+//	/***
+//	 * Create the Apache GET command
+//	 * @author shawn
+//	 */
+//	public class ApacheGetCommand extends HttpGetCommand{
+//		public ApacheGetCommand(HttpExecutor<HttpUriRequest, String> executor, URL url) {
+//			super(executor, url);
+//		}
+//		public ApacheGetCommand(HttpExecutor<HttpUriRequest, String> executor,  final URL url,  String defaultValue) {
+//			super(executor, url, defaultValue);
+//		}
+//		@Override
+//		public HttpUriRequest createRequest(URL url) {
+//			try {
+//				return new HttpGet(url.toURI());
+//			} catch (URISyntaxException e) {
+//				throw new RuntimeException(e.getMessage(), e);
+//			}
+//		}
+//	}
+//	
+//	
+//	public abstract class HttpGetCommandWithInput<R,A> extends FunctionalCommand1<A,R>{
+//		protected HttpGetCommandWithInput(Func1<A, R> function, final Input1<A> input,  String key,ListeningExecutorService executor) {
+//			super(function,input, key, executor);
+//		}
+//	}
+//	
+//	
+//	/***
+//	 * Apache HTTP PUT Command
+//	 */
+//	public class ApacheHttpPutCommand extends HttpPutCommand{
+//		public ApacheHttpPutCommand(HttpExecutor<HttpUriRequest, String> executor, final URL url) {
+//			super(executor, url);
+//		}
+//		@Override
+//		public HttpUriRequest createRequest(URL url) {
+//			try {
+//				return new HttpPut(url.toURI());
+//			} catch (URISyntaxException e) {
+//				throw new RuntimeException(e.getMessage(), e);
+//			}
+//		}
+//	}
+//	
+//	/***
+//	 * Apache HTTP Post Command
+//	 */
+//	public class ApacheHttpPostCommand extends HttpPostCommand{
+//		public ApacheHttpPostCommand(HttpExecutor<HttpUriRequest, String> executor, final URL url) {
+//			super(executor, url);
+//		}
+//		@Override
+//		public HttpUriRequest createRequest(URL url) {
+//			try {
+//				return new HttpPost(url.toURI());
+//			} catch (URISyntaxException e) {
+//				throw new RuntimeException(e.getMessage(), e);
+//			}
+//		}
+//	}
+//	
+//	
+//	/***
+//	 * Apache HTTP Delete Command
+//	 */
+//	public class ApacheHttpDeleteCommand extends HttpDeleteCommand{
+//		public ApacheHttpDeleteCommand(HttpExecutor<HttpUriRequest, String> executor,  final URL url) {
+//			super(executor, url);
+//		}
+//		@Override
+//		public HttpUriRequest createRequest(URL url) {
+//			try {
+//				return new HttpPost(url.toURI());
+//			} catch (URISyntaxException e) {
+//				throw new RuntimeException(e.getMessage(), e);
+//			}
+//		}
+//	}
+//
+//
+//	@Override
+//	public void close() throws IOException {
+//		HTTP_EXECUTOR.close();
+//	}
+//
+//
+//	@Override
+//	public HttpFactory<HttpUriRequest, String>.HttpPutCommand put(
+//			URL url, String defaultValue) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//
+//	@Override
+//	public HttpFactory<HttpUriRequest, String>.HttpPostCommand post(
+//			URL url, String defaultValue) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//
+//	@Override
+//	public HttpFactory<HttpUriRequest, String>.HttpDeleteCommand delete(
+//			URL url, String defaultValue) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+}

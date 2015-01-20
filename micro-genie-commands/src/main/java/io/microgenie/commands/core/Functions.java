@@ -24,7 +24,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class Functions{
 
 	
-	
 	public static class MapResults<I,O> implements Func1<CommandResult<I>,List<O>>{
 
 		private List<O> flattenResults(CommandResult<I> result) throws TimeoutException, ExecutionException{
@@ -57,15 +56,6 @@ public class Functions{
 			} catch (ExecutionException e) {
 				throw new RuntimeException(e);
 			}
-		}
-
-		/**
-		 * Legacy method
-		 */
-		@Override
-		@SuppressWarnings("unchecked")
-		public List<O> run(Input input) {
-			return this.run((Input1<CommandResult<I>>)input);
 		}
 	}
 	

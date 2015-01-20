@@ -13,9 +13,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
-import org.assertj.core.util.Lists;
+
+
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -150,8 +152,7 @@ public class CommandResult<R> {
 	 * Apply the given function for each result
 	 * @param function
 	 */
-	public <O> void forEach(Func1<R, O> function){
-		
+	public <O> void forEach(Func1<O, R> function){
 		final MapResults<R,O> map = new MapResults<R,O>();
 		final List<O> fromList = map.run(Input1.with(this));
 		for(O item : fromList){
@@ -177,7 +178,7 @@ public class CommandResult<R> {
 	 * @return reducedResults - Applied by function
 	 */
 	public <I, O> O reduce(ReduceFunction<I,O> function){
-		final MapResults<I, I> map = new MapResults<I, I>();
+		final MapResults<R, I> map = new MapResults<R, I>();
 		List<I> fromList = map.run(Input.with(this));
 		return function.reduce(fromList);
 	}

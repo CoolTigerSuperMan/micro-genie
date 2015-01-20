@@ -1,6 +1,6 @@
 package io.microgenie.commands.mocks;
 
-import io.microgenie.commands.core.AbstractCommand;
+import io.microgenie.commands.core.GenieInputCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,32 +34,66 @@ public class MockCommands {
 	 * Base Test command
 	 * @author shawn
 	 */
-	public static class TestCommand<T> extends AbstractCommand<T>{
-		private T value;
-		private T defaultValue;
+	public static class TestCommand<I,O> extends GenieInputCommand<I,O>{
+
+		private O value;
+		private O defaultValue;
 		
-		public  TestCommand(final T value, final String key) {
+		public  TestCommand(final O value, final String key) {
 			this(value, key, null);
 		}
-		public  TestCommand(final T value, final String key, final T defaultValue) {
+		public  TestCommand(final O value, final String key, final O defaultValue) {
 			this(value, key, defaultValue, MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor()));
 		}
-		protected TestCommand(final T value, final String key, final T defaultValue,final ListeningExecutorService executor) {
+		protected TestCommand(final O value, final String key, final O defaultValue, final ListeningExecutorService executor) {
 			super(key, executor);
 			this.value = value;
 			this.defaultValue = defaultValue;
 		}
 		@Override
-		protected T run() {return value;}
-		@Override
-		protected void success(T result) {}
+		protected void success(O result) {}
 		@Override
 		protected void failure(Throwable t) {}
 		@Override
-		protected T fallback() {return defaultValue;}
-		@SuppressWarnings("unchecked")
+		protected O fallback() {return defaultValue;}
 		@Override
-		protected <I> T run(I input){return (T)input;}
+		public O run(I input) {
+			return this.value;
+		}
+	}
+	
+	
+	/**
+	 * Base Test command
+	 * @author shawn
+	 */
+	public static class TestInputCommand<I,O> extends GenieInputCommand<I,O>{
+		private O value;
+		private O defaultValue;
+		
+		public  TestInputCommand(final O value, final String key) {
+			this(value, key, null);
+		}
+		public  TestInputCommand(final O value, final String key, final O defaultValue) {
+			this(value, key, defaultValue, MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor()));
+		}
+		protected TestInputCommand(final O value, final String key, final O defaultValue,final ListeningExecutorService executor) {
+			super(key, executor);
+			this.value = value;
+			this.defaultValue = defaultValue;
+		}
+		@Override
+		protected O run(I Input) {
+			return value; //Mock Value
+		}
+		@Override
+		protected void success(O result) {}
+		@Override
+		protected void failure(Throwable t) {}
+		@Override
+		protected O fallback() {
+			return this.defaultValue;
+		}	
 	}
 	
 	
@@ -69,13 +103,13 @@ public class MockCommands {
 	 * Test Command to capture callbacks for success and failures
 	 * @author shawn
 	 */
-	public static class TestCommandWithCallBacks<T> extends TestCommand<T>{
-		private final List<T> successes = new ArrayList<T>();
+	public static class TestCommandWithCallBacks<I,O> extends TestCommand<I,O>{
+		private final List<O> successes = new ArrayList<O>();
 		private final List<Throwable> errors = new ArrayList<Throwable>();
-		public TestCommandWithCallBacks(T value, String key) {
+		public TestCommandWithCallBacks(O value, String key) {
 			super(value, key);
 		}
-		public TestCommandWithCallBacks(final T value, final String key, final T defaultValue) {
+		public TestCommandWithCallBacks(final O value, final String key, final O defaultValue) {
 			super(value, key, defaultValue);
 		}
 		@Override
@@ -84,10 +118,10 @@ public class MockCommands {
 			this.errors.add(t);
 		}
 		@Override
-		protected void success(T result) {
+		protected void success(O result) {
 			this.successes.add(result);
 		}
-		public List<T> getSuccesses() {
+		public List<O> getSuccesses() {
 			return successes;
 		}
 		public List<Throwable> getErrors() {

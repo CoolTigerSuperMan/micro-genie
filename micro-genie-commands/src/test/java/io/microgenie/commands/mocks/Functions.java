@@ -28,11 +28,6 @@ public class Functions{
 	 * A function to print a submitted String
 	 */
 	public final static Func1<String, String> PRINT_STRING_FUNCTION = new Func1<String, String>(){
-		@SuppressWarnings("unchecked")
-		@Override
-		public String run(Input input) {
-			return this.run((Input1<String>)input);
-		}
 		@Override
 		public String run(Input1<String> input) {
 			System.out.println("printing page");
@@ -51,11 +46,6 @@ public class Functions{
 			Integer result = input.a + input.b;
 			System.out.println("ADDITION_FUNCTION result: " + result);
 			return result;
-		}
-		@SuppressWarnings("unchecked")
-		@Override
-		public Integer run(Input input) {
-			return this.run((Input2<Integer,Integer>)input);
 		}};
 
 		
@@ -68,12 +58,6 @@ public class Functions{
 		@Override
 		public String run(Input1<Integer> input) {
 			return input.a.toString();
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public String run(Input input) {
-			return this.run((Input1<Integer>)input);
 		}
 	};
 	

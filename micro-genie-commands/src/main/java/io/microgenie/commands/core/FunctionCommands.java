@@ -1,6 +1,5 @@
 package io.microgenie.commands.core;
 
-import io.microgenie.commands.core.Inputs.Input;
 import io.microgenie.commands.core.Inputs.Input1;
 import io.microgenie.commands.core.Inputs.Input2;
 import io.microgenie.commands.core.Inputs.Input3;
@@ -24,7 +23,7 @@ public class FunctionCommands {
 	 * @author shawn
 	 * @param <R>
 	 */
-	public abstract static class FunctionCommand<R> extends AbstractCommand<R> {
+	public abstract static class FunctionCommand<R> extends GenieContainer<R> {
 		private final R fallback;
 		
 		protected FunctionCommand(final String key, ListeningExecutorService executor) {
@@ -45,6 +44,7 @@ public class FunctionCommands {
 		public Fallback<R> getFallback(){
 			return new Fallback<R>(fallback);		
 		}
+		public abstract R run();
 	}
 
 	
@@ -62,15 +62,10 @@ public class FunctionCommands {
 			this.function = function;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run();
 		}
-		@Override
-		protected <I> R run(I input) {
-			//Inspect input then run
-			R result = this.run();
-			return result;
-		}
+
 	}
 	
 	/**
@@ -89,13 +84,8 @@ public class FunctionCommands {
 			this.input = input;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run(this.input);
-		}
-		@Override
-		protected <I> R run(I input) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 	
@@ -117,13 +107,8 @@ public class FunctionCommands {
 			this.input = input;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run(this.input);
-		}
-		@Override
-		protected <I> R run(I input) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 	
@@ -146,13 +131,8 @@ public class FunctionCommands {
 			this.input = input;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run(this.input);
-		}
-		@Override
-		protected <I> R run(I input) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 	
@@ -176,13 +156,8 @@ public class FunctionCommands {
 			this.input = input;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run(this.input);
-		}
-		@Override
-		protected <I> R run(I input) {
-			// TODO Auto-generated method stub
-			return null;
 		}
 	}
 	
@@ -207,12 +182,8 @@ public class FunctionCommands {
 			this.input = input;
 		}
 		@Override
-		protected R run() {
+		public R run(){
 			return this.function.run(this.input);
-		}
-		@Override
-		protected <I> R run(I input) {
-			return null;
 		}
 	}
 	
@@ -221,9 +192,7 @@ public class FunctionCommands {
 	 * Function interfaces
 	 */
 	
-	public interface Func<R> {
-		public R run(Input input);
-	}
+	public interface Func<R> {}
 	public interface Func0<R> extends Func<R> {
 		public R run();
 	}
