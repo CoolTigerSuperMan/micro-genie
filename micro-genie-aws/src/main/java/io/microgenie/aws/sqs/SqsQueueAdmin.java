@@ -15,6 +15,10 @@ import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.google.common.base.Strings;
 
+/***
+ * Used to administer SQS Queues
+ * @author shawn
+ */
 public class SqsQueueAdmin {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqsQueueAdmin.class);
@@ -84,8 +88,7 @@ public class SqsQueueAdmin {
 		/** If the Admin Client is not being shutdown, then we timed out **/
 		if(!this.shutdown){
 			throw new RuntimeException(String.format("Queue %s did was not ready after creation within %d Milliseconds", config.getName(), config.getQueueCreationTimeoutMS()));	
-		}
-				
+		}		
 	}
 
 	public void shutdown() {

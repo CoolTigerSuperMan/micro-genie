@@ -48,10 +48,6 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	public FileStoreCommnandFactory(final FileStoreFactory files){
 		this.files = files;
 	}
-	
-	
-
-	
 	public  SaveFileCommand save(final FileContent content){
 		return new SaveFileCommand(this.files, content, ExecutorRegistry.INSTANCE.get(content.getPath().getDrive()));
 	}
@@ -375,15 +371,7 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	
 	
 	@Override
-	public void close() throws IOException {
-
-	}
-
-
-
-
+	public void close() throws IOException {}
 	@Override
-	public void initialize() {
-		
-	}
+	public void initialize() {}
 }

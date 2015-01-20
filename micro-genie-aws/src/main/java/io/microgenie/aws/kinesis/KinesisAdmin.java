@@ -90,8 +90,7 @@ public class KinesisAdmin {
 	    	} catch (InterruptedException e) {
 	    		// Ignore interruption (doesn't impact stream creation)
 	    	}
-	    	
-	            
+
 	        try {
 	                
 	        	/** Ask for no more than 10 shards at a time -- this is an optional parameter **/

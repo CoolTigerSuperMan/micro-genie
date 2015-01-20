@@ -375,24 +375,12 @@ public class HttpCommandFactory extends CommandFactory{
 	}
 
 
-	
-	
 	@Override
-	public void initialize() {
-		
-	}
+	public void initialize() {}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws IOException {}
 
-	}
-	
-	
-
-	
-	
-	
-	
 
 	public interface ToEntityRequestFunction<I> extends Func1<I, EntityRequest>{}
 	
@@ -422,5 +410,4 @@ public class HttpCommandFactory extends CommandFactory{
 			return this;
 		}
 	}
-	
 }

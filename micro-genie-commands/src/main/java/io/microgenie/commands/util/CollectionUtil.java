@@ -6,7 +6,6 @@ import java.util.Collection;
  * Genie Collection Utilities
  * 
  * @author shawn
- *
  */
 public class CollectionUtil {
 

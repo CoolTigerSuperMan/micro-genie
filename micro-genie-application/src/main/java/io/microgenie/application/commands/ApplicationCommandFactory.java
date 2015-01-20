@@ -49,10 +49,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 	private final QueueCommandFactory queues;
 	private final EventCommandFactory events;
 	
-	
 
-	
-	
 	public ApplicationCommandFactory(final ApplicationFactory app) {
 		this.files = new FileStoreCommnandFactory(app.blobs());
 		this.http = new HttpCommandFactory(app.http());
@@ -77,9 +74,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 	}
 	public DeleteFileCommand deleteFile(final FilePath path){
 		return this.files.delete(path);
-	}
-
-	
+	}	
 	public <I> SaveFileInputCommand<I> saveFile(final FilePath path, final ToFileFunction<I> toFile){
 		final DefaultFileInputSpec<I> defaultSpec = new DefaultFileInputSpec<I>(path.getDrive(), toFile);
 		final SaveBlobInputSpec<I> saveSpec = new SaveBlobInputSpec<I>(defaultSpec, path.getPath());		
@@ -95,10 +90,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 		return this.files.delete(toPath);
 	}
 	
-	
-	/** HTTP Commands 
-	 * @throws MalformedURLException **/
-
 
 	public HttpGetCommand get(final String url) throws ExecutionException{
 		try{
@@ -107,6 +98,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 			throw new ExecutionException(ex.getMessage(),ex);
 		}
 	}
+	
 	public HttpGetCommand get(final URL url){
 		return this.http.get(url);
 	}
@@ -129,6 +121,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 		return this.http.delete(new URL(url));
 	}
 	
+	
 	/** HTTP Input Commands **/
 	public <I> HttpGetInputCommand<I> get(final ToEntityRequestFunction<I> toEntityRequest){
 		return this.http.getInput(toEntityRequest);
@@ -142,8 +135,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 	public <I> HttpDeleteInputCommand<I> delete(final ToEntityRequestFunction<I> toEntityRequest){
 		return this.http.deleteInput(toEntityRequest);
 	}
-	
-	
 	
 	
 	/** Queue Commands **/
@@ -162,12 +153,8 @@ public class ApplicationCommandFactory extends CommandFactory {
 	public <I> PublishInputCommand<I> publish(final String topic, final ToEventFunction<I> toEventFunction){
 		return this.events.submit(topic, toEventFunction);
 	}
-
 	@Override
-	public void initialize() {
-		
-	}
-	
+	public void initialize() {}
 	
 	@Override
 	public void close() throws IOException{}

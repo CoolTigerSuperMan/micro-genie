@@ -24,9 +24,7 @@ public class S3BlobFactory extends FileStoreFactory{
 	private FileStore fileStore;
 	private S3Admin admin;
 	
-	
 
-	
 	
 	/**
 	 * Constructs an S3 File Store implementation of CommandFactory
