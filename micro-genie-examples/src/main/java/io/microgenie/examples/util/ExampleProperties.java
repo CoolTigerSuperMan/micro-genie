@@ -1,4 +1,4 @@
-package io.microgenie.examples.commands.util;
+package io.microgenie.examples.util;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

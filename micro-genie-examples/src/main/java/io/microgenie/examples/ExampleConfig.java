@@ -8,7 +8,7 @@ import io.microgenie.aws.SqsConfig;
 import io.microgenie.aws.SqsConsumerConfig;
 import io.microgenie.aws.SqsQueueConfig;
 import io.microgenie.examples.commands.CommandExamples.OutputMessageHandler;
-import io.microgenie.examples.commands.util.ExampleProperties;
+import io.microgenie.examples.util.ExampleProperties;
 
 import java.io.IOException;
 import java.util.List;

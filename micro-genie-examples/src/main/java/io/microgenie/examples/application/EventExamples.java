@@ -1,4 +1,4 @@
-package io.microgenie.examples.commands.application;
+package io.microgenie.examples.application;
 
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.events.Event;
