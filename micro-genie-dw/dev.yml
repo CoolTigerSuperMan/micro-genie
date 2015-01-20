@@ -19,7 +19,6 @@ aws:
         produces: true
         consumers:
             - queue: FileSavedQueue
-              handler: com.evidint.app.LogOutputHandler
               threads: 3
  
  
