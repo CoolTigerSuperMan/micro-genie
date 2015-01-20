@@ -1,11 +1,10 @@
-Micro Genie Commands
+Micro Genie AWS
 =======
 
 
 # Description
 
 Micro Genie AWS extends the core interfaces in Micro Genie Application to offer application commands with implementations for S3, SQS, DynamoDb, and Kineses
-
 
 
 
