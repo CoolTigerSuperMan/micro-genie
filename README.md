@@ -1,6 +1,8 @@
 Micro Genie
 =======
 
+[![Build Status](https://travis-ci.org/shagwood/micro-genie.svg?branch=master)](https://travis-ci.org/shagwood/micro-genie)
+
 Common application libraries commonly used in micro-service architectures, including libraries for publishing / subscribing to/from event topics, saving to file stores, producing and consuming to/from queues, and database persistence.  
 
 Micro Genie also includes the ability to execute application commands asynchronously with dependency chaining (blocking until command results return) and passing outputs from one command as input to a chained / dependent command. 
