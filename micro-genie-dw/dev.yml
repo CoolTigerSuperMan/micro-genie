@@ -1,7 +1,7 @@
 
 ## AWS Configuration
 
-host: evidint.shagwood.io
+host: mysite.com
 port: 8080
 
 aws:
@@ -25,7 +25,7 @@ aws:
  
     #DynamoDb Config - The package prefix to scan for DynamoDb mapper annotations
     dynamo:
-       packageScanPrefix: "com.evidint"
+       packageScanPrefix: "io.microgenie"
        
     # Kinesis Event - Pub / Sub Configuration
     kinesis:
