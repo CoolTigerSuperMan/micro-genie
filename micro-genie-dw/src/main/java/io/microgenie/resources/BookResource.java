@@ -26,8 +26,8 @@ import com.wordnik.swagger.annotations.ApiResponse;
 /***
  * @author shawn
  */
-@Path(value="users")
-@Api(value="users", description="Create, Update, Read, Delete Books", consumes="application/json", produces="application/json")
+@Path(value="books")
+@Api(value="books", description="Create, Update, Read, Delete Books", consumes="application/json", produces="application/json")
 @Consumes(value="application/json")
 @Produces(value="application/json")
 public class BookResource extends BaseResource{
