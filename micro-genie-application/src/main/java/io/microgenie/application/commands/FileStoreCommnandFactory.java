@@ -1,12 +1,12 @@
 package io.microgenie.application.commands;
 
 
-import io.microgenie.application.blob.BlobSpecs.SaveBlobInputSpec;
 import io.microgenie.application.blob.FileContent;
 import io.microgenie.application.blob.FileContentStream;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.blob.FileStore;
 import io.microgenie.application.blob.FileStoreFactory;
+import io.microgenie.application.commands.BlobSpecs.SaveBlobInputSpec;
 import io.microgenie.commands.concurrency.ExecutorRegistry;
 import io.microgenie.commands.core.CommandFactory;
 import io.microgenie.commands.core.FunctionCommands.Func1;

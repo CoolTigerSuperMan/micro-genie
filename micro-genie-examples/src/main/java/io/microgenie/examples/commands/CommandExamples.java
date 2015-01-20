@@ -3,10 +3,10 @@ package io.microgenie.examples.commands;
 
 
 import io.microgenie.application.ApplicationFactory;
-import io.microgenie.application.blob.BlobSpecs.DefaultFileInputSpec;
 import io.microgenie.application.blob.FileContent;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.commands.ApplicationCommandFactory;
+import io.microgenie.application.commands.BlobSpecs.DefaultFileInputSpec;
 import io.microgenie.application.commands.FileStoreCommnandFactory.SaveFileInputCommand;
 import io.microgenie.application.commands.FileStoreCommnandFactory.ToFileFunction;
 import io.microgenie.application.commands.QueueCommandFactory.ToMessageFunction;
