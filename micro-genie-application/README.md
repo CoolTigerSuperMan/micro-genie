@@ -1,4 +1,4 @@
-Micro Genie Commands
+Micro Genie Application
 =======
 
 
@@ -6,8 +6,6 @@ Micro Genie Commands
 
 Micro Genie Application Contains the core libraries that can be used to extend Application commands for variious factories such as Database, Queues, 
 Pub/Sub, File Stores etc..
-
-
 
 
 # Under Development
