@@ -9,13 +9,23 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	
+	<properties>
+		<micro-genie.version>0.0.1-SNAPSHOT</micro-genie.version>
+	</properties>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-aws</artifactId>
-			<version>${project.version}</version>
+			<version>${micro-genie.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.microgenie</groupId>
+			<artifactId>micro-genie-commands</artifactId>
+			<version>${micro-genie.version}</version>
 		</dependency>
 
 		<dependency>
