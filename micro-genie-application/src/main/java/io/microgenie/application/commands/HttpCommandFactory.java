@@ -24,8 +24,6 @@ import com.google.common.collect.Maps;
  * 
  * @author shawn
  *
- * @param <I>
- * @param <O>
  */
 public class HttpCommandFactory extends CommandFactory{
 
@@ -34,7 +32,10 @@ public class HttpCommandFactory extends CommandFactory{
 	
 	private final HttpFactory<String> http;
 	
-	
+	/**
+	 * Constructor
+	 * @param http - The underlying http factory to use
+	 */
 	public HttpCommandFactory(final HttpFactory<String> http){
 		super();
 		this.http = http;

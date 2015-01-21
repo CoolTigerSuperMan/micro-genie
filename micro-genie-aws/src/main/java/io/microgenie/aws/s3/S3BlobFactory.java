@@ -28,7 +28,7 @@ public class S3BlobFactory extends FileStoreFactory{
 	
 	/**
 	 * Constructs an S3 File Store implementation of CommandFactory
-	 * @param defaultBucket - default bucket to user if not specified when interacting with s3
+	 * @param config - default bucket to user if not specified when interacting with s3
 	 */
 	public S3BlobFactory(final S3Config config){
 		this.config = config;

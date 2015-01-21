@@ -78,7 +78,6 @@ public class EventCommandFactory extends CommandFactory{
 	 * @author shawn
 	 *
 	 * @param <I>
-	 * @param <O>
 	 */
 	public static class PublishInputCommand<I> extends GenieInputCommand<I, Event>{
 		private final EventFactory events;

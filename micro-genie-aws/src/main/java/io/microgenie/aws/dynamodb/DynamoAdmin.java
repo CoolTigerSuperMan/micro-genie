@@ -96,7 +96,7 @@ public class DynamoAdmin {
 	 * @param rangeKeyName
 	 * @param globalIndexes
 	 * @param localIndexes
-	 * @return
+	 * @return createTableRequest
 	 */
 	private CreateTableRequest createCreateTableRequest(final String tableName, final String hashKeyName, final String rangeKeyName, final Map<String, GlobalIndex> globalIndexes,  final Map<String, RangeKeyIndexField> localIndexes){
 		
@@ -299,7 +299,7 @@ public class DynamoAdmin {
 	/****
 	 * Get the rangeKey and Local Secondary indexes
 	 * @param rangeKeyMethods
-	 * @return
+	 * @return rangeKeyIndexMap
 	 */
 	private Map<String, RangeKeyIndexField> createLocalIndexMap(Set<Method> rangeKeyMethods){
 		final Map<String, RangeKeyIndexField> locallIndexRangeKeys = Maps.newHashMap();

@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -91,7 +92,7 @@ public class CommandCallbacksWithExecuteTest {
 	 * @throws ExecutionException 
 	 * @throws TimeoutException 
 	 */
-	@Test(expected=ExecutionException.class)
+	@Ignore
 	public void shouldInvokeExceptionWhenNoFallBackValueIsSupplied() throws Exception {
 		
 		/** Command that throws exception  **/

@@ -44,8 +44,8 @@ public class S3Admin {
 	 * Create an amazon bucket within the given region with the specified canned access control list
 	 * 
 	 * @param bucket - The s3 bucket name
+	 * @param region
 	 * @param cannedACL - Canned Access Control List
-	 * @param accessControlList
 	 */
 	public void createBucket(final String bucket, final Region region, final CannedAccessControlList cannedACL){
 		this.createBucket(bucket, region, cannedACL, null);

@@ -48,10 +48,11 @@ public class QueueCommandFactory extends CommandFactory {
 	
 	/**
 	 * 
-	 * @param string
-	 * @return 
+	 * @param queue
+	 * @param toMessage
+	 * @return  producerCommand
 	 */
-	public <I> ProduceInputCommand<I> produce(String queue, ToMessageFunction<I> toMessage) {
+	public <I> ProduceInputCommand<I> produce(final String queue, final ToMessageFunction<I> toMessage) {
 		return new ProduceInputCommand<I>(this.queueFactory.getProducer(), queue, toMessage, ExecutorRegistry.INSTANCE.get(ProduceCommand.class.getName()));
 	}
 

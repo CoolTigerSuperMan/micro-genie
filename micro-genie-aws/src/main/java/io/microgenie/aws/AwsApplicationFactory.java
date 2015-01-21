@@ -12,6 +12,7 @@ import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
+import io.microgenie.commands.core.CommandFactory;
 import io.microgenie.commands.util.CloseableUtil;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
@@ -41,7 +42,8 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	
 	/**
 	 * Default Constructor to close thread group factory
-	 * @param defaultBucket - The default s3 bucket to use for fileStore paths
+	 * @param config - Aws configuration
+	 * @param withCommands - whether or not the {@link CommandFactory} should also be initialized
 	 */
 	public AwsApplicationFactory(final AwsConfig config, final boolean withCommands){
 		this.config = config;
@@ -50,7 +52,8 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	}
 	
 
-	private void createApplicationFactories(AwsConfig config2) {
+	private void createApplicationFactories(final AwsConfig config) {
+		
 		/** Always Create the Http Client Factory **/
 		http = new ApacheHttpFactory();
 		
@@ -72,7 +75,6 @@ public class AwsApplicationFactory extends ApplicationFactory{
 				files = new S3BlobFactory(config.getS3());		
 			}
 			if(config.getDynamo()!=null){
-				//databases = new DynamoDbFactory(config.getDynamo());
 				databases = new DynamoDbMapperFactory(config.getDynamo().getPackagePrefix(), dynamoDbClient);
 			}
 			if(config.getSqs()!=null){

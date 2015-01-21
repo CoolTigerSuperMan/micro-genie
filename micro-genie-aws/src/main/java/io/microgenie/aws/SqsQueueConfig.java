@@ -89,7 +89,7 @@ public class SqsQueueConfig {
 	
 	/***
 	 * Maximum Message size
-	 * @return max message size in bytes
+	 * @return maximumMessageSize - The maximum message size in bytes
 	 */
 	@JsonProperty("maximumMessageSize")
 	public int getMaximumMessageSize() {
@@ -103,7 +103,7 @@ public class SqsQueueConfig {
 	
 	/**
 	 * Retention Period
-	 * @return
+	 * @return messageRetentionPeriod
 	 */
 	@JsonProperty("messageRetentionPeriod")
 	public int getMessageRetentionPeriod() {

@@ -13,19 +13,24 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+
+
 		<metrics3.version>3.1.0</metrics3.version>
 		<jersey.version>2.13</jersey.version>
 		<commons-io.version>2.4</commons-io.version>
+
+
 		<jackson.api.version>2.4.0</jackson.api.version>
-		<jackson.version>2.4.3</jackson.version>
-		<logback.version>1.1.2</logback.version>
+		<com.fasterxml>2.4.3</com.fasterxml>
+
 		<slf4j.version>1.7.7</slf4j.version>
 		<guava.version>18.0</guava.version>
+		<logback.version>1.1.2</logback.version>
 		<h2.version>1.4.182</h2.version>
 		<assertj.version>1.7.0</assertj.version>
 		<org.apache.http.client>4.3.6</org.apache.http.client>
-		<org.apache.http.async.client>4.0.2</org.apache.http.async.client>
-		<com.fasterxml>2.4.3</com.fasterxml>
 		<com.google.code.findbugs.version>3.0.0</com.google.code.findbugs.version>
 	</properties>
 
@@ -41,6 +46,21 @@
 			</roles>
 		</developer>
 	</developers>
+
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+
+
+	<scm>
+		<url>https://github.com/shagwood/micro-genie</url>
+		<connection>scm:git:git@github.com:shagwood/micro-genie.git</connection>
+		<developerConnection>scm:git:git@github.com:shagwood/micro-genie.git</developerConnection>
+	</scm>
 
 
 
@@ -78,11 +98,9 @@
 			<artifactId>jul-to-slf4j</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-access</artifactId>
-		</dependency>
 
+		<!-- <dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-access</artifactId> 
+			</dependency> -->
 
 		<!-- Test Dependencies -->
 
@@ -104,6 +122,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- plugins -->
+		<dependency>
+			<groupId>org.apache.maven.plugin-tools</groupId>
+			<artifactId>maven-plugin-annotations</artifactId>
+			<version>${mavenPluginPluginVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 
@@ -118,7 +144,7 @@
 				<artifactId>httpclient</artifactId>
 				<version>${org.apache.http.client}</version>
 
-				<!-- -->
+
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -160,13 +186,6 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
-			</dependency>
-
-
-			<dependency>
-				<groupId>io.microgenie</groupId>
-				<artifactId>micro-genie-commands</artifactId>
-				<version>${project.version}</version>
 			</dependency>
 
 
@@ -214,7 +233,7 @@
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
-				<!-- Use the specified api instead -->
+				<!-- Use the explicitly set slf4j-api versioninstead -->
 				<exclusions>
 					<exclusion>
 						<groupId>org.slf4j</groupId>
@@ -274,6 +293,8 @@
 		</dependencies>
 	</dependencyManagement>
 
+
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -283,9 +304,35 @@
 
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-plugin-plugin</artifactId>
+					<version>${mavenPluginPluginVersion}</version>
+					<configuration>
+						<skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+					</configuration>
+					<executions>
+						<execution>
+							<id>mojo-descriptor</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>descriptor</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>help-goal</id>
+							<goals>
+								<goal>helpmojo</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -357,6 +404,8 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -369,26 +418,26 @@
 				</configuration>
 			</plugin>
 
-			<!-- 
+
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.0</version>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
 				<configuration>
-					<effort>Max</effort>
-					<threshold>Default</threshold>
-					<xmlOutput>true</xmlOutput>
-					<excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-			 -->
+
+
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>findbugs-maven-plugin</artifactId> 
+				<version>3.0.0</version> <configuration> <effort>Max</effort> <threshold>Default</threshold> 
+				<xmlOutput>true</xmlOutput> <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile> 
+				</configuration> <executions> <execution> <goals> <goal>check</goal> </goals> 
+				</execution> </executions> </plugin> -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -421,6 +470,60 @@
 		</plugins>
 	</build>
 
+
+	<!-- profiles -->
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+	<!-- reporting -->
 	<reporting>
 		<plugins>
 			<plugin>
@@ -447,6 +550,8 @@
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<!-- child modules -->
 	<modules>
 		<module>micro-genie-commands</module>
 		<module>micro-genie-application</module>

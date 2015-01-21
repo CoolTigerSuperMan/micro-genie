@@ -47,9 +47,8 @@ public class SqsConsumer implements Consumer, Runnable{
 	
 	/***
 	 * Constructor for SQS Consumer
-	 * @param sqs
-	 * @param queue
-	 * @param threads
+	 * @param client
+	 * @param config
 	 */
 	public SqsConsumer(final AmazonSQSClient client, final SqsConsumerConfig config) {
 		
@@ -63,6 +62,7 @@ public class SqsConsumer implements Consumer, Runnable{
 	
 	/***
 	 * Start the Sqs Consumer
+	 * @param handler
 	 */
 	@Override
 	public void start(final MessageHandler handler) {
@@ -79,7 +79,7 @@ public class SqsConsumer implements Consumer, Runnable{
 	/***
 	 * Get the queue Url
 	 * @param queue
-	 * @return queue
+	 * @return queueUrl
 	 */
 	private String getQueueUrl(final String queue) {
 		final GetQueueUrlResult result = this.client.getQueueUrl(queue);
@@ -115,6 +115,7 @@ public class SqsConsumer implements Consumer, Runnable{
 	
 	/***
 	 * Handle Messages
+	 * @param queue
 	 * @param sqsMessages
 	 */
 	private void handleMessages(final String queue, final List<com.amazonaws.services.sqs.model.Message> sqsMessages) {
@@ -141,7 +142,7 @@ public class SqsConsumer implements Consumer, Runnable{
 	/***
 	 * Transform to out message format
 	 * @param sqsMessages
-	 * @return
+	 * @return messages
 	 */
 	private List<Message> fromSqsMessages(final String queue, final List<com.amazonaws.services.sqs.model.Message> sqsMessages){
 		

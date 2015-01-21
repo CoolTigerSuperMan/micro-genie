@@ -43,7 +43,6 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	/**
 	 * File Commands
 	 * @param files
-	 * @param tgFactory
 	 */
 	public FileStoreCommnandFactory(final FileStoreFactory files){
 		this.files = files;
@@ -192,7 +191,8 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	 * A base file store command that accepts chained input
 	 * @author shawn
 	 *
-	 * @param <R>
+	 * @param <I> - The input type
+	 * @param <O> - The output type
 	 */
 	public static abstract class FileStoreInputCommand<I,O> extends GenieInputCommand<I,O> implements FileStore{
 		private final FileStoreFactory files;
@@ -249,7 +249,7 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	/**
 	 * SaveFileInputCommand<I> - where I is the input type to be received
 	 * @author shawn
-	 * @param <R>
+	 * @param <I> - The input type
 	 */
 	public class SaveFileInputCommand<I> extends FileStoreInputCommand<I, FilePath>{
 		private final ToFileFunction<I> toFile;
@@ -272,9 +272,9 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	
 	
 	/**
-	 * InputSaveFileCommand<I> where I type is being input to build the file path
+	 * ReadFileInputCommand<I> where I type is being input to build the file path
 	 * @author shawn
-	 * @param <R>
+	 * @param <I> - The input type
 	 */
 	public static class ReadFileInputCommand<I> extends FileStoreInputCommand<I, FileContent> {
 		

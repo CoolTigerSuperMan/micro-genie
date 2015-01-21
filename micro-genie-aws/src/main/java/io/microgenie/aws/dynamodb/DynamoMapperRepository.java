@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
  * 
  * @author shawn
  *
- * @param <T>
  */
 public class DynamoMapperRepository {
 
@@ -78,8 +77,8 @@ public class DynamoMapperRepository {
 
 	
 	/**
-	 * Save the given item To DynamoDb
-	 * @param item
+	 * Save the given items To DynamoDb
+	 * @param items
 	 */
 	public <T> void  save(final List<T> items){
 		this.mapper.batchSave(items);
@@ -113,9 +112,13 @@ public class DynamoMapperRepository {
 	/**
 	 * Run Queries against dynamodb
 	 * @param clazz
+	 * @param itemKey
+	 * @param indexName
+	 * @param operator
 	 * @param rangeKeyConditions
+	 * @param limit
 	 * @param consistentRead
-	 * @return
+	 * @return items
 	 */
 	public <T> List<T> query(final Class<T> clazz, final T itemKey, final String indexName, final ConditionalOperator operator,  final Map<String, Condition> rangeKeyConditions, final int limit, final boolean consistentRead){
 		
