@@ -19,7 +19,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Handy Functions for transformations
  * @author shawn
- * @param <A>
  */
 public class Functions{
 
@@ -50,7 +49,7 @@ public class Functions{
 		@Override
 		public List<O> run(Input1<CommandResult<I>> input) {
 			try {
-				return this.flattenResults(input.a);
+				return this.flattenResults(input.getA());
 			} catch (TimeoutException e) {
 				throw new RuntimeException(e);
 			} catch (ExecutionException e) {
@@ -80,7 +79,7 @@ public class Functions{
 		 * All results are traversed and for each result, {@link #collect(Object)} is called, 
 		 * allowing the implementation to filter out and accumulate results.
 		 * <p> 
-		 * After all commands have been traversed, {@link #transform(CommandResult)} is called.
+		 * After all commands have been traversed,  is called.
 		 */
 		@Override
 		public ListenableFuture<O> apply(CommandResult<I> input)throws Exception {
@@ -112,8 +111,8 @@ public class Functions{
 	 * Reduce many results into one
 	 * @author shawn
 	 *
-	 * @param <F>
-	 * @param <T>
+	 * @param <I>
+	 * @param <O>
 	 */
 	public static abstract class ReduceFunction<I, O> implements Func1<List<I>, O> {
 		protected abstract O reduce(List<I> from);
@@ -122,7 +121,7 @@ public class Functions{
 			return this.run((Input1<List<I>>)input);
 		}
 		public O run(Input1<List<I>> input){
-			return reduce(input.a);
+			return reduce(input.getA());
 		}
 	}
 }

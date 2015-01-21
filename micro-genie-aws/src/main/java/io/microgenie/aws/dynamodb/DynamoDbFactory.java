@@ -43,7 +43,6 @@ public class DynamoDbFactory extends DatabaseFactory{
 	
 	/***
 	 * @param dynamoDbConfig
-	 * @param tgFactory
 	 */
 	public DynamoDbFactory(final DynamoDbConfig dynamoDbConfig) {
 		this.config = dynamoDbConfig;
@@ -56,7 +55,6 @@ public class DynamoDbFactory extends DatabaseFactory{
 	 * 
 	 * @param dynamoClient
 	 * @param dynamoDbConfig
-	 * @param tgFactory
 	 */
 	public DynamoDbFactory(final AmazonDynamoDBClient dynamoClient, final DynamoDbConfig dynamoDbConfig) {
 		this.config = dynamoDbConfig;
@@ -94,7 +92,7 @@ public class DynamoDbFactory extends DatabaseFactory{
 	/***
 	 * Create the Table Request
 	 * @param table
-	 * @return
+	 * @return createTableRequest
 	 */
 	private CreateTableRequest createTableRequest(final Table table) {
 		

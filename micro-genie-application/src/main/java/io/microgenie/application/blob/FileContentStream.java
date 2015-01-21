@@ -21,11 +21,12 @@ public class FileContentStream{
 	
 	
 	/**
+	 * Used to return an open {@link InputStream} for a file
 	 * 
-	 * @param drive - The mount point the file is stored on
 	 * @param path - The path to the file on the given drive / mount point
-	 * @param metadata - @see {@link FileMetadata}
+	 * @param contentLength - The content length of the contained {@link InputStream}
 	 * @param content - The actual file contents available as an {@link InputStream}
+	 * @param metadata - @see {@link FileMetadata}
 	 */
 	protected FileContentStream(FilePath path, final long contentLength, InputStream content, FileMetadata metadata){
 		this.path = path;
@@ -60,8 +61,8 @@ public class FileContentStream{
 	 * A representation of {@link FileContent} except that the contents are available as an {@link InputStream}
 	 * instead of a buffered byte array
 	 * 
-	 * @param drive
-	 * @param path
+	 * @param drive - The mounted drive that the path and file reside on
+	 * @param path - {@link FilePath}
 	 * @param contentLength
 	 * @param content
 	 * @return fileContentStream
@@ -76,10 +77,9 @@ public class FileContentStream{
 	 * A representation of {@link FileContent} except that the contents are available as an {@link InputStream}
 	 * instead of a buffered byte array
 	 * 
-	 * @param drive
-	 * @param path
+	 * @param path - {@link FilePath}
 	 * @param contentLength
-	 * @param content
+	 * @param content - {@link InputStream}
 	 * @return fileContentStream
 	 */
 	public static FileContentStream create(final FilePath path, final long contentLength, InputStream content){
@@ -92,10 +92,10 @@ public class FileContentStream{
 	 * A representation of {@link FileContent} except that the contents are available as an {@link InputStream}
 	 * instead of a buffered byte array
 	 * 
-	 * @param drive
-	 * @param path
+	 * @param path - {@link FilePath}
 	 * @param contentLength
-	 * @param content
+	 * @param content - {@link InputStream}
+	 * @param metadata - {@link FileMetadata}
 	 * @return fileContentStream
 	 */
 	public static FileContentStream create(final FilePath path, final long contentLength, InputStream content, FileMetadata metadata){

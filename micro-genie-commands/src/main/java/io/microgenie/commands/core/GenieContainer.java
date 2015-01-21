@@ -174,10 +174,10 @@ public abstract class GenieContainer<R> implements GenieCommand<R>  {
 	
 	/**
 	 * If input is NOT null this method queues the current command with 
-	 * the specified input parameter submitted to it's run method, {@link #run(Object)}
+	 * the specified input parameter submitted to it's run method
 	 * <p>
 	 * If input IS null, this method queues the current command with null
-	 * from input which invokes the no argument run method {@link #run()}
+	 * from input which invokes the no argument run method
 	 */
 	public <I> CommandResult<R> queue(I input){
 		
@@ -319,7 +319,7 @@ public abstract class GenieContainer<R> implements GenieCommand<R>  {
 	
 	/**
 	 * Create a default future fallback
-	 * @return
+	 * @return fallbackFuture
 	 */
 	protected FutureFallback<R> getFallback(){
 		return new Fallback<R>(this.fallback());

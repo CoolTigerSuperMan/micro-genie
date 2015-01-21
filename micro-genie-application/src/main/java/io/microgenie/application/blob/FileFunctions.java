@@ -15,7 +15,7 @@ public class FileFunctions {
 	
 	/***
 	 * A ReduceFunction capable of collecting file paths
-	 * @return
+	 * @return reduceFunction - {@link ReduceFunction}
 	 */
 	public static ReduceFunction<List<Object>, List<FilePath>> collectFilePaths(){
 		return COLLECT_FILE_PATHS;
@@ -27,7 +27,7 @@ public class FileFunctions {
 	/**
 	 * Filter out command results and return a {@link List} of {@link FilePath}
 	 */
-	public static ReduceFunction<List<Object>, List<FilePath>> COLLECT_FILE_PATHS = new ReduceFunction<List<Object>, List<FilePath>>(){
+	public static final ReduceFunction<List<Object>, List<FilePath>> COLLECT_FILE_PATHS = new ReduceFunction<List<Object>, List<FilePath>>(){
 		@Override
 		protected List<FilePath> reduce(List<List<Object>> from) {
 			List<FilePath> paths = new ArrayList<FilePath>();

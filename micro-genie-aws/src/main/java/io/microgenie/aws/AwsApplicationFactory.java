@@ -30,12 +30,12 @@ public class AwsApplicationFactory extends ApplicationFactory{
 
 	private final AwsConfig config;
 	
-	private static FileStoreFactory files;
-	private static EventFactory events;
-	private static QueueFactory queues;
-	private static DatabaseFactory databases;
-	private static HttpFactory<String> http;
-	private static ApplicationCommandFactory commands;
+	private FileStoreFactory files;
+	private EventFactory events;
+	private QueueFactory queues;
+	private DatabaseFactory databases;
+	private HttpFactory<String> http;
+	private ApplicationCommandFactory commands;
 	private boolean withCommands;
 	
 	
@@ -140,27 +140,27 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	
 	@Override
 	public void registerFiles(final FileStoreFactory files) {
-		AwsApplicationFactory.files = files;
+		this.files = files;
 	}
 	@Override
 	public void registerQueues(final QueueFactory queues) {
-		AwsApplicationFactory.queues = queues;
+		this.queues = queues;
 	}
 	@Override
 	public void registerEvents(final EventFactory events) {
-		AwsApplicationFactory.events = events;
+		this.events = events;
 	}
 	@Override
 	public void registerDatabase(final DatabaseFactory database) {
-		AwsApplicationFactory.databases = database;
+		this.databases = database;
 	}
 	@Override
 	public void registerHttp(final HttpFactory<String> http) {
-		AwsApplicationFactory.http = http;
+		this.http = http;
 	}
 	@Override
 	public void registerCommands(final ApplicationCommandFactory commands) {
-		AwsApplicationFactory.commands = commands;
+		this.commands = commands;
 	}
 	
 	

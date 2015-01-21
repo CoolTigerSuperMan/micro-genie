@@ -104,7 +104,7 @@ public class CommandConfiguration {
 	     * Factory method to retrieve the Builder.
 	     * @return builder - new Builder instance
 	     */
-	    public static Builder Builder() {
+	    public static Builder builder() {
 	        return new Builder();
 	    }
 	    /**
@@ -150,7 +150,6 @@ public class CommandConfiguration {
 	     *           .withQueueSizeRejectionThreshold(10);
 	     * } </pre>
 	     * 
-	     * @NotThreadSafe
 	     */
 	    public static class Builder {
 	    	
@@ -188,7 +187,7 @@ public class CommandConfiguration {
 	        public Integer getQueueSizeRejectionThreshold() {
 	            return this.queueSizeRejectionThreshold;
 	        }
-			public Builder WithKey(final String key) {
+			public Builder withKey(final String key) {
 				this.key = key;
 				return this;
 			}
@@ -294,7 +293,7 @@ public class CommandConfiguration {
 		 * @return commandProperties - Default command properties
 		 */
 		public static CommandProperties createwithDefaults(final String key, final TimeoutMillis timeout){
-			return new CommandProperties(key, timeout, ExecutorProperties.Builder());
+			return new CommandProperties(key, timeout, ExecutorProperties.builder());
 		}
 		
 		/**
@@ -303,7 +302,7 @@ public class CommandConfiguration {
 		 * @return commandProperties - Default command properties
 		 */
 		public static CommandProperties createwithDefaults(final String key){
-			return new CommandProperties(key, ExecutorProperties.Builder());
+			return new CommandProperties(key, ExecutorProperties.builder());
 		}
 	}
 }

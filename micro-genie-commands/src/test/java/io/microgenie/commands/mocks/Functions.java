@@ -32,8 +32,8 @@ public class Functions{
 		public String run(Input1<String> input) {
 			System.out.println("printing page");
 			System.out.println("===============");
-			System.out.println(input.a);
-			return input.a;
+			System.out.println(input.getA());
+			return input.getA();
 		}
 	};
 	
@@ -43,7 +43,7 @@ public class Functions{
 	public final static Func2<Integer,Integer,Integer> ADDITION_FUNCTION = new Func2<Integer,Integer,Integer>(){
 		@Override
 		public Integer run(Input2<Integer, Integer> input) {
-			Integer result = input.a + input.b;
+			Integer result = input.getA() + input.getB();
 			System.out.println("ADDITION_FUNCTION result: " + result);
 			return result;
 		}};
@@ -57,7 +57,7 @@ public class Functions{
 	 public final static Func1<Integer, String> INTEGER_TO_STRING_FUNCTION = new Func1<Integer,String>(){
 		@Override
 		public String run(Input1<Integer> input) {
-			return input.a.toString();
+			return input.getA().toString();
 		}
 	};
 	

@@ -24,7 +24,7 @@ public interface GenieCommand<R> {
 	 * will have to have results evaluated before the child commands can be 
 	 * executed
 	 * <p>
-	 * @param command - Another command that will have this commands result provided as input before the provided command is executed
+	 * @param inputCommand - Another command that will have this commands result provided as input before the provided command is executed
 	 * @return thisCommand - as a fluent setter
 	 */
 	public <O> GenieCommand<R> into(final GenieInputCommand<R, O> inputCommand);
@@ -35,8 +35,8 @@ public interface GenieCommand<R> {
 
 	/**
 	 * 
-	 * @param command
-	 * @return
+	 * @param inputCommands - A list of input commands
+	 * @return thisCommand 
 	 */
 	public abstract <O> GenieCommand<R> asListInputTo(final List<GenieInputCommand<R,O>> inputCommands);
 	
@@ -45,7 +45,7 @@ public interface GenieCommand<R> {
 	/**
 	 *  
 	 * @param function
-	 * @return the current command
+	 * @return thisCommand - the current command
 	 */
 	public abstract <O> GenieCommand<R> asInputTo(final Func1<R,O> function);
 	

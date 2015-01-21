@@ -80,13 +80,16 @@ public class KinesisAdmin {
 
 		LOGGER.info("Waiting for topic {} to become ACTIVE...", topic);
 
-	    long startTime = System.currentTimeMillis();
-	    long endTime = startTime + (minutesToWait * 60 * 1000);
+	    final long startTime = System.currentTimeMillis();
+	    final long endTime = startTime + (minutesToWait * 60L * 1000L);
+	    
+	    final long sleepTime = (1000L * 20L);
 	    
 	    while (System.currentTimeMillis() < endTime) {
 	            
 	    	try {
-	    		Thread.sleep(1000 * 20);
+	    		
+	    		Thread.sleep(sleepTime);
 	    	} catch (InterruptedException e) {
 	    		// Ignore interruption (doesn't impact stream creation)
 	    	}

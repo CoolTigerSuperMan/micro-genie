@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class EventFactory implements Closeable {
 
 	
-	public static String CLIENT_ID = "clientId";
+	public static final String CLIENT_ID = "clientId";
 	
 	private final Map<String, Subscriber> subscribers = new ConcurrentHashMap<String, Subscriber>();
 	private Publisher publisher;
@@ -103,7 +103,6 @@ public abstract class EventFactory implements Closeable {
 		if(this.publisher!=null){
 			this.publisher.close();
 		}
-		publisher.close();
 		for(Entry<String, Subscriber>  subscriber: this.subscribers.entrySet()){
 			subscriber.getValue().close();	
 		}

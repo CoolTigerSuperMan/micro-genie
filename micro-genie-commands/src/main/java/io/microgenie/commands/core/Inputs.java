@@ -36,9 +36,12 @@ public class Inputs {
 	 * @param <A>
 	 */
 	public static class Input1<A> extends Input{
-		public A a;
+		private final A a;
 		public Input1(A a){
 			this.a=a;
+		}
+		public A getA() {
+			return a;
 		}
 	}
 	/**
@@ -47,11 +50,17 @@ public class Inputs {
 	 * @param <B>
 	 */
 	public static class Input2<A, B> extends Input{
-		public A a;
-		public B b;
+		private final A a;
+		private final B b;
 		public Input2(A a, B b){
 			this.a=a;
 			this.b=b;
+		}
+		public A getA() {
+			return a;
+		}
+		public B getB() {
+			return b;
 		}
 	}
 	/**
@@ -61,13 +70,22 @@ public class Inputs {
 	 * @param <C>
 	 */
 	public static class Input3<A, B, C> extends Input{
-		public A a;
-		public B b;
-		public C c;
+		private final A a;
+		private final B b;
+		private final C c;
 		public Input3(A a, B b, C c){
 			this.a=a;
 			this.b=b;
 			this.c=c;
+		}
+		public A getA() {
+			return a;
+		}
+		public B getB() {
+			return b;
+		}
+		public C getC() {
+			return c;
 		}
 	}
 	/**
@@ -78,15 +96,27 @@ public class Inputs {
 	 * @param <D>
 	 */
 	public static class Input4<A, B, C, D> extends Input{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
+		private final A a;
+		private final B b;
+		private final C c;
+		private final D d;
 		public Input4(A a, B b, C c, D d){
 			this.a=a;
 			this.b=b;
 			this.c=c;
 			this.d=d;
+		}
+		public A getA() {
+			return a;
+		}
+		public B getB() {
+			return b;
+		}
+		public C getC() {
+			return c;
+		}
+		public D getD() {
+			return d;
 		}
 	}
 	/**
@@ -98,17 +128,32 @@ public class Inputs {
 	 * @param <E>
 	 */
 	public static class Input5<A, B, C, D, E> extends Input{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public Input5(A a, B b, C c, D d, E e){
-			this.a=a;
+		private final A a;
+		private final B b;
+		private final C c;
+		private final D d;
+		private final E e;
+		private Input5(A a, B b, C c, D d, E e){
+			this.a = a;
 			this.b=b;
 			this.c=c;
 			this.d=d;
 			this.e=e;
+		}
+		public A getA() {
+			return a;
+		}
+		public B getB() {
+			return b;
+		}
+		public C getC() {
+			return c;
+		}
+		public D getD() {
+			return d;
+		}
+		public E getE() {
+			return e;
 		}
 	}
 	

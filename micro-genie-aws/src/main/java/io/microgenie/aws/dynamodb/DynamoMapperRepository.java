@@ -147,28 +147,36 @@ public class DynamoMapperRepository {
 	
 	/***
 	 * Query DynamoDb using the given query expression
-	 * @param clazz
-	 * @param expression
-	 * @return
+	 * @param clazz - The Java class specifying the return type
+	 * @param queryExpression - The dynamoDb query expression
+	 * @return paginatedList
 	 */
-	public <T> PaginatedQueryList<T> query(final Class<T> clazz, DynamoDBQueryExpression<T> expression){
-		final PaginatedQueryList<T> itemList = mapper.query(clazz, expression);
+	public <T> PaginatedQueryList<T> query(final Class<T> clazz, DynamoDBQueryExpression<T> queryExpression){
+		final PaginatedQueryList<T> itemList = mapper.query(clazz, queryExpression);
 		return itemList;
 	}
 	
 	
-	public <T> PaginatedScanList<T> query(final Class<T> clazz, DynamoDBScanExpression expression){
-		final PaginatedScanList<T> itemList = mapper.scan(clazz, expression);
+	
+	/***
+	 * 
+	 * Query DynamoDb using the given scan expression
+	 * @param clazz - The Java class specifying the return type
+	 * @param scanExpression - The dynamoDb query expression
+	 * @return paginatedScanList
+	 */
+	public <T> PaginatedScanList<T> query(final Class<T> clazz, DynamoDBScanExpression scanExpression){
+		final PaginatedScanList<T> itemList = mapper.scan(clazz, scanExpression);
 		return itemList;
 	}
 	
 	
 	/***
-	 * Conditionally Save the item
-	 * 
+	 * Conditionally Save the item if the expected attribute is found to be true
 	 * @param item
 	 * @param conditional
-	 * @param expectedAttributes
+	 * @param attributeName
+	 * @param expectedAttribute
 	 */
 	public <T> void saveIf(final T item, ConditionalOperator conditional, final String attributeName, final ExpectedAttributeValue expectedAttribute){
 		DynamoDBSaveExpression expression = new DynamoDBSaveExpression()
@@ -180,7 +188,7 @@ public class DynamoMapperRepository {
 	
 	
 	/***
-	 * Conditionally Save the item
+	 * Conditionally Save the items  if the expected attributes are found to be true
 	 * 
 	 * @param item
 	 * @param conditional
@@ -215,15 +223,15 @@ public class DynamoMapperRepository {
 	 * Construct an expected attribute value
 	 * 
 	 * @param operator
-	 * @param value
+	 * @param values
 	 * @param exists
 	 * @return expectedAttributeValue
 	 */
-	public static ExpectedAttributeValue expected(final ComparisonOperator operator, final List<String> value, final boolean exists){
+	public static ExpectedAttributeValue expected(final ComparisonOperator operator, final List<String> values, final boolean exists){
 		return new ExpectedAttributeValue()
 		.withComparisonOperator(operator)
 		.withExists(exists)
-		.withValue(new AttributeValue(value));
+		.withValue(new AttributeValue(values));
 	}
 
 

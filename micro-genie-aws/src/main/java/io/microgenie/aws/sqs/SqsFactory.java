@@ -34,8 +34,7 @@ public class SqsFactory extends QueueFactory{
 	
 	/**
 	 * @param sqsClient
-	 * @param configs
-	 * @param tgFactory
+	 * @param config
 	 */
 	public SqsFactory(final AmazonSQSClient sqsClient, final SqsConfig config){
 		this.sqs = sqsClient;
@@ -70,6 +69,7 @@ public class SqsFactory extends QueueFactory{
 	
 	/***
 	 * Initialize  the following:
+	 * <li>SQS Admin</li>
 	 * <li>SQS Queues</li>
 	 * <li>SQS Producer</li>
 	 * <li>SQS Consumers</li>

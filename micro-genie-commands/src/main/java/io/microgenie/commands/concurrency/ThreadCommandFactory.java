@@ -63,7 +63,7 @@ public class ThreadCommandFactory implements Closeable{
 	
 	/***
 	 * This method should be overridden where different thread pool strategies apply
-	 * @param commandKey
+	 * @param key
 	 * @return executor
 	 */
 	public  ListeningExecutorService getExecutor(final String key){		

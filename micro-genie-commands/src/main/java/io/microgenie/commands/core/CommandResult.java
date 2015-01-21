@@ -83,8 +83,8 @@ public class CommandResult<R> {
 	/**
 	 * Create a command result which gets returned to the caller
 	 * 
-	 * @param future - {@link Future} - to retrieve results
-	 * @return result - A newly created {@link CommandResult} instance
+	 * @param future - {@link ListenableFuture} - to retrieve results
+	 * @return result - A newly created commandResult
 	 */
 	public static <R> CommandResult<R> create(final ListenableFuture<R> future){
 		return new CommandResult<R>(future);
@@ -94,9 +94,9 @@ public class CommandResult<R> {
 	/**
 	 * Create a command result which gets returned to the caller
 	 * 
-	 * @param future - {@link Future} - to retrieve results
+	 * @param future - {@link ListenableFuture} - to retrieve results
 	 * @param timeout - {@link Timeout} - the command timeout value
-	 * @return result - A newly created {@link CommandResult} instance
+	 * @return result - A newly created commandResult
 	 */
 	public static <R> CommandResult<R> create(final ListenableFuture<R> future, final Timeout timeout){
 		return create(future, timeout, Lists.<CommandResult<?>>newArrayList());
@@ -108,8 +108,8 @@ public class CommandResult<R> {
 	 * 
 	 * @param future - {@link Future} - to retrieve results
 	 * @param timeout - {@link Timeout} - the command timeout value
-	 * @param children - {@link CommandResult<?>} childResults Dependent on completion of this result
-	 * @return result - A newly created {@link CommandResult} instance
+	 * @param childResults - child Results Dependent on completion of this result
+	 * @return result - A newly created commandResult
 	 */
 	public static <R> CommandResult<R> create(final ListenableFuture<R> future, final Timeout timeout, final List<CommandResult<?>> childResults){
 		Preconditions.checkNotNull(future, "Future is required");
@@ -119,7 +119,6 @@ public class CommandResult<R> {
 
 	/***
 	 * Internal Transform method 
-	 * @param input - a listenable future of type I for the input
 	 * @param function - async function meant to perform the actual transform
 	 * @return output - The transformed output value
 	 * @throws ExecutionException 
@@ -163,7 +162,7 @@ public class CommandResult<R> {
 	
 	/***
 	 * Get all results as a combined list
-	 * @return
+	 * @return outputList
 	 */
 	public <O> List<O> allResults(){
 		final MapResults<R,O> map = new MapResults<R,O>();

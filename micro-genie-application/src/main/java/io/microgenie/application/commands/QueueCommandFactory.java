@@ -26,8 +26,7 @@ public class QueueCommandFactory extends CommandFactory {
 
 	/**
 	 * Create QueueCommandFactory - With a queueFactory and threadCommandFactory
-	 * @param queues
-	 * @param threadCommandFactory
+	 * @param queues - {@link QueueFactory} - The underlying queueFactory implementation to use when the command is executed
 	 */
 	public QueueCommandFactory(final QueueFactory queues){
 		this.queueFactory = queues;

@@ -42,7 +42,7 @@ public class FileMetadata {
 
 	/**
 	 * The Content Type of a {@link FileContent} instance
-	 * @return
+	 * @return contentType
 	 */
 	public String getContentType() {
 		return this.contentType;
@@ -51,7 +51,10 @@ public class FileMetadata {
 	
 	
 
-
+	/***
+	 * Content Encoding
+	 * @return encoding
+	 */
 	public String getEncoding() {
 		return encoding;
 	}
@@ -102,6 +105,10 @@ public class FileMetadata {
 	 * 
 	 * 
 	 * @param encoding 
+	 * 
+ 	 * <p>
+ 	 * The HTTP Content-Encoding header, as defined in RFC 2616.
+ 	 * </p>
  	 * <p>
      * Sets the optional Content-Encoding HTTP header specifying what
      * content encodings have been applied to the object and what decoding
@@ -117,8 +124,6 @@ public class FileMetadata {
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11</a>
      * </p>
      *
-     * @param encoding
-     *            The HTTP Content-Encoding header, as defined in RFC 2616.
      *
      * @see <a
      *      href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11"

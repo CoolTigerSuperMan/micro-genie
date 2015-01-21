@@ -15,6 +15,11 @@ public class Fallback<T> implements FutureFallback<T>{
 	public Fallback(T defaultValue){
 		this.defaultValue = defaultValue;
 	}
+	
+	/***
+	 * @param  t -  {@link Throwable} - The exception that occurred
+	 * @return defaultValueFuture 
+	 */
 	@Override
 	public ListenableFuture<T> create(Throwable t) throws Exception {
 		return Futures.immediateFuture(defaultValue);
@@ -22,7 +27,7 @@ public class Fallback<T> implements FutureFallback<T>{
 	/**
 	 * Create a fallback Future with a default value
 	 * @param defaultValue
-	 * @return
+	 * @return fallbackValue
 	 */
 	public static <T>  Fallback<T> create(T defaultValue){
 		return new Fallback<T>(defaultValue);

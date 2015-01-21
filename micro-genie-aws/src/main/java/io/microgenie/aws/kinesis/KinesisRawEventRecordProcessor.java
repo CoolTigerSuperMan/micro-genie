@@ -18,6 +18,7 @@ import com.amazonaws.services.kinesis.clientlibrary.interfaces.IRecordProcessorC
 import com.amazonaws.services.kinesis.clientlibrary.types.ShutdownReason;
 import com.amazonaws.services.kinesis.model.Record;
 import com.amazonaws.services.route53.model.ThrottlingException;
+import com.google.common.base.Charsets;
 
 /**
 * Kinesis Record Processor
@@ -129,7 +130,7 @@ public class KinesisRawEventRecordProcessor  implements IRecordProcessor {
 			final ByteBuffer buffer = record.getData();
 			final byte[] byteArray = buffer.array();
 			
-			LOGGER.trace("sequence number: {}, partitionKey: {}, data:{}", record.getSequenceNumber(), record.getPartitionKey(), new String(byteArray));
+			LOGGER.trace("sequence number: {}, partitionKey: {}, data:{}", record.getSequenceNumber(), record.getPartitionKey(), new String(byteArray, Charsets.UTF_8));
 	         
 			final Event event = new Event(this.topic, record.getPartitionKey(), byteArray);
 			handler.handle(event);

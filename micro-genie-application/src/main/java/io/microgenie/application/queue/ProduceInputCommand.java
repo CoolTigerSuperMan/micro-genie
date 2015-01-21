@@ -26,10 +26,11 @@ public class ProduceInputCommand<I> extends GenieInputCommand<I, String> {
 	/**
 	 * ProducerCommand
 	 * 
-	 * @param producer
-	 * @param message
-	 * @param executor
-	 * @param defaultValue
+	 * @param producer - {@link Producer} - The underlying producer implementation to use
+	 * @param queue - The queue to submit the message to
+	 * @param toMessage - {@link ToMessageFunction} The function implementation capable of converting chained input to a queue message
+	 * @param executor - The {@link ListeningExecutorService} to use to execute this command asyncronously
+	 * @param defaultValue - The default value to return in case of failure
 	 */
 	protected ProduceInputCommand(final Producer producer, final String queue, final ToMessageFunction<I> toMessage, final ListeningExecutorService executor, final String defaultValue) {
 		super(ProduceCommand.class.getName(), executor);
@@ -41,7 +42,8 @@ public class ProduceInputCommand<I> extends GenieInputCommand<I, String> {
 
 
 	/**
-	 * 
+	 * @param input - The input from the previous command this command is chained to
+	 * @return result 
 	 */
 	@Override
 	public String run(I input) {

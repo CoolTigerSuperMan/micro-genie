@@ -440,7 +440,10 @@
 					<effort>Max</effort>
 					<threshold>Default</threshold>
 					<xmlOutput>true</xmlOutput>
+					<!-- 
 					<excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
+					 -->
+					
 				</configuration>
 				<executions>
 					<execution>

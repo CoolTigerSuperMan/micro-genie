@@ -97,7 +97,7 @@ public class SqsProducer implements Producer{
 	
 	/**
 	 * Submit a batch of messages to SQS
-	 * @param message
+	 * @param messages
 	 */
 	@Override
 	public void submitBatch(final List<Message> messages) {
@@ -111,7 +111,7 @@ public class SqsProducer implements Producer{
 	/**
 	 * Convert Message headers from {@link Message} to SQS {@link MessageAttributeValue} Map entries
 	 * @param message
-	 * @return
+	 * @return messageAttributes
 	 */
 	private Map<String, MessageAttributeValue> toMessageAttrs(Message message){
 		if(message!=null && message.getHeaders() != null && message.getHeaders().size()>0){
