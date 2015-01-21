@@ -87,11 +87,12 @@ public class CommandCallbacksWithExecuteTest {
 
 	/**
 	 * Command Should throw Exception when now Fallback Value is specified
+	 * @throws Exception 
 	 * @throws ExecutionException 
 	 * @throws TimeoutException 
 	 */
 	@Test(expected=ExecutionException.class)
-	public void shouldInvokeExceptionWhenNoFallBackValueIsSupplied() throws TimeoutException, ExecutionException{
+	public void shouldInvokeExceptionWhenNoFallBackValueIsSupplied() throws Exception {
 		
 		/** Command that throws exception  **/
 		final TestCommandWithCallBacks<String, String> commandWithException = new TestCommandWithCallBacks<String, String>("realValue", "commandKey"){
@@ -102,7 +103,7 @@ public class CommandCallbacksWithExecuteTest {
 		
 		try{
 			commandWithException.execute();	
-		}catch(Exception ex){
+		}catch(ExecutionException ex){
 			Assert.assertTrue("Expected Success Was: 0",commandWithException.getSuccesses().size()==0);
 			Assert.assertTrue("Expected Errors Were: 1", commandWithException.getErrors().size()==1);
 			throw ex;
