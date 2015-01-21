@@ -2,6 +2,7 @@ Micro Genie
 =======
 
 [![Build Status](https://travis-ci.org/shagwood/micro-genie.svg?branch=master)](https://travis-ci.org/shagwood/micro-genie)
+[![Coverage Status](https://coveralls.io/repos/shagwood/micro-genie/badge.svg)](https://coveralls.io/r/shagwood/micro-genie)
 
 Common application libraries commonly used in micro-service architectures, including libraries for publishing / subscribing to/from event topics, saving to file stores, producing and consuming to/from queues, and database persistence.  
 
