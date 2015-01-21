@@ -117,8 +117,8 @@ public class MockCommands {
 		}
 		@Override
 		protected void failure(Throwable t) {
-			System.err.println(t.getMessage());
 			this.errors.add(t);
+			System.err.println(t.getMessage());
 		}
 		@Override
 		protected void success(O result) {
@@ -131,5 +131,4 @@ public class MockCommands {
 			return errors;
 		}
 	}
-
 }
