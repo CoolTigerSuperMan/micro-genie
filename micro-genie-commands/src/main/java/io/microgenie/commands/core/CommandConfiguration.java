@@ -36,7 +36,6 @@ public class CommandConfiguration {
 	    
 	    /***
 	     * ExecutorProperties Constructor, set by builder
-	     * @param key
 	     */
 	    protected ExecutorProperties() {
 	        this(new Builder(), "command-executor");
@@ -44,7 +43,6 @@ public class CommandConfiguration {
 
 	    /***
 	     * ExecutorProperties Constructor, set by builder
-	     * @param key
 	     * @param builder
 	     */
 	    protected ExecutorProperties(Builder builder) {
@@ -53,7 +51,6 @@ public class CommandConfiguration {
 
 	    /***
 	     * ExecutorProperties Constructor, set by builder
-	     * @param key
 	     * @param builder
 	     * @param propertyPrefix
 	     */
@@ -70,7 +67,7 @@ public class CommandConfiguration {
 	    /**
 	     * Core thread-pool size that gets passed to {@link ThreadPoolExecutor#setCorePoolSize(int)}
 	     * 
-	     * @return {@code Integer}
+	     * @return coreSize - {@code Integer}
 	     */
 	    public Integer getCoreSize() {
 	        return corePoolSize;
@@ -78,8 +75,7 @@ public class CommandConfiguration {
 
 	    /**
 	     * Keep-alive time in minutes that gets passed to {@link ThreadPoolExecutor#setKeepAliveTime(long, TimeUnit)}
-	     * 
-	     * @return {@code Integer}
+	     * @return keepAliveTime - {@code Integer}
 	     */
 	    public Integer getKeepAliveTimeMinutes() {
 	        return keepAliveTime;
@@ -87,8 +83,7 @@ public class CommandConfiguration {
 
 	    /**
 	     * Max queue size that gets passed to {@link BlockingQueue} 
-	     * 
-	     * @return {@code Integer}
+	     * @return maxQueueSize - {@code Integer}
 	     */
 	    public Integer getMaxQueueSize() {
 	        return maxQueueSize;
@@ -100,20 +95,21 @@ public class CommandConfiguration {
 	     * <p>
 	     * This is used by {@link GenieContainer} when queuing a thread for execution.
 	     * 
-	     * @return {@code Integer}
+	     * @return queueSizeRejectionThreshold - {@code Integer}
 	     */
 	    public Integer getQueueSizeRejectionThreshold() {
 	        return queueSizeRejectionThreshold;
 	    }
 	    /**
 	     * Factory method to retrieve the Builder.
+	     * @return builder - new Builder instance
 	     */
 	    public static Builder Builder() {
 	        return new Builder();
 	    }
 	    /**
 	     * A unique key identifying an {@link ExecutorService}
-	     * @return
+	     * @return key
 	     */
 	    public String getKey() {
 			return key;
@@ -140,7 +136,7 @@ public class CommandConfiguration {
 		
 		/**
 	     * Fluent interface that allows chained setting of properties that can 
-	     * be passed into {@link ExecutorProperties} via a {@link BasicCommand} constructor 
+	     * be passed into {@link ExecutorProperties} via a {@link GenieCommand} constructor 
 	     * allowing injection of instance specific property overrides.
 	     * <p>
 	     * 

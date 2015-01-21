@@ -19,7 +19,6 @@ public enum ExecutorRegistry {
 	
 	/***
 	 * Get the ThreadCommandFactory
-	 * @return
 	 */
 	public ThreadCommandFactory get(){
 		return threadFactory;
