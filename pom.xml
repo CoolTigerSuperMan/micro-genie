@@ -274,8 +274,18 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
 	<build>
 		<plugins>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -358,27 +368,12 @@
 					<preparationGoals>clean test</preparationGoals>
 				</configuration>
 			</plugin>
-			
-			<!-- 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-					<effort>Max</effort>
-					<threshold>Default</threshold>
-					<xmlOutput>true</xmlOutput>
-					<excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			 -->
+
+			<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>findbugs-maven-plugin</artifactId> 
+				<version>3.0.0</version> <configuration> <effort>Max</effort> <threshold>Default</threshold> 
+				<xmlOutput>true</xmlOutput> <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile> 
+				</configuration> <executions> <execution> <goals> <goal>check</goal> </goals> 
+				</execution> </executions> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>

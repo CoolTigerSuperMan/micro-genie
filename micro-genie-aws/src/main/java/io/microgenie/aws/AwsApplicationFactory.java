@@ -12,7 +12,7 @@ import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
-import io.microgenie.commands.util.CloseableUtils;
+import io.microgenie.commands.util.CloseableUtil;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -164,11 +164,11 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	
 	@Override
 	public void close(){
-		CloseableUtils.closeQuietly(events);
-		CloseableUtils.closeQuietly(databases);
-		CloseableUtils.closeQuietly(files);
-		CloseableUtils.closeQuietly(http);
-		CloseableUtils.closeQuietly(queues);
-		CloseableUtils.closeQuietly(commands);
+		CloseableUtil.closeQuietly(events);
+		CloseableUtil.closeQuietly(databases);
+		CloseableUtil.closeQuietly(files);
+		CloseableUtil.closeQuietly(http);
+		CloseableUtil.closeQuietly(queues);
+		CloseableUtil.closeQuietly(commands);
 	}
 }

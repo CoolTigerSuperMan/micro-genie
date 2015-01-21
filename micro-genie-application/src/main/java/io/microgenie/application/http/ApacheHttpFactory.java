@@ -1,6 +1,6 @@
 package io.microgenie.application.http;
 
-import io.microgenie.commands.util.CloseableUtils;
+import io.microgenie.commands.util.CloseableUtil;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -178,6 +178,6 @@ public class ApacheHttpFactory extends HttpFactory<String> {
 	}
 	@Override
 	public void close() throws IOException {
-		CloseableUtils.closeQuietly(this.httpClient);
+		CloseableUtil.closeQuietly(this.httpClient);
 	}
 }

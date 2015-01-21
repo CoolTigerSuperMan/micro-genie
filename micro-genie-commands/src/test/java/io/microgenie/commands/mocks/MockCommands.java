@@ -1,6 +1,7 @@
 package io.microgenie.commands.mocks;
 
 import io.microgenie.commands.core.GenieInputCommand;
+import io.microgenie.commands.core.GenieRunnableCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,14 @@ import com.google.common.util.concurrent.MoreExecutors;
 public class MockCommands {
 	
 	
-
+	public static final Long MICHALE_JORDAN = 23L;
+	
+	
 	/** The successful value **/
 	public static final String REAL_VALUE = "realValue";
 	public static final String COMMAND_KEY = "commandKey";
 	public static final String FALL_BACK_VALUE = "fallbackValue";
-	public static final String EXCEPTION_MESSAGE = "Test Error";
+	public static final String EXCEPTION_MESSAGE = "Expected Test Error to invoke fallback value";
 	
 	
 	
@@ -34,18 +37,18 @@ public class MockCommands {
 	 * Base Test command
 	 * @author shawn
 	 */
-	public static class TestCommand<I,O> extends GenieInputCommand<I,O>{
+	public static class TestRunnableCommand<O> extends GenieRunnableCommand<O>{
 
 		private O value;
 		private O defaultValue;
 		
-		public  TestCommand(final O value, final String key) {
+		public  TestRunnableCommand(final O value, final String key) {
 			this(value, key, null);
 		}
-		public  TestCommand(final O value, final String key, final O defaultValue) {
+		public  TestRunnableCommand(final O value, final String key, final O defaultValue) {
 			this(value, key, defaultValue, MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor()));
 		}
-		protected TestCommand(final O value, final String key, final O defaultValue, final ListeningExecutorService executor) {
+		protected TestRunnableCommand(final O value, final String key, final O defaultValue, final ListeningExecutorService executor) {
 			super(key, executor);
 			this.value = value;
 			this.defaultValue = defaultValue;
@@ -57,7 +60,7 @@ public class MockCommands {
 		@Override
 		protected O fallback() {return defaultValue;}
 		@Override
-		public O run(I input) {
+		public O run() {
 			return this.value;
 		}
 	}
@@ -103,7 +106,7 @@ public class MockCommands {
 	 * Test Command to capture callbacks for success and failures
 	 * @author shawn
 	 */
-	public static class TestCommandWithCallBacks<I,O> extends TestCommand<I,O>{
+	public static class TestCommandWithCallBacks<I,O> extends TestInputCommand<I,O>{
 		private final List<O> successes = new ArrayList<O>();
 		private final List<Throwable> errors = new ArrayList<Throwable>();
 		public TestCommandWithCallBacks(O value, String key) {

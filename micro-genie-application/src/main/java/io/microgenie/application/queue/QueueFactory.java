@@ -19,7 +19,7 @@ public abstract class QueueFactory implements Closeable {
 	public abstract Consumer getConsumer(final String queue);
 	
 	public abstract void submit(final Message message);
-	public abstract void submitBatch(final List<Message> message);
+	public abstract void submitBatch(final List<Message> messages);
 	public abstract void consume(final String queue, final MessageHandler handler);
 	public abstract void initialize();
 	

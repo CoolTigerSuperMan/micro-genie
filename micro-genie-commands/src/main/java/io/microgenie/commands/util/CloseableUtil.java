@@ -11,9 +11,9 @@ import com.google.common.io.Closeables;
  * Safely close resources
  * @author shawn
  */
-public class CloseableUtils {
+public class CloseableUtil {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CloseableUtils.class); 
+	private static final Logger LOGGER = LoggerFactory.getLogger(CloseableUtil.class); 
 	
 	/** The Guava version throws an IOException even if swallow exception is set to true, based on guava version **/
 	public static void closeQuietly(Closeable closeable){

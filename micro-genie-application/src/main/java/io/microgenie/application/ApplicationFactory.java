@@ -6,7 +6,7 @@ import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.QueueFactory;
-import io.microgenie.commands.util.CloseableUtils;
+import io.microgenie.commands.util.CloseableUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -49,11 +49,11 @@ public abstract class ApplicationFactory implements Closeable{
 	 */
 	@Override
 	public void close() throws IOException {
-		CloseableUtils.closeQuietly(this.http());
-		CloseableUtils.closeQuietly(this.events());
-		CloseableUtils.closeQuietly(this.blobs());
-		CloseableUtils.closeQuietly(this.http());
-		CloseableUtils.closeQuietly(this.database());
-		CloseableUtils.closeQuietly(this.commands());
+		CloseableUtil.closeQuietly(this.http());
+		CloseableUtil.closeQuietly(this.events());
+		CloseableUtil.closeQuietly(this.blobs());
+		CloseableUtil.closeQuietly(this.database());
+		CloseableUtil.closeQuietly(this.queues());
+		CloseableUtil.closeQuietly(this.commands());
 	}
 }
