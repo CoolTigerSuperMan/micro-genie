@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.common.collect.Maps;
 
@@ -24,6 +27,8 @@ import com.google.common.collect.Maps;
  */
 public class SqsFactory extends QueueFactory{
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SqsFactory.class);
+	
 	private final AmazonSQSClient sqs;
 	private final SqsQueueAdmin admin;
 	private final SqsConfig config;
@@ -100,13 +105,19 @@ public class SqsFactory extends QueueFactory{
 	 */
 	@Override
 	public void close(){
+		LOGGER.info("shutting down admin client");
 		this.admin.shutdown();
-		if(this.consumers!=null && this.consumers.size()>0){
+		if(this.consumers !=null && this.consumers.size()>0){
+			int i = 0;
 			for(Entry<String, Consumer> c : consumers.entrySet()){
+				LOGGER.info("stopping consumer: {}", ++i);
 				c.getValue().stop();
+				LOGGER.info("consumer[{}].isRunning() is: {}", i, c.getValue().isRunning());
 			}
 		}
-		this.sqs.shutdown();
+		LOGGER.info("shutting down sqs client");
+		//this.sqs.shutdown();
+		LOGGER.info("sqs client shutdown complete");
 	}
 	
 	

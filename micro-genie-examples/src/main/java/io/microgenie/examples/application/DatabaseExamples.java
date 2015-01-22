@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
@@ -26,6 +29,16 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
  */
 public class DatabaseExamples {
 
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseExamples.class);
+	
+	
+	
+	/****
+	 * Execute example database calls using the dynamodb database factory
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args ) throws IOException{
 
 		final AwsConfig aws  = ExampleConfig.createConfigForDatabaseExamples();
@@ -37,17 +50,26 @@ public class DatabaseExamples {
 		/*** TODO - Need to add the 'wait until table creation complete' logic **/
 		try (ApplicationFactory app = new AwsApplicationFactory(aws, false)) {
 			
+			LOGGER.info("initializing book repository. This will create tables if they do not exist");
+			
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository));
 			app.initialize();
 			
+			LOGGER.info("initialization of book repository complete");
 
+			
+			LOGGER.info("Executing create, read, update and delete examples.....");
 			final Book createdBook = DatabaseExamples.create(app.database());
 			final Book retrievedBook = DatabaseExamples.read(app.database(), createdBook.getLibraryId(), createdBook.getBookId());
 			final Book updatedBook = DatabaseExamples.update(app.database(), retrievedBook);
 			
 			/** Delete the updated book **/
 			DatabaseExamples.delete(app.database(), updatedBook);
+			
+			LOGGER.info("Execution of examples complete, shuting down now");
 		}
+		
+		LOGGER.info("Shutdown complete for all resources...exiting now");
 	}
 	
 
@@ -62,7 +84,7 @@ public class DatabaseExamples {
 		final String bookId = UUID.randomUUID().toString();
 		final BookRepository bookRepository = database.repos(Book.class);
 
-		Book book = new Book();
+		final Book book = new Book();
 		book.setLibraryId(libraryId);
 		book.setBookId(bookId);
 		book.setTitle("The Old Man and the Sea");
@@ -70,7 +92,12 @@ public class DatabaseExamples {
 		book.setIsbn("978-0684801223");
 		book.setAuthor("Ernest Hemingway");
 		
+		LOGGER.info("saving book title {} for libraryId: {} with bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
+		
 		bookRepository.save(book);
+		
+		LOGGER.info("successfully saved book title {} for libraryId: {} with bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
+		
 		return book;
 	}
 	
@@ -85,8 +112,18 @@ public class DatabaseExamples {
 	 * @return book
 	 */
 	private static Book read(final DatabaseFactory database, String libraryId, String bookId) {
+		
+		LOGGER.info("attempting to read book with libraryId: {} and bookId: {}", libraryId, bookId);
+		
 		final BookRepository bookRepo = database.repos(Book.class);
 		final Book book = bookRepo.get(libraryId, bookId);
+		
+		if(book!=null){
+			LOGGER.info("successfully read book with libraryId: {} and bookId: {}", libraryId, bookId);	
+		}else{
+			LOGGER.info("book was not found with libraryId: {} and bookId: {}", libraryId, bookId);
+		}
+		
 		return book;
 	}
 
@@ -103,11 +140,15 @@ public class DatabaseExamples {
 	 */
 	private static Book update(final DatabaseFactory database, Book book) {
 
+		LOGGER.info("attempting to update book for libraryId: {} bookId: {} with title: {}", book.getLibraryId(), book.getBookId(), book.getTitle());	
+		
 		final String updatedTitle = book.getTitle() + " -  Updated";
 		book.setTitle(updatedTitle);
-		
 		final BookRepository bookRepository = database.repos(Book.class);
 		bookRepository.save(book);
+		
+		LOGGER.info("successfully updated book title to: '{}' for libraryId: {} bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
+		
 		return book;
 	}
 
@@ -123,7 +164,12 @@ public class DatabaseExamples {
 	 */
 	private static void delete(final DatabaseFactory database, final Book updatedBook) {
 		final BookRepository bookRepository = database.repos(Book.class);
+		
+		LOGGER.info("attempting to delete book for libraryId: {} bookId: {}", updatedBook.getLibraryId(), updatedBook.getBookId());
+		
 		bookRepository.delete(updatedBook);
+		
+		LOGGER.info("successfully deleted book for libraryId: {} bookId: {}", updatedBook.getLibraryId(), updatedBook.getBookId());
 	}
 
 

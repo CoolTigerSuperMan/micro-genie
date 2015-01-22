@@ -24,7 +24,7 @@ public class ExampleConfig {
 	/** Command Example Properties **/
 	public static final String PROPERTY_FILE_NAME = "application.properties";
 	public static final String EVENT_PROPERTY_FILE_NAME = "event.examples..properties";
-	public static final String DATABASE_PROPERTY_FILE_NAME = "database.examples..properties";
+	public static final String DATABASE_PROPERTY_FILE_NAME = "database.examples.properties";
 	
 	/** Property Keys **/
 	public  static final String BUCKET_PROPERTY = "s3.buckets.default";

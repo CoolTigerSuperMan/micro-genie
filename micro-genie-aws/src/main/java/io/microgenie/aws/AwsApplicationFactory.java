@@ -169,8 +169,8 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		CloseableUtil.closeQuietly(events);
 		CloseableUtil.closeQuietly(databases);
 		CloseableUtil.closeQuietly(files);
-		CloseableUtil.closeQuietly(http);
 		CloseableUtil.closeQuietly(queues);
 		CloseableUtil.closeQuietly(commands);
+		CloseableUtil.closeQuietly(http);
 	}
 }

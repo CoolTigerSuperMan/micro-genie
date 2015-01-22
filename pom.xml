@@ -99,9 +99,6 @@
 		</dependency>
 
 
-		<!-- <dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-access</artifactId> 
-			</dependency> -->
-
 		<!-- Test Dependencies -->
 
 		<dependency>
@@ -153,22 +150,12 @@
 				</exclusions>
 			</dependency>
 
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpasyncclient</artifactId>
-				<version>${org.apache.http.async.client}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.httpcomponents</groupId>
-						<artifactId>httpcore</artifactId>
-					</exclusion>
 
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+			<!-- <dependency> <groupId>org.apache.httpcomponents</groupId> <artifactId>httpasyncclient</artifactId> 
+				<version>${org.apache.http.async.client}</version> <exclusions> <exclusion> 
+				<groupId>org.apache.httpcomponents</groupId> <artifactId>httpcore</artifactId> 
+				</exclusion> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
+				</exclusion> </exclusions> </dependency> -->
 
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -227,8 +214,6 @@
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
@@ -241,26 +226,21 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
-
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-core</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jul-to-slf4j</artifactId>
 				<version>${slf4j.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-access</artifactId>
@@ -440,10 +420,8 @@
 					<effort>Max</effort>
 					<threshold>Default</threshold>
 					<xmlOutput>true</xmlOutput>
-					<!-- 
-					<excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
-					 -->
-					
+					<!-- <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile> -->
+
 				</configuration>
 				<executions>
 					<execution>

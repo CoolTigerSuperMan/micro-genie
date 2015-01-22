@@ -29,6 +29,7 @@ import io.microgenie.application.commands.QueueCommandFactory.ToMessageFunction;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.queue.ProduceInputCommand;
 import io.microgenie.application.queue.QueueSpecs.DefaultQueueInputSpec;
+import io.microgenie.commands.concurrency.ExecutorRegistry;
 import io.microgenie.commands.core.CommandFactory;
 
 import java.io.IOException;
@@ -157,5 +158,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 	public void initialize() {}
 	
 	@Override
-	public void close() throws IOException{}
+	public void close() throws IOException{
+		ExecutorRegistry.INSTANCE.shutdown();
+	}
 }

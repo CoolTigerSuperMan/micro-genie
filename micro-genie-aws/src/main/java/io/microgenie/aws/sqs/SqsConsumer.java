@@ -13,6 +13,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.AbortedException;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
@@ -33,6 +34,8 @@ import com.google.common.collect.Maps;
 public class SqsConsumer implements Consumer, Runnable{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqsConsumer.class);
+	
+	private final long shutdownTimeMS = 2000L;
 	
 	private final AmazonSQSClient client;
 	private final SqsConsumerConfig config;
@@ -105,6 +108,11 @@ public class SqsConsumer implements Consumer, Runnable{
 				if(result !=null && CollectionUtil.hasElements(result.getMessages())){
 					final List<com.amazonaws.services.sqs.model.Message> sqsMessages = result.getMessages();		
 					this.handleMessages(this.config.getQueue(), sqsMessages);	
+				}
+			}catch(AbortedException ex){
+				LOGGER.debug("Aborted threadId: {} - message: {} Thread isRunning: {}", Thread.currentThread().getId(),ex.getMessage(), this.running);
+				if(!running){
+					return;
 				}
 			}catch(Exception ex){
 				LOGGER.error(ex.getMessage(), ex);
@@ -181,6 +189,17 @@ public class SqsConsumer implements Consumer, Runnable{
 	@Override
 	public void stop() {
 		this.running = false;
+		for(Thread t : this.threads){
+			LOGGER.info("stopping threadId: {}", t.getId());
+			if(!t.isInterrupted()){
+				t.interrupt();
+			}
+		}
+		
+		try {
+			LOGGER.debug("waiting {} milliseconds for SQS consumer threads to shutdown", shutdownTimeMS);
+			Thread.sleep(shutdownTimeMS);
+		} catch (InterruptedException e) {}
 	}
 
 
@@ -195,7 +214,11 @@ public class SqsConsumer implements Consumer, Runnable{
 
 	@Override
 	public void run() {
-		this.poll(this.handler);
+		try{
+			this.poll(this.handler);	
+		}catch(Exception ex){
+			LOGGER.debug("Consumer has been aborted");
+		}
 	}
 }
 

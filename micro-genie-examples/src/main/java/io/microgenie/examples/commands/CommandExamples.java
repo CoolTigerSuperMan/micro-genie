@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -105,23 +106,21 @@ public class CommandExamples {
 		app.queues().consume(queue, new OutputMessageHandler());
 		
 		
+		
 		final CommandResult<String> result = 
 				commands.get(GOOGLE)
-					.into(commands.saveFile(blobSpec.path("pages/google.html"))
+					.into(commands.saveFile(blobSpec.path("pages/google.html?" + UUID.randomUUID().toString()))
 							.into(commands.produce(claimCheckSpec))
 			)
 			.queue();
 			
-
-		Thread.sleep(5000);
-				
-				
-		
 //		final CommandResult<String> result = 
 //			commands.get(GOOGLE).into(commands.saveFile(blobSpec.path("pages/google.html")).into(commands.produce(claimCheckSpec)))
 //			.inParallel(commands.get(CNN).into(commands.saveFile(blobSpec.path("pages/cnn.html")).into(commands.produce(claimCheckSpec))))
 //			.inParallel(commands.get(LINKED_IN).into(commands.saveFile(blobSpec.path("pages/linkedin.html")).into(commands.produce(claimCheckSpec))))
 //			.queue();
+		
+		Thread.sleep(5000);
 		
 		final List<Object> results = result.allResults();
 		LOGGER.info("Commands Executed: {}", results.size());
@@ -179,8 +178,8 @@ public class CommandExamples {
 	public static class PageToFile implements ToFileFunction<String> {
 		@Override
 		public FileContent run(Input2<String, FilePath> input) {
-			byte[] bytes = input.a.getBytes();
-			return FileContent.create(input.b, bytes.length,
+			byte[] bytes = input.getA().getBytes();
+			return FileContent.create(input.getB(), bytes.length,
 					new ByteArrayInputStream(bytes));
 		}
 	}
@@ -200,15 +199,15 @@ public class CommandExamples {
 			return new Message() {
 				@Override
 				public String getQueue() {
-					return input.a;
+					return input.getA();
 				}
 				@Override
 				public String getId() {
-					return input.b;
+					return input.getB();
 				}
 				@Override
 				public String getBody() {
-					return input.c.toString();
+					return input.getC().toString();
 				}
 				@Override
 				public Map<String, String> getHeaders() {

@@ -1,6 +1,7 @@
 package io.microgenie.commands.concurrency;
 
 import io.microgenie.commands.core.CommandConfiguration.ExecutorProperties;
+import io.microgenie.commands.util.CloseableUtil;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 
@@ -33,5 +34,12 @@ public enum ExecutorRegistry {
 	}
 	public ListeningExecutorService register(final ExecutorProperties properties){
 		return this.threadFactory.registerExecutor(properties);
+	}
+
+	/***
+	 * Shutdown all executors
+	 */
+	public void shutdown() {
+		CloseableUtil.closeQuietly(this.threadFactory);
 	}
 }
