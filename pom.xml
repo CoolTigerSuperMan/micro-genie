@@ -21,7 +21,7 @@
 		<jersey.version>2.13</jersey.version>
 		<commons-io.version>2.4</commons-io.version>
 
-
+		<joda.version>2.7</joda.version>
 		<jackson.api.version>2.4.0</jackson.api.version>
 		<com.fasterxml>2.4.3</com.fasterxml>
 
@@ -31,6 +31,7 @@
 		<h2.version>1.4.182</h2.version>
 		<assertj.version>1.7.0</assertj.version>
 		<org.apache.http.client>4.3.6</org.apache.http.client>
+		<org.apache.http.core>4.3.3</org.apache.http.core>
 		<com.google.code.findbugs.version>3.0.0</com.google.code.findbugs.version>
 	</properties>
 
@@ -46,6 +47,7 @@
 			</roles>
 		</developer>
 	</developers>
+
 
 	<licenses>
 		<license>
@@ -71,33 +73,13 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 
-		<!-- Use the specified api instead -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-		</dependency>
-
+		<!-- Use the specified api instead <dependency> <groupId>ch.qos.logback</groupId> 
+			<artifactId>logback-classic</artifactId> <exclusions> <exclusion> <groupId>org.slf4j</groupId> 
+			<artifactId>slf4j-api</artifactId> </exclusion> </exclusions> </dependency> 
+			<dependency> <groupId>ch.qos.logback</groupId> <artifactId>logback-core</artifactId> 
+			</dependency> <dependency> <groupId>org.slf4j</groupId> <artifactId>jcl-over-slf4j</artifactId> 
+			</dependency> <dependency> <groupId>org.slf4j</groupId> <artifactId>jul-to-slf4j</artifactId> 
+			</dependency> -->
 
 		<!-- Test Dependencies -->
 
@@ -119,14 +101,9 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- plugins -->
-		<dependency>
-			<groupId>org.apache.maven.plugin-tools</groupId>
-			<artifactId>maven-plugin-annotations</artifactId>
-			<version>${mavenPluginPluginVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
+		<!-- plugins <dependency> <groupId>org.apache.maven.plugin-tools</groupId> 
+			<artifactId>maven-plugin-annotations</artifactId> <version>${mavenPluginPluginVersion}</version> 
+			<scope>provided</scope> </dependency> -->
 	</dependencies>
 
 
@@ -140,8 +117,6 @@
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
 				<version>${org.apache.http.client}</version>
-
-
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>
@@ -150,6 +125,18 @@
 				</exclusions>
 			</dependency>
 
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>${org.apache.http.core}</version>
+			</dependency>
+			
+
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>${joda.version}</version>
+			</dependency>
 
 			<!-- <dependency> <groupId>org.apache.httpcomponents</groupId> <artifactId>httpasyncclient</artifactId> 
 				<version>${org.apache.http.async.client}</version> <exclusions> <exclusion> 

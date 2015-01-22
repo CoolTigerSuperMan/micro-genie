@@ -12,29 +12,46 @@
 
 	<dependencies>
 	
+	
 		<dependency>
 			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-commands</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	
+	
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-		</dependency> 
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+		</dependency>
+
+		
+		
+		
+		<!--
+		
+		Found to be unused by running: mvn dependency:analyze-only
+		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>com.google.code.findbugs</groupId>
 			<artifactId>jsr305</artifactId>
 		</dependency>
-
+		 --> 
+		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		
 
 		<!-- Jackson -->
 		<dependency>

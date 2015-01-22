@@ -102,10 +102,7 @@ public class CommandExamples {
 		 * 			.into(queue().publish(claimCheckSpec)))
 		 * 
 		 */
-		
 		app.queues().consume(queue, new OutputMessageHandler());
-		
-		
 		
 		final CommandResult<String> result = 
 				commands.get(GOOGLE)
