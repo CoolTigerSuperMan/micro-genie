@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
+
+
+	<parent>
+		<relativePath>..</relativePath>
+		<groupId>io.microgenie</groupId>
+		<artifactId>micro-genie</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<name>Micro Genie Dropwizard Service</name>
+	<artifactId>micro-genie-dw-service</artifactId>
+
+
+
+	<properties>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+
+		<!-- dropwizard -->
+		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
+		<io.dropwizard.metrics.version>3.1.0</io.dropwizard.metrics.version>
+
+		<javax.ws.rs.version>2.0.1</javax.ws.rs.version>
+		<jjschema.version>0.6</jjschema.version>
+		<swagger-dropwizard.version>0.5.2</swagger-dropwizard.version>
+		<swagger-annotations.version>1.3.2</swagger-annotations.version>
+
+
+
+		<javax.validation.version>1.1.0.Final</javax.validation.version>
+		<jersey.guava.version>2.13</jersey.guava.version>
+		<common-lang3.version>3.3.2</common-lang3.version>
+	</properties>
+
+
+
+	<!-- Shared Dependencies for all sub modules -->
+	<dependencies>
+
+		<!-- micro-genie -->
+		<dependency>
+			<groupId>io.microgenie</groupId>
+			<artifactId>micro-genie-aws</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.microgenie</groupId>
+			<artifactId>micro-genie-application</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- dropwizard -->
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-healthchecks</artifactId>
+			<version>${io.dropwizard.metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-annotation</artifactId>
+			<version>${io.dropwizard.metrics.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-jersey</artifactId>
+			<version>${io.dropwizard.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-core</artifactId>
+			<version>${io.dropwizard.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-testing</artifactId>
+			<version>${io.dropwizard.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-views</artifactId>
+			<version>${io.dropwizard.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-views-freemarker</artifactId>
+			<version>${io.dropwizard.version}</version>
+		</dependency>
+
+
+		<!-- miscellaneous -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${javax.ws.rs.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.reinert</groupId>
+			<artifactId>jjschema</artifactId>
+			<version>${jjschema.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${javax.validation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${common-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.bundles.repackaged</groupId>
+			<artifactId>jersey-guava</artifactId>
+			<version>${jersey.guava.version}</version>
+		</dependency>
+
+
+		<!-- Swagger Documentation -->
+		
+		<!-- 
+		<dependency>
+			<groupId>com.wordnik</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger-annotations.version}</version>
+		</dependency>
+		 -->
+		
+		<dependency>
+			<groupId>io.federecio</groupId>
+			<artifactId>dropwizard-swagger</artifactId>
+			<version>${swagger-dropwizard.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.dropwizard</groupId>
+					<artifactId>dropwizard-views-freemarker</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.dropwizard</groupId>
+					<artifactId>dropwizard-core</artifactId>
+				</exclusion>
+			
+			
+				<exclusion>
+					<groupId>io.dropwizard</groupId>
+					<artifactId>dropwizard-views</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jsr311-api</artifactId>
+					<groupId>javax.ws.rs</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.javassist</groupId>
+					<artifactId>javassist</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.module</groupId>
+					<artifactId>jackson-module-jsonSchema</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				
+				
+				<exclusion>
+					<groupId>io.dropwizard</groupId>
+					<artifactId>dropwizard-assets</artifactId>
+				</exclusion>
+
+			</exclusions>
+		</dependency>
+
+
+		<!-- Managed dependencies -->
+
+
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
+		<!-- miscellaneous -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-access</artifactId>
+		</dependency>
+
+
+		<!-- Test Dependencies -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
