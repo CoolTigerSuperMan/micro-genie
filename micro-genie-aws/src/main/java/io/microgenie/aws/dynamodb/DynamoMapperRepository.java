@@ -170,7 +170,7 @@ public class DynamoMapperRepository {
 	 * 
 	 * @param clazz - The model to query
 	 * @param itemKey - An instance of the model class with values in the predicate fields
-	 * @param indexName- The index to query
+	 * @param indexName - The index to query
 	 * @param rangeKeyName - The field name of the Index rangeKey
 	 * @param condition - The condition to apply to the rangeKey
 	 * @param limit - The number of results to return 

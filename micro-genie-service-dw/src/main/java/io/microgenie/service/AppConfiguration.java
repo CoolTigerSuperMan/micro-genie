@@ -28,12 +28,23 @@ public class AppConfiguration extends Configuration {
 	
 	@JsonProperty("host")
 	public String getHost() {
-		return host;
+		return this.host;
 	}
+	@JsonProperty("host")
+	public void setHost(String host) {
+		this.host = host;
+	}
+	
+	
 	@JsonProperty("port")
 	public int getPort(){
 		return this.port;
+	}	
+	@JsonProperty("port")
+	public void setPort(int port) {
+		this.port = port;
 	}
+	
 	@JsonProperty("dateFormat")
 	public String getDateFormatPattern() {
 		return dateFormatPattern;

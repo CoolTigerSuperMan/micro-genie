@@ -97,11 +97,10 @@ public class LibraryExample {
 			final Set<String> libraries = LibraryExample.generateLibraries();
 			final Set<Book> publishedBooks = LibraryExample.stockLibrariesShelves(libraries, bookRepository, NUMBER_OF_BOOK_COPIES);
 			
-			
 			/** run queries against our library books **/
-//			LibraryExample.queryByIsbns(bookRepository, publishedBooks);
-//			LibraryExample.queryByLibraryId(bookRepository, libraries);
-//			LibraryExample.queryByLibraryIdAndISBN(bookRepository, libraries, publishedBooks);	
+			LibraryExample.queryByIsbns(bookRepository, publishedBooks);
+			LibraryExample.queryByLibraryId(bookRepository, libraries);
+			LibraryExample.queryByLibraryIdAndISBN(bookRepository, libraries, publishedBooks);	
 			
 			/** Check out our favorite book from the North Gotham Library **/
 			LibraryExample.checkOutBook(bookRepository, events, NORTH_GOTHAM_LIBRARY, OLD_MAN_IN_SEA_ISBN);

@@ -87,10 +87,7 @@ public class KinesisConsumer implements Subscriber{
 	public synchronized void stop() {
 		
 		try {
-			
-			
 			this.worker.shutdown();
-			Thread.sleep(2000);
 			this.executor.shutdown();
 			if(!executor.awaitTermination(5, TimeUnit.SECONDS)){
 				this.executor.shutdownNow();

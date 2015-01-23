@@ -61,7 +61,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 	 * 
 	 * @param appFactory
 	 * @param configuration
-	 * @param environment
+	 * @param jersey
 	 */
 	protected abstract void registerResources(final ApplicationFactory appFactory, final T configuration, final JerseyEnvironment jersey);
 

@@ -42,7 +42,7 @@ public abstract class EventFactory implements Closeable {
 	
 	/**
 	 * Creates a publisher
-	 * @param properties - The properties required to initialize the publisher
+	 * @param clientId - The clientId of the publisher to get
 	 * @return publisher
 	 */
 	public synchronized Publisher getPublisher(final String clientId) {
