@@ -189,17 +189,16 @@ public class SqsConsumer implements Consumer, Runnable{
 	@Override
 	public void stop() {
 		this.running = false;
+		try {
+			LOGGER.debug("waiting {} milliseconds for SQS consumer threads to shutdown", shutdownTimeMS);
+			Thread.sleep(shutdownTimeMS);
+		} catch (InterruptedException e) {}		
 		for(Thread t : this.threads){
 			LOGGER.info("stopping threadId: {}", t.getId());
 			if(!t.isInterrupted()){
 				t.interrupt();
 			}
 		}
-		
-		try {
-			LOGGER.debug("waiting {} milliseconds for SQS consumer threads to shutdown", shutdownTimeMS);
-			Thread.sleep(shutdownTimeMS);
-		} catch (InterruptedException e) {}
 	}
 
 

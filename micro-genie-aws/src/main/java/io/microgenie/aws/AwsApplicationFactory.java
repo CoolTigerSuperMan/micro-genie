@@ -28,6 +28,8 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
  */
 public class AwsApplicationFactory extends ApplicationFactory{
 
+	private volatile boolean isInitialized;
+	
 	private final AwsConfig config;
 	
 	private FileStoreFactory files;
@@ -113,28 +115,32 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		return commands;
 	}
 	
+	
 
+	
 	@Override
-	public void initialize() {
+	public synchronized void initialize() {
 		if(config!=null){
-			if(http!=null){
-				http.initialize();
-			}
-			if(events!=null){
-				events.initialize();	
-			}
-			if(databases!=null){
-				databases.initialize();	
-			}
-			if(files!=null){
-				files.initialize();	
-			}
-			if(queues !=null){
-				queues.initialize();
-			}
-			if(commands!=null){
-				commands.initialize();
-			}
+			if(!this.isInitialized){
+				if(http!=null){
+					http.initialize();
+				}
+				if(events!=null){
+					events.initialize();	
+				}
+				if(databases!=null){
+					databases.initialize();	
+				}
+				if(files!=null){
+					files.initialize();	
+				}
+				if(queues !=null){
+					queues.initialize();
+				}
+				if(commands!=null){
+					commands.initialize();
+				}
+			}	
 		}
 	}
 	
@@ -172,5 +178,10 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		CloseableUtil.closeQuietly(queues);
 		CloseableUtil.closeQuietly(commands);
 		CloseableUtil.closeQuietly(http);
+	}
+
+
+	public boolean isInitialized() {
+		return isInitialized;
 	}
 }

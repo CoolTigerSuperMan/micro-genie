@@ -80,6 +80,8 @@ public class ApplicationFactoryTest {
 	 * @author shawn
 	 */
 	static class MockApplicationFactory extends ApplicationFactory {
+		
+		private volatile boolean isInitialized;
 		private QueueFactory queues;
 		private DatabaseFactory databases;
 		private FileStoreFactory files;
@@ -135,7 +137,13 @@ public class ApplicationFactoryTest {
 			return this.files;
 		}
 		@Override
-		public void initialize() {}
+		public void initialize() {
+			this.isInitialized = true;
+		}
+		@Override
+		public boolean isInitialized() {
+			return isInitialized;
+		}
 	};
 	
 }

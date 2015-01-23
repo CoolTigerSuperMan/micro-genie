@@ -43,6 +43,8 @@ public abstract class ApplicationFactory implements Closeable{
 	/** Initialize application command factories **/
 	public abstract void initialize();
 
+	public abstract boolean isInitialized();
+	
 	
 	/**
 	 * Close all resources safely

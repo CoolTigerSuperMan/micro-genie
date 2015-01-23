@@ -101,9 +101,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- plugins <dependency> <groupId>org.apache.maven.plugin-tools</groupId> 
-			<artifactId>maven-plugin-annotations</artifactId> <version>${mavenPluginPluginVersion}</version> 
-			<scope>provided</scope> </dependency> -->
 	</dependencies>
 
 
@@ -138,11 +135,6 @@
 				<version>${joda.version}</version>
 			</dependency>
 
-			<!-- <dependency> <groupId>org.apache.httpcomponents</groupId> <artifactId>httpasyncclient</artifactId> 
-				<version>${org.apache.http.async.client}</version> <exclusions> <exclusion> 
-				<groupId>org.apache.httpcomponents</groupId> <artifactId>httpcore</artifactId> 
-				</exclusion> <exclusion> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> 
-				</exclusion> </exclusions> </dependency> -->
 
 			<dependency>
 				<groupId>com.google.code.findbugs</groupId>
@@ -161,7 +153,6 @@
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
 			</dependency>
-
 
 			<dependency>
 				<groupId>commons-io</groupId>
