@@ -59,7 +59,7 @@ public class KinesisProducer implements Publisher{
 		//putRecordRequest.setSequenceNumberForOrdering( sequenceNumberOfPreviousRecord );
 		
 		final PutRecordResult putRecordResult = client.putRecord(putRecordRequest);
-		LOGGER.debug("published message to stream: {} partitionKey: {}, sequenceNumberForOrdering: {}, returnedSequenceNumber:{}", 
+		LOGGER.trace("published message to stream: {} partitionKey: {}, sequenceNumberForOrdering: {}, returnedSequenceNumber:{}", 
 					putRecordRequest.getStreamName(), 
 					putRecordRequest.getPartitionKey(), 
 					putRecordRequest.getSequenceNumberForOrdering(), 
@@ -95,10 +95,6 @@ public class KinesisProducer implements Publisher{
 	 */
 	@Override
 	public void close() throws IOException {
-		try{
-			this.client.shutdown();	
-		}catch(Exception ex){
-			LOGGER.error(ex.getMessage(), ex);
-		}
+
 	}
 }

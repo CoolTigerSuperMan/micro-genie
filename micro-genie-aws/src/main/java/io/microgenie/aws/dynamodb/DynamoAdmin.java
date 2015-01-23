@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
@@ -21,6 +24,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DescribeTableResult;
 import com.amazonaws.services.dynamodbv2.model.GlobalSecondaryIndex;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.LocalSecondaryIndex;
@@ -41,7 +45,12 @@ import com.google.common.collect.Sets;
  */
 public class DynamoAdmin {
 	
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DynamoAdmin.class);
 	private static final long DEFAULT_PROVISIONED_THROUGHPUT_VALUE = 10;
+	private static final long DEFAULT_PAUSE_TIME_SECONDS = 5;
+	private static final long DEFAULT_MAX_BLOCK_TIME_SECONDS = 45;
+	
 	
 	private static final ProvisionedThroughput DEFAULT_PROVISIONED_THROUGHPUT = new ProvisionedThroughput(DEFAULT_PROVISIONED_THROUGHPUT_VALUE, DEFAULT_PROVISIONED_THROUGHPUT_VALUE);
 	
@@ -53,12 +62,30 @@ public class DynamoAdmin {
 	
 	
 	
-	
-	/***
-	 * Scan classes to determine which tables and indexes need to be created
+	/****
+	 * Scan classes in the specified package prefix to determine which tables and indexes need to be created
+	 * <p>
+	 * This method will use default settings which block until the tables become active or until the blocking timeout period
+	 * expires. The maximum blocking timeout period per table is 45 seconds
+	 * <p>
 	 * @param packagePrefix
 	 */
 	public void scan(final String packagePrefix){
+		this.scan(packagePrefix, true, DEFAULT_MAX_BLOCK_TIME_SECONDS);
+	}
+	
+	
+	/***
+	 * Scan classes to determine which tables and indexes need to be created
+	 * 
+	 * TODO - DynamoDB has a limit of how many tables can be created at once, I think 10 as of now.
+	 * This method does not batch but really needs to, so it only tries to create up 10 tables at the same time
+	 *  
+	 * @param packagePrefix
+	 * @param blockUntilActive - If true this method will not return until the table is active or maxBlockTimeSeconds has expired
+	 * @param  maxBlockTimeSeconds - The maximum amount of time to block for each table until the table becomes active
+	 */
+	public void scan(final String packagePrefix, boolean blockUntilActive, long maxBlockTimeSeconds){
 		
 		final Reflections reflections = new Reflections(packagePrefix);
 		final Set<Class<?>> tableClasses = reflections.getTypesAnnotatedWith(DynamoDBTable.class);
@@ -66,6 +93,13 @@ public class DynamoAdmin {
 			if(!tableExists(clazz)){
 				this.createTable(clazz);	
 			}
+		}
+		
+		/** If specified, wait for all the tables to become if active **/
+		if(blockUntilActive){
+			for(Class<?> clazz : tableClasses){
+				this.waitForTableToBecomeActive(clazz, maxBlockTimeSeconds, DEFAULT_PAUSE_TIME_SECONDS);
+			}			
 		}
 	}
 
@@ -75,11 +109,9 @@ public class DynamoAdmin {
 	 * @param clazz
 	 * @return tableExists
 	 */
-	private boolean tableExists(Class<?> clazz) {
-		final String tableName = this.getClassAnnotationValue(clazz, DynamoDBTable.class, String.class, "tableName");
-		final DescribeTableRequest describeRequest = new DescribeTableRequest(tableName);
+	public boolean tableExists(Class<?> clazz) {
 		try{
-			this.client.describeTable(describeRequest);	
+			this.describeTable(clazz);	
 		}catch(ResourceNotFoundException rnf){
 			return false;
 		}
@@ -200,13 +232,14 @@ public class DynamoAdmin {
 		final String hashKeyName = this.getAnnotationValue(hashKeyAnno, "attributeName", String.class);
 		String rangeKeyName = null;
 		
+		
 		final Method rangeKeyMember = this.getMethodForAnnotation(clazz, DynamoDBRangeKey.class);
 		if(rangeKeyMember!=null){
 			DynamoDBRangeKey rangeKeyAnno = rangeKeyMember.getAnnotation(DynamoDBRangeKey.class);	
 			rangeKeyName = this.getAnnotationValue(rangeKeyAnno, "attributeName", String.class);
 		}
 		
-		
+
 		final Set<Method> hashKeyIndexFields = this.getMethodsAnnotatedWith(DynamoDBIndexHashKey.class, clazz);
 		final Set<Method> rangeKeyIndexFields = this.getMethodsAnnotatedWith(DynamoDBIndexRangeKey.class, clazz);
 		
@@ -256,10 +289,11 @@ public class DynamoAdmin {
 	private Map<String, GlobalIndex> createGlobalIndexes(final Set<Method> hashKeyIndexFields, final Set<Method> rangeKeyIndexFields, Class<?> clazz) {
 		
 		final Map<String, GlobalIndex> globalIndexes = Maps.newHashMap();	
-		final Set<String> globalIndexNames = Sets.newHashSet();
 		
 		
 		for(Method m : hashKeyIndexFields){
+			
+			final Set<String> globalIndexNames = Sets.newHashSet();
 			
 			final DynamoDBIndexHashKey indexHashKeyAnno = m.getAnnotation(DynamoDBIndexHashKey.class);
 			String[] indexNames = this.getAnnotationValue(indexHashKeyAnno, "globalSecondaryIndexNames", String[].class);
@@ -498,5 +532,70 @@ public class DynamoAdmin {
         }
         return value;
     }
+
+
 	
+	/***
+	 * Wait the specified time for the table to become active
+	 * @param clazz
+	 * @param maxWaitTimeSeconds
+	 * @param timeBetweenChecksSeconds
+	 */
+	private void waitForTableToBecomeActive(Class<?> clazz, long maxWaitTimeSeconds, long timeBetweenChecksSeconds){
+		
+		try{
+		
+			final String ACTIVE = "ACTIVE";
+			
+			long waitUntil = (DateTime.now().getMillis() + (maxWaitTimeSeconds * 1000L));
+			String status = null;
+			while(!ACTIVE.equals(status) && DateTime.now().getMillis() < waitUntil){
+			
+				status = this.getTableStatus(clazz);
+				
+				/** If it's active then return **/
+				if(ACTIVE.equals(status)){
+					LOGGER.info("Table for model: {} is active!", clazz);
+					return;
+				}
+				
+				LOGGER.info("Table for model: {} has status of {}. Waiting {} seconds for next check", clazz.getName(), status, timeBetweenChecksSeconds);
+				Thread.sleep(timeBetweenChecksSeconds * 1000L);
+			}
+			
+			
+			if(!ACTIVE.equals(status) && DateTime.now().getMillis() > waitUntil){
+				LOGGER.warn("The timeout period expired while waiting for table: {} to become active. Status is {} maxWaitTimeInSeconds: {}", clazz, status, maxWaitTimeSeconds);
+			}
+			
+		}catch(ResourceNotFoundException rnf){
+			LOGGER.warn("Table for model: {} does not exist", clazz.getName());
+		}catch(Exception ex){
+			LOGGER.error(ex.getMessage(), ex);
+		}
+	}
+	
+	/***
+	 * Get Table Status
+	 * @param clazz
+	 * @return status
+	 */
+	public String getTableStatus(Class<?> clazz) throws ResourceNotFoundException{
+		final DescribeTableResult description = describeTable(clazz);
+		if(description.getTable()!=null){
+			return description.getTable().getTableStatus();
+		}
+		return null;
+	}
+	
+	
+	/***
+	 * Describe Table
+	 * @param clazz
+	 * @return describeTableResult
+	 */
+	private DescribeTableResult describeTable(Class<?> clazz) throws ResourceNotFoundException{
+		final String tableName = this.getClassAnnotationValue(clazz, DynamoDBTable.class, String.class, "tableName");
+		return this.client.describeTable(new DescribeTableRequest(tableName));
+	}
 }

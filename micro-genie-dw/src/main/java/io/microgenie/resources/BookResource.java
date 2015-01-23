@@ -1,8 +1,9 @@
 package io.microgenie.resources;
 
-import io.microgenie.core.Book;
-import io.microgenie.data.BookRepository;
+import io.microgenie.example.data.BookRepository;
+import io.microgenie.models.Book;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -13,6 +14,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -27,23 +29,47 @@ import com.wordnik.swagger.annotations.ApiResponse;
  * @author shawn
  */
 @Path(value="books")
-@Api(value="books", description="Create, Update, Read, Delete Books", consumes="application/json", produces="application/json")
+@Api(value="books", description="Query, Create, Update, Read, Delete Books", consumes="application/json", produces="application/json")
 @Consumes(value="application/json")
 @Produces(value="application/json")
 public class BookResource extends BaseResource{
 	
+	
 	private BookRepository bookRepository;
 	
+	
+	/***
+	 * Create the book resource
+	 * @param bookRepository - Book data access repository
+	 */
 	public BookResource(BookRepository bookRepository) {
 		this.bookRepository = bookRepository;
 	}
 	
+	
+	
+	/**
+	* Get the item by it's id
+	* @param id
+	* @return book
+	*/
+	@Timed
+	@GET
+	@ApiOperation(value="Query Books by defined query filters",  response=Book[].class, nickname="Book")
+	@ApiResponses(value = {@ApiResponse(code=200, message = "Success", response=Book.class), @ApiResponse(code=404, message = "Book Not Found", response=ApiError.class)})
+	public List<Book> query(@QueryParam("isbn") String isbn){
+		final List<Book> books = bookRepository.getBooksByIsbn(isbn);
+		return books;
+	}
+	
+	
+	
 
 	/**
-	 * Get the item by it's id
-	 * @param id
-	 * @return book
-	 */
+	* Get the item by it's id
+	* @param id
+	* @return book
+	*/
 	@Timed
 	@GET
 	@Path(value = "/{id}")
@@ -56,13 +82,14 @@ public class BookResource extends BaseResource{
 	}
 	
 	
+	
 
 	/***
-	 * Update the given item with the specified id
-	 * @param id
-	 * @param book
-	 * @return Book - The updated book
-	 */
+	* Update the given item with the specified id
+	* @param id
+	* @param book
+	* @return Book - The updated book
+	*/
 	@Timed
 	@PUT
 	@Path(value = "/{id}")
@@ -70,7 +97,7 @@ public class BookResource extends BaseResource{
 	@ApiResponses(value = {@ApiResponse(code=200, message = "Success", response=Book.class),
 			 			   @ApiResponse(code=404, message = "Book Not Found", response=ApiError.class)})
 	public Book update(@PathParam("id") String id, Book book){
-		book.setId(id);
+		book.setBookId(id);
 		bookRepository.save(book);
 		return book;
 	}
@@ -79,33 +106,35 @@ public class BookResource extends BaseResource{
 	
 	
 	/**
-	 * Create a new Item
-	 * @param book
-	 * @return book - The newly created book
-	 */
+	* Create a new Item
+	* @param book
+	* @return book - The newly created book
+	*/
 	@Timed
 	@POST
 	@ApiOperation(value="Create a new Book", response=Book.class, nickname="Book")
 	@ApiResponses(value = { @ApiResponse(code=200, message = "Success", response=Book.class)})
 	public Book create(Book book){
-		book.setId(UUID.randomUUID().toString());
+		book.setBookId(UUID.randomUUID().toString());
 		bookRepository.save(book);
 		return book;
 	}
 	
 	
 	
+	
+	
 	/**
-	 * Delete the resource with the given Id
-	 * @param id
-	 * @return 200 OK
-	 */
+	* Delete the resource with the given Id
+	* @param id
+	* @return 200 OK
+	*/
 	@Timed
 	@DELETE
 	@Path(value = "/{id}")
 	@ApiOperation(value="Delete a Book")
 	public Response delete(@PathParam("id") String id){
-		bookRepository.delete(id);
+		bookRepository.delete(new Book());
 		return Response.status(Status.OK).build();
 	}
 }

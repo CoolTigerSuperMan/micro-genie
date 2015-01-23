@@ -1,7 +1,9 @@
 package io.microgenie.aws.dynamodb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -55,6 +57,31 @@ public class DynamoMapperRepository {
 	}
 	
 	
+	
+	/***
+	 * Get multiple items in batch
+	 * @param itemKeys - instances with the keys set
+	 * @return itemList
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getList(List<T> itemKeys) {
+		final List<T> results = new ArrayList<T>();
+		final List<Object> itemsToGet = new ArrayList<Object>();
+		for(T item : itemKeys){
+			itemsToGet.add(item);	
+		}
+		final Map<String, List<Object>> tables = this.mapper.batchLoad(itemsToGet);
+		if(tables!=null){
+			for(Entry<String, List<Object>> table : tables.entrySet()){
+				for(Object item : table.getValue()){
+					results.add(((T)item));
+				}
+			}			
+		}
+		return results;
+	}
+	
+	
 	/**
 	 * Get the Item with the given hash key and range key
 	 * @param clazz
@@ -95,17 +122,72 @@ public class DynamoMapperRepository {
 	
 	
 	
-	public <T> List<T> query(final Class<T> clazz, final T itemKey, final String indexName, final String rangeKeyField, Condition condition, final int limit){
-		final Map<String, Condition> rangeConditions = Maps.newHashMap();
-		rangeConditions.put(rangeKeyField, condition);
-		return this.query(clazz, itemKey, null, null, null, limit, false);
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Query and Index by hash key only, expecting multiple results.
+	 * <br>
+	 * The query expects multiple results 
+	 * 
+	 * @param clazz - The model to query
+	 * @param itemKey - An instance of the model class with values in the predicate fields
+	 * @param indexName - The index to query
+	 * @param limit - The number of results to return
+	 * @return results
+	 */
+	public <T> List<T> queryIndexHashKey(final Class<T> clazz, final T itemKey, final String indexName, final int limit){
+		return this.query(clazz, itemKey, indexName, null, null, limit, false);
 	}
-	public <T> List<T> query(final Class<T> clazz, final T itemKey, final int limit){
-		return this.query(clazz, itemKey, null, null, null, limit, false);
+	
+
+	
+	/****
+	 * 
+	 * Queries a dynamodb table Index by the hash key only, expecting multiple results. 
+	 * This query allows a read consistency option to be specified
+	 * 
+	 * @param clazz - The model to query
+	 * @param itemKey - An instance of the model class with values in the predicate fields
+	 * @param indexName - The index to use
+	 * @param limit - The records to return
+	 * @param consistentRead - Whether or not to perform a consistent read
+	 * @return results - List<T>
+	 */
+	public <T> List<T> queryIndexHashKey(final Class<T> clazz, final T itemKey, final String indexName, final int limit, final boolean consistentRead){
+		return this.query(clazz, itemKey, indexName, null, null, limit, consistentRead);
 	}
-	public <T> List<T> query(final Class<T> clazz, final T itemKey, final int limit, final boolean consistentRead){
-		return this.query(clazz, itemKey, null, null, null, limit, consistentRead);
+	
+	
+	/***
+	 * Query a dynamodb Index by a hash key and RangeKey.  
+	 * 
+	 * This does not execute a consistent read
+	 * 
+	 * @param clazz - The model to query
+	 * @param itemKey - An instance of the model class with values in the predicate fields
+	 * @param indexName- The index to query
+	 * @param rangeKeyName - The field name of the Index rangeKey
+	 * @param condition - The condition to apply to the rangeKey
+	 * @param limit - The number of results to return 
+	 * @return results
+	 */
+	public <T> List<T> queryIndexHashAndRangeKey(final Class<T> clazz, final T itemKey, final String indexName, final String rangeKeyName, Condition condition, final int limit){
+		
+		Map<String, Condition> rangeConditions = null;
+		ConditionalOperator conditionOperator = null;
+		if(condition!=null){
+			rangeConditions = Maps.newHashMap();
+			rangeConditions.put(rangeKeyName, condition);
+			//conditionOperator = ConditionalOperator.AND; // Leave this out for now
+		}
+		return this.query(clazz, itemKey, indexName, conditionOperator, rangeConditions, limit, false);
 	}
+	
 	
 
 
@@ -125,15 +207,15 @@ public class DynamoMapperRepository {
 		final DynamoDBQueryExpression<T> expression = new DynamoDBQueryExpression<T>();
 		expression.withHashKeyValues(itemKey);
 		expression.withConsistentRead(consistentRead);
-
+		
 		/**
 		 * Optional Query parameters
 		 */
-		if(operator!=null){
-			expression.withConditionalOperator(operator);
-		}
 		if(!Strings.isNullOrEmpty(indexName)){
 			expression.withIndexName(indexName);
+		}
+		if(operator!=null){
+			expression.withConditionalOperator(operator);
 		}
 		if(rangeKeyConditions != null && rangeKeyConditions.size()>0){
 			expression.withRangeKeyConditions(rangeKeyConditions);
@@ -141,7 +223,12 @@ public class DynamoMapperRepository {
 		if(limit>0){
 			expression.withLimit(limit);	
 		}
-		return this.query(clazz, expression);
+		List<T> items = this.query(clazz, expression);
+		if(items==null){
+			return new ArrayList<T>();
+		}else{
+			return items;
+		}
 	}
 	
 	
@@ -179,9 +266,12 @@ public class DynamoMapperRepository {
 	 * @param expectedAttribute
 	 */
 	public <T> void saveIf(final T item, ConditionalOperator conditional, final String attributeName, final ExpectedAttributeValue expectedAttribute){
-		DynamoDBSaveExpression expression = new DynamoDBSaveExpression()
-		.withConditionalOperator(conditional)
+		
+		final DynamoDBSaveExpression expression = new DynamoDBSaveExpression()
 		.withExpectedEntry(attributeName, expectedAttribute);
+		if(conditional !=null){
+			expression.withConditionalOperator(conditional);
+		}
 		this.mapper.save(item, expression);
 	}
 	

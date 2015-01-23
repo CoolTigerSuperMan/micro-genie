@@ -1,4 +1,4 @@
-package io.microgenie.dw;
+package io.microgenie.example.app;
 
 import io.dropwizard.Configuration;
 import io.microgenie.application.ApplicationFactory;

@@ -24,13 +24,15 @@ public class S3BlobFactory extends FileStoreFactory{
 	private FileStore fileStore;
 	private S3Admin admin;
 	
+	private AmazonS3Client s3; 
 
 	
 	/**
 	 * Constructs an S3 File Store implementation of CommandFactory
 	 * @param config - default bucket to user if not specified when interacting with s3
 	 */
-	public S3BlobFactory(final S3Config config){
+	public S3BlobFactory(final AmazonS3Client s3Client, final S3Config config){
+		this.s3 = s3Client;
 		this.config = config;
 		this.defaultBucket = config.getDefaultDrive();
 	}
@@ -64,7 +66,7 @@ public class S3BlobFactory extends FileStoreFactory{
 	
 	@Override
 	public void initialize() {
-		final AmazonS3Client s3 = new AmazonS3Client();
+		this.s3 = new AmazonS3Client();
 		this.fileStore = new S3FileStore(defaultBucket, s3);
 		this.admin = new S3Admin(s3);
 		this.createBuckets();

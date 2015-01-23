@@ -85,7 +85,7 @@ public class SqsFactory extends QueueFactory{
 		try{
 			if(this.config !=null){
 				/** Ensure that queues are all created, and if specified, block until all queues are ready **/
-				this.admin.initializeQueues(this.config.getQueues(), this.config.isBlockUntilQueueIsReady());
+				this.admin.initializeQueues(this.config.getQueues(), this.config.isBlockUntilReady());
 				
 				/** Should we create a producer? **/
 				if(config.isProduces()){

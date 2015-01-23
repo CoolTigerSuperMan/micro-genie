@@ -12,14 +12,17 @@ import java.util.List;
  *
  * @param <T>
  */
-public abstract class EntityRepository<T> {
+public abstract class EntityRepository<T, H, R> {
 
-	protected abstract T get(Object id);
-	protected abstract T get(Object id, Object rangeId);
+	/** These are protected because some models support hash key only and 
+	*  some support hash and range key its up to the implementation
+	*  class to expose the correct method for get and getList.
+	*/
+	protected abstract T get(H id);
+	protected abstract T get(H id, R rangeKey);
+	protected abstract List<T> getList(H hashKey);
 	
-	protected abstract void delete(T item);
-	
-	protected abstract void save(T item);
-	protected abstract void save(List<T> items);
-
+	public abstract void delete(T item);
+	public abstract void save(T item);
+	public abstract void save(List<T> items);
 }

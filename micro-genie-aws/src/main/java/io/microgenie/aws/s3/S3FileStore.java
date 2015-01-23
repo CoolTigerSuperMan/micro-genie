@@ -222,6 +222,5 @@ public class S3FileStore implements FileStore{
 	@Override
 	public void close() throws IOException {
 		LOGGER.debug("shutting down S3FileStore");
-		this.client.shutdown();
 	}
 }

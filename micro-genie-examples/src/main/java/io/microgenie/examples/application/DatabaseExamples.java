@@ -9,6 +9,7 @@ import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 import io.microgenie.examples.ExampleConfig;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,7 +52,6 @@ public class DatabaseExamples {
 		try (ApplicationFactory app = new AwsApplicationFactory(aws, false)) {
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
-			
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository));
 			app.initialize();
 			
@@ -65,13 +65,14 @@ public class DatabaseExamples {
 			
 			/** Delete the updated book **/
 			DatabaseExamples.delete(app.database(), updatedBook);
-			
 			LOGGER.info("Execution of examples complete, shuting down now");
 		}
 		
 		LOGGER.info("Shutdown complete for all resources...exiting now");
 	}
 	
+
+
 
 	/**
 	 * Create a new book
@@ -244,30 +245,38 @@ public class DatabaseExamples {
 	 * DynamoDb book Repository
 	 * @author shawn
 	 */
-	public static class BookRepository extends EntityRepository<Book>{
+	public static class BookRepository extends EntityRepository<Book, String, String>{
 		private final DynamoMapperRepository mapper;
 		public BookRepository(DynamoMapperRepository mapper){
 			this.mapper = mapper;
 		}
 		@Override
-		protected Book get(Object id) {
-			return mapper.get(Book.class, id);
+		protected Book get(String id) {
+			return this.mapper.get(Book.class, id);
 		}
 		@Override
-		protected Book get(Object id, Object rangeId) {
-			return mapper.get(Book.class, id, rangeId);
+		protected Book get(String id, String rangeKey) {
+			return this.mapper.get(Book.class, id, rangeKey);
 		}
 		@Override
-		protected void delete(Book book) {
-			mapper.delete(book);
+		protected List<Book> getList(String hashKey) {
+			final List<Book> books = new ArrayList<Book>();
+			final Book book =new Book();
+			book.setBookId(hashKey);
+			books.add(book);
+			return this.mapper.getList(books);
 		}
 		@Override
-		protected void save(Book book) {
-			mapper.save(book);
+		public void delete(final Book book) {
+			this.mapper.delete(book);
 		}
 		@Override
-		protected void save(List<Book> books) {
-			mapper.save(books);
+		public void save(final Book book) {
+			this.mapper.save(book);
+		}
+		@Override
+		public void save(final List<Book> books) {
+			this.mapper.save(books);
 		}
 	}
 }

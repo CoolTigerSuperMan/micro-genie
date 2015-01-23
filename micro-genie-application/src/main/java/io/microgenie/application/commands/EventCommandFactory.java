@@ -26,7 +26,6 @@ public class EventCommandFactory extends CommandFactory{
 	private final EventFactory events;
 	
 	
-	
 	public EventCommandFactory(final EventFactory events) {
 		this.events = events;
 	}

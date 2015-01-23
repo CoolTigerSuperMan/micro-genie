@@ -83,7 +83,7 @@ public class KinesisAdmin {
 	    final long startTime = System.currentTimeMillis();
 	    final long endTime = startTime + (minutesToWait * 60L * 1000L);
 	    
-	    final long sleepTime = (1000L * 20L);
+	    final long sleepTime = (1000L * 10L);
 	    
 	    while (System.currentTimeMillis() < endTime) {
 	            

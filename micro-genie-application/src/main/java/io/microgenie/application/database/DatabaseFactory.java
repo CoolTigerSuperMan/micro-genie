@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 public abstract class DatabaseFactory implements Closeable {
 
 	
-	private final Map<Class<?>, EntityRepository<?>> repositories = Maps.newHashMap();
+	private final Map<Class<?>, EntityRepository<?, ?, ?>> repositories = Maps.newHashMap();
 	
 	public DatabaseFactory(){}
 
@@ -28,8 +28,8 @@ public abstract class DatabaseFactory implements Closeable {
 	
 	
 	@SuppressWarnings("unchecked")
-	public <T,R extends EntityRepository<T>> R repos(Class<T> clazz) {
-		final EntityRepository<?> repo =  repositories.get(clazz);
+	public <T,R extends EntityRepository<T, ?, ?>> R repos(Class<T> clazz) {
+		final EntityRepository<?,?,?> repo =  repositories.get(clazz);
 		if(repo!=null){
 			return (R) repo;	
 		}
@@ -44,7 +44,7 @@ public abstract class DatabaseFactory implements Closeable {
 	 * @param clazz
 	 * @param repo
 	 */
-	public <T> EntityRepository<T> registerRepo(Class<T> clazz, EntityRepository<T> repo){
+	public <T> EntityRepository<T, ?, ?> registerRepo(Class<T> clazz, EntityRepository<T,?,?> repo){
 		this.repositories.put(clazz, repo);
 		return repo;
 	}

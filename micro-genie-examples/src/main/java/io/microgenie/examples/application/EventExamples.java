@@ -34,6 +34,7 @@ public class EventExamples {
 
 		final int eventCount = 1000;
 		
+		
 		final AwsConfig config  = ExampleConfig.createConfigForEventExamples();
 		final Properties props  = ExampleConfig.getProperties(ExampleConfig.EVENT_PROPERTY_FILE_NAME);
 		
@@ -42,16 +43,16 @@ public class EventExamples {
 		
 		try (ApplicationFactory app = new AwsApplicationFactory(config, false)) {
 			app.initialize();	
-			app.events().subcribe(topicOne, props, new ExampleEventHandler(topicOne));
-			app.events().subcribe(topicTwo, props, new ExampleEventHandler(topicTwo));
+			app.events().subcribe(topicOne, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicOne));
+			app.events().subcribe(topicTwo, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicTwo));
 
 			/** Publish Events to both topics **/
 			for(int i=0;i<eventCount; i++){
 				
 				final Event topic1Event = new Event(topicOne, String.valueOf(i), String.format("topic %s event - event item %d", topicOne, i).getBytes());
 				final Event topic2Event = new Event(topicTwo, String.valueOf(i), String.format("topic %s event - event item %d", topicTwo, i).getBytes());
-				app.events().publish(topic1Event);
-				app.events().publish(topic2Event);
+				app.events().publish(EventHandlers.DEFAULT_CLIENT_ID, topic1Event);
+				app.events().publish(EventHandlers.DEFAULT_CLIENT_ID, topic2Event);
 			}
 			
 			//finish consuming

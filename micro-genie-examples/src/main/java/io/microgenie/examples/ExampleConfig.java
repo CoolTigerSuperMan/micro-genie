@@ -7,10 +7,12 @@ import io.microgenie.aws.S3Config;
 import io.microgenie.aws.SqsConfig;
 import io.microgenie.aws.SqsConsumerConfig;
 import io.microgenie.aws.SqsQueueConfig;
+import io.microgenie.examples.application.EventHandlers;
 import io.microgenie.examples.commands.CommandExamples.OutputMessageHandler;
 import io.microgenie.examples.util.ExampleProperties;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -38,6 +40,8 @@ public class ExampleConfig {
 	
 	public static final String TOPIC_2_NAME = "events.topics.topic2";
 	public static final String TOPIC_2_SHARDS = "events.topics.topic2.shards";
+	
+	
 	
 	
 	/*** Database Examples **/
@@ -127,6 +131,24 @@ public class ExampleConfig {
 		final  DynamoDbConfig dynamo = new DynamoDbConfig();
 		dynamo.setPackagePrefix(scanPackage);
 		aws.setDynamo(dynamo);
+		
+		
+		/** Kinesis Topics **/
+		
+		/** Book Checkout Request **/
+		final List<KinesisConfig> kinesisConfigList = new ArrayList<KinesisConfig>();
+		final KinesisConfig checkoutBookRequestStream = new KinesisConfig();
+		checkoutBookRequestStream.setShards(1);
+		checkoutBookRequestStream.setTopic(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST);
+		checkoutBookRequestStream.setShards(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS);
+		kinesisConfigList.add(checkoutBookRequestStream);
+		
+		/** Book Checked out Event **/
+		final KinesisConfig bookCheckedOutEventStream = new KinesisConfig();
+		bookCheckedOutEventStream.setTopic(EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
+		bookCheckedOutEventStream.setShards(EventHandlers.TOPIC_BOOK_CHANGE_EVENT_SHARDS);
+		kinesisConfigList.add(bookCheckedOutEventStream);
+		aws.setKinesis(kinesisConfigList);
 		return aws;
 	}
 }

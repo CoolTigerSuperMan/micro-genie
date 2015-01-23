@@ -4,7 +4,9 @@ import io.microgenie.application.events.EventHandler;
 import io.microgenie.application.events.Subscriber;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -29,6 +31,8 @@ public class KinesisConsumer implements Subscriber{
 	private Worker worker;
 	private AmazonDynamoDBClient dynamoClient;
 	private AmazonCloudWatchClient cloudwatchClient;
+	
+	private final ExecutorService executor = Executors.newCachedThreadPool();
 
 	
 	
@@ -76,15 +80,28 @@ public class KinesisConsumer implements Subscriber{
 		if(this.worker==null){
 			this.worker = new Worker(new KinesisRecordProcessorFactory(this.topic, handler), this.config, this.client, this.dynamoClient, this.cloudwatchClient);
 		}
-		Executors.newCachedThreadPool().execute(this.worker);
+		this.executor.execute(this.worker);
 	}
 	
 	@Override
 	public synchronized void stop() {
-		if(this.worker!=null){
-			this.worker.shutdown();	
+		
+		try {
+			
+			
+			this.worker.shutdown();
+			Thread.sleep(2000);
+			this.executor.shutdown();
+			if(!executor.awaitTermination(5, TimeUnit.SECONDS)){
+				this.executor.shutdownNow();
+			}
+		} catch (InterruptedException e) {
+			try{
+				this.executor.shutdown();
+			}catch(Exception ex){}
 		}
 	}
+	
 	@Override
 	public String getTopic() {
 		return topic;

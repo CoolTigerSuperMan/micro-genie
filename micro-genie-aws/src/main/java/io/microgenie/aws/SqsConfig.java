@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SqsConfig {
 
 	private boolean produces = true;
-	private boolean blockUntilQueueIsReady = true;
+	private boolean blockUntilReady = true;
 	private List<SqsQueueConfig> queues = new ArrayList<SqsQueueConfig>();
 	private List<SqsConsumerConfig> consumers = new ArrayList<SqsConsumerConfig>();
 	
@@ -41,11 +41,11 @@ public class SqsConfig {
 		this.produces = produces;
 	}
 	@JsonProperty(value="blockUntilReady")
-	public boolean isBlockUntilQueueIsReady() {
-		return blockUntilQueueIsReady;
+	public boolean isBlockUntilReady() {
+		return blockUntilReady;
 	}
 	@JsonProperty(value="blockUntilReady")
-	public void setBlockUntilQueueIsReady(boolean blockUntilQueueIsReady) {
-		this.blockUntilQueueIsReady = blockUntilQueueIsReady;
+	public void setBlockUntilReady(boolean blockUntilReady) {
+		this.blockUntilReady = blockUntilReady;
 	}
 }

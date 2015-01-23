@@ -15,7 +15,7 @@
   </appender>
  
 
-  <logger name="io.microgenie.examples.commands" level="debug" />
+  <logger name="io.microgenie.examples" level="info" />
   <logger name="org.apache.http" level="info" />
   <logger name="com.amazonaws" level="info" />
 

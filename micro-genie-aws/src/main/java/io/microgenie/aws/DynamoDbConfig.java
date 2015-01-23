@@ -15,6 +15,17 @@ public class DynamoDbConfig {
 	
 	private String packagePrefix;
 	private List<Table> tables = new ArrayList<Table>();
+	private boolean blockUntilReady = true;
+	
+	
+	@JsonProperty(value="blockUntilReady")
+	public boolean isBlockUntilReady() {
+		return blockUntilReady;
+	}
+	@JsonProperty(value="blockUntilReady")
+	public void setBlockUntilReady(boolean blockUntilReady) {
+		this.blockUntilReady = blockUntilReady;
+	}
 	
 	
 	/***
