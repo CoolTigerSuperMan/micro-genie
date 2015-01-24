@@ -151,9 +151,11 @@ public class BookRepository extends EntityRepository<Book, String, String>{
 		 * @param expectedValue
 		 */
 		public void saveIf(final Book book, final ComparisonOperator operator,final String attributeName, final String expectedValue){
+			
 			final ExpectedAttributeValue expected = new ExpectedAttributeValue();
 			expected.withComparisonOperator(operator);
 			expected.withValue(new AttributeValue(expectedValue));
+			
 			this.mapper.saveIf(book, null,attributeName, expected);
 			this.publisher.submit(this.createEvent(book));
 		}

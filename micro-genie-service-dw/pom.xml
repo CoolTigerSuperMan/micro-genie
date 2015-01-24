@@ -30,12 +30,12 @@
 		<io.dropwizard.metrics.version>3.1.0</io.dropwizard.metrics.version>
 
 		<javax.ws.rs.version>2.0.1</javax.ws.rs.version>
-		<jjschema.version>0.6</jjschema.version>
+
 		<swagger-dropwizard.version>0.5.2</swagger-dropwizard.version>
 		<swagger-annotations.version>1.3.2</swagger-annotations.version>
 
 
-
+		<jjschema.version>0.6</jjschema.version>
 		<javax.validation.version>1.1.0.Final</javax.validation.version>
 		<jersey.guava.version>2.13</jersey.guava.version>
 		<common-lang3.version>3.3.2</common-lang3.version>
@@ -52,6 +52,7 @@
 			<artifactId>micro-genie-aws</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-application</artifactId>
@@ -126,15 +127,10 @@
 
 
 		<!-- Swagger Documentation -->
-		
-		<!-- 
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger-annotations.version}</version>
-		</dependency>
-		 -->
-		
+
+		<!-- <dependency> <groupId>com.wordnik</groupId> <artifactId>swagger-annotations</artifactId> 
+			<version>${swagger-annotations.version}</version> </dependency> -->
+
 		<dependency>
 			<groupId>io.federecio</groupId>
 			<artifactId>dropwizard-swagger</artifactId>
@@ -148,8 +144,8 @@
 					<groupId>io.dropwizard</groupId>
 					<artifactId>dropwizard-core</artifactId>
 				</exclusion>
-			
-			
+
+
 				<exclusion>
 					<groupId>io.dropwizard</groupId>
 					<artifactId>dropwizard-views</artifactId>
@@ -174,8 +170,8 @@
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
-				
-				
+
+
 				<exclusion>
 					<groupId>io.dropwizard</groupId>
 					<artifactId>dropwizard-assets</artifactId>

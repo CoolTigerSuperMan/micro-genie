@@ -29,7 +29,7 @@ public class EventHandlers {
 	
 	
 	public static final String TOPIC_BOOK_CHANGE_EVENT = "BookChangeEvent";
-	public static final int TOPIC_BOOK_CHANGE_EVENT_SHARDS = 3;
+	public static final int TOPIC_BOOK_CHANGE_EVENT_SHARDS = 1;
 	
 	/***
 	 * Event Handler that receives Book Check out submissions
@@ -45,11 +45,19 @@ public class EventHandlers {
 		}
 		@Override
 		public void handle(Event event) {
+			
+			
 			final byte[] body = event.getBody();
 			try {
 				final CheckoutBookRequest checkoutRequest = this.mapper.readValue(body, CheckoutBookRequest.class);
+				
+				
 				final Book book = this.repository.get(checkoutRequest.getBookId());
+				
+				
 				if(Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
+					
+					
 					book.setCheckedOutBy(checkoutRequest.getUserId());
 					this.repository.saveIf(book,ComparisonOperator.EQ, "checkedOutBy", Book.CHECKED_OUT_BY_NOBODY);
 					LOGGER.info("=========================== SAVING BOOK CHECKOUT REQUEST ===========================");
@@ -57,6 +65,9 @@ public class EventHandlers {
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
+			
+			
+			
 		}
 		@Override
 		public void handle(List<Event> events) {

@@ -24,7 +24,8 @@ public class AppConfiguration extends Configuration {
 	private boolean useCommands = false;
 	
 	private String dateFormatPattern = ISO_8601_DATE_FORMAT;
-
+	private SchemaContracts schemaContracts;
+	
 	
 	@JsonProperty("host")
 	public String getHost() {
@@ -69,6 +70,15 @@ public class AppConfiguration extends Configuration {
 	public void setUseCommands(boolean useCommands) {
 		this.useCommands = useCommands;
 	}
+
+	@JsonProperty("schemaContracts")
+	public SchemaContracts getSchemaContracts() {
+		return schemaContracts;
+	}
+	@JsonProperty("schemaContracts")
+	public void setSchemaContracts(SchemaContracts schemaContracts) {
+		this.schemaContracts = schemaContracts;
+	}
 	
 	
 	/**
@@ -92,5 +102,47 @@ public class AppConfiguration extends Configuration {
 			return appFactory;
 		}
 		throw new IllegalStateException("No Valid Configuration was found, unable to build the application Factory");
+	}
+
+
+
+	/***
+	 * Used to publish schema contracts from this service for other services and / or code generation
+	 * @author shawn
+	 */
+	public static class SchemaContracts{
+		private String publishDrive;
+		private String publishPath;
+		private String scanPackage;
+		
+		protected SchemaContracts(){}
+		public SchemaContracts(final String drive, final String path){
+			this.setDrive(drive);
+			this.setPath(path);
+		}
+		@JsonProperty("drive")
+		public String getDrive() {
+			return publishDrive;
+		}
+		@JsonProperty("drive")
+		public void setDrive(String publishDrive) {
+			this.publishDrive = publishDrive;
+		}
+		@JsonProperty("path")
+		public String getPath() {
+			return publishPath;
+		}
+		@JsonProperty("path")
+		public void setPath(String publishPath) {
+			this.publishPath = publishPath;
+		}
+		@JsonProperty("scanPackage")
+		public String getScanPackage() {
+			return scanPackage;
+		}
+		@JsonProperty("scanPackage")
+		public void setScanPackage(String scanPackage) {
+			this.scanPackage = scanPackage;
+		}
 	}
 }

@@ -5,7 +5,6 @@ import io.microgenie.application.blob.FileStoreFactory;
 import io.microgenie.application.commands.ApplicationCommandFactory;
 import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
-import io.microgenie.application.http.ApacheHttpFactory;
 import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
@@ -41,10 +40,11 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	private ApplicationCommandFactory commands;
 	private boolean withCommands;
 	
+	
+	/**Amazon Clients **/
 	private AmazonDynamoDBClient dynamoClient;
 	private AmazonCloudWatchClient cloudwatchClient;
 	private AmazonKinesisClient kinesisClient;
-
 	private AmazonSQSClient sqsClient;
 	private AmazonS3Client s3Client;
 	
@@ -59,36 +59,35 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	public AwsApplicationFactory(final AwsConfig config, final boolean withCommands){
 		this.config = config;
 		this.withCommands = withCommands;
-		this.createApplicationFactories(config);
+		this.createConfiguredFactories(config);
 	}
 	
 
-	private void createApplicationFactories(final AwsConfig config) {
+	private void createConfiguredFactories(final AwsConfig config) {
 		
-		/** Always Create the Http Client Factory **/
-		http = new ApacheHttpFactory();
 		
-		/*** Configure Resources **/
+		/*** Create any clients that specify configuration **/
 		if(config!=null){
 			
 			if(config.getKinesis()!=null || config.getDynamo()!=null){
 				this.dynamoClient = new AmazonDynamoDBClient();
-				if(this.config.getKinesis()!=null){
-					this.cloudwatchClient = new AmazonCloudWatchClient();	
-				}
+				
+				/** Kinesis KCL uses the cloudwatchClient **/
+				if(this.config.getKinesis() != null){
+					this.cloudwatchClient = new AmazonCloudWatchClient();
+					this.kinesisClient = new AmazonKinesisClient();	
+					events = new KinesisEventFactory(kinesisClient, config.getKinesis(), this.dynamoClient, this.cloudwatchClient);
+				} 
 			}
-			if(config.getKinesis()!=null){
-				this.kinesisClient = new AmazonKinesisClient();	
-				events = new KinesisEventFactory(kinesisClient, config.getKinesis(), this.dynamoClient, this.cloudwatchClient);
-			}
-			if(config.getS3()!=null){
+			
+			if(config.getS3() != null){
 				this.s3Client = new AmazonS3Client();
 				files = new S3BlobFactory(this.s3Client, config.getS3());		
 			}
-			if(config.getDynamo()!=null){
+			if(config.getDynamo() != null){
 				databases = new DynamoDbMapperFactory(config.getDynamo().getPackagePrefix(), this.dynamoClient);
 			}
-			if(config.getSqs()!=null){
+			if(config.getSqs() != null){
 				this.sqsClient = new AmazonSQSClient();
 				queues = new SqsFactory(this.sqsClient, config.getSqs());
 			}
@@ -129,6 +128,7 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	
 	@Override
 	public synchronized void initialize() {
+		
 		if(config!=null){
 			if(!this.isInitialized){
 				if(http!=null){
@@ -149,6 +149,7 @@ public class AwsApplicationFactory extends ApplicationFactory{
 				if(commands!=null){
 					commands.initialize();
 				}
+				this.isInitialized = true;
 			}	
 		}
 	}
@@ -181,7 +182,6 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	
 	@Override
 	public void close(){
-		
 
 		CloseableUtil.closeQuietly(databases);
 		CloseableUtil.closeQuietly(files);
@@ -207,6 +207,7 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		if(this.s3Client !=null){
 			this.s3Client.shutdown();	
 		}
+		this.isInitialized = false;
 	}
 
 

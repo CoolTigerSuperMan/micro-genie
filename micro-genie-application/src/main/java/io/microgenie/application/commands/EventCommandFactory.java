@@ -29,7 +29,6 @@ public class EventCommandFactory extends CommandFactory{
 	public EventCommandFactory(final EventFactory events) {
 		this.events = events;
 	}
-
 	public PublishCommand submit(final Event event){
 		return new PublishCommand(events, event, event.getTopic(), ExecutorRegistry.INSTANCE.get(event.getTopic()));
 	}

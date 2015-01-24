@@ -66,7 +66,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 	public ReadFileCommand readFile(final FilePath path){
 		return this.files.read(path);
 	}
-
 	public DeleteFileCommand deleteFile(final String path){
 		return this.files.delete(FilePath.as(files.getDefaultDrive(), path));
 	}
@@ -91,7 +90,7 @@ public class ApplicationCommandFactory extends CommandFactory {
 		return this.files.delete(toPath);
 	}
 	
-
+	/** Http Commands **/
 	public HttpGetCommand get(final String url) throws ExecutionException{
 		try{
 			return this.http.get(new URL(url));	
@@ -99,7 +98,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 			throw new ExecutionException(ex.getMessage(),ex);
 		}
 	}
-	
 	public HttpGetCommand get(final URL url){
 		return this.http.get(url);
 	}
@@ -145,7 +143,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 	public <I> ProduceInputCommand<I> produce(final DefaultQueueInputSpec<I> spec){
 		return this.queues.produce(spec);
 	}
-	
 	
 	/** Event Commands **/
 	public PublishCommand publish(final Event event){
