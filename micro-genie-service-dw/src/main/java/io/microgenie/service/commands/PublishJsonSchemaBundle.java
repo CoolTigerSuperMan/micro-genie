@@ -57,11 +57,11 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 * and the result will be published to the specified s3 location
 	 *<pre>
 	 * 
- 	 *		schemaContracts:
-     *			drive: mycompany-schemas   
-     *			path: services/myservice/resources
-     *			scanPackage: com.mycompany.api.contracts
-     *
+	 *		schemaContracts:
+	 *			drive: mycompany-schemas   
+	 *			path: services/myservice/resources
+	 *			scanPackage: com.mycompany.api.contracts
+	 *
 	 *</pre>
 	 */
 	public PublishJsonSchemaBundle(){}
