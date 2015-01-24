@@ -21,9 +21,4 @@ public class FilePath {
 	public static FilePath as(String drive, String path) {
 		return new FilePath(drive,path);
 	}
-	
-	@Override
-	public String toString(){
-		return String.format("s3://%s/%s", drive, path);
-	}
 }
