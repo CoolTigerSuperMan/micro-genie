@@ -16,15 +16,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AppConfiguration extends Configuration {
 
 	private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-	
-	private ApplicationFactory appFactory;
+
 	private String host;
 	private int port;
-	private AwsConfig aws;
-	private boolean useCommands = false;
+	private SchemaContracts schemaContracts;
 	
 	private String dateFormatPattern = ISO_8601_DATE_FORMAT;
-	private SchemaContracts schemaContracts;
+	private ApplicationFactory appFactory;
+
+	private AwsConfig aws;
+	private boolean useCommands = false;
 	
 	
 	@JsonProperty("host")
@@ -35,8 +36,6 @@ public class AppConfiguration extends Configuration {
 	public void setHost(String host) {
 		this.host = host;
 	}
-	
-	
 	@JsonProperty("port")
 	public int getPort(){
 		return this.port;
@@ -45,7 +44,6 @@ public class AppConfiguration extends Configuration {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	
 	@JsonProperty("dateFormat")
 	public String getDateFormatPattern() {
 		return dateFormatPattern;
@@ -114,7 +112,6 @@ public class AppConfiguration extends Configuration {
 		private String publishDrive;
 		private String publishPath;
 		private String scanPackage;
-		
 		protected SchemaContracts(){}
 		public SchemaContracts(final String drive, final String path){
 			this.setDrive(drive);

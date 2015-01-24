@@ -20,4 +20,5 @@ public abstract class HttpFactory<O> implements Closeable{
 	public abstract O put(URL url, Object payload) throws URISyntaxException;
 	public abstract O post(URL url, Object payload) throws URISyntaxException;
 	public abstract O delete(URL url) throws URISyntaxException;
+	
 }

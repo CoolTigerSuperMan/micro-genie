@@ -154,8 +154,5 @@ public class ApplicationFactoryTest {
 			CloseableUtil.closeQuietly(this.queues());
 			CloseableUtil.closeQuietly(this.commands());
 		}
-		
-		
 	};
-	
 }

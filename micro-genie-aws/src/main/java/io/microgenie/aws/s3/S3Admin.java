@@ -7,15 +7,14 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.Region;
 
 /**
- * Amazon S3 Admin Utilities 
+ * Amazon S3 Admin Utilities. Used to create buckets
  * @author shawn
- *
  */
 public class S3Admin {
 	
-	private AmazonS3Client client;
+	private final AmazonS3Client client;
 
-	public S3Admin(AmazonS3Client client){
+	public S3Admin(final AmazonS3Client client){
 		this.client = client;
 	}
 	

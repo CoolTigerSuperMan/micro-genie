@@ -1,4 +1,4 @@
-package io.microgenie.service.commands;
+package io.microgenie.service.bundle;
 
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;

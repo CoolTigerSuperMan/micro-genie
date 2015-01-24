@@ -13,7 +13,12 @@ import com.amazonaws.services.kinesis.model.ResourceNotFoundException;
 
 
 /**
- * Administrative client for AWS kinesis
+ * Administrative client for Amazon kinesis. Kinesis Admin is able to
+ * create streams with given shard counts. It is beneficial for the application
+ * to perform this tasks as  a pre-startup routine. 
+ * <p>
+ * This ensures that the application always has the resources in place that it needs 
+ * 
  * @author shawn
  */
 public class KinesisAdmin {

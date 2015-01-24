@@ -41,10 +41,8 @@ import com.google.common.collect.Sets;
 /***
  * DynamoDb Admin, used to create Tables and indexes programmatically
  * @author shawn
- *
  */
 public class DynamoAdmin {
-	
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DynamoAdmin.class);
 	private static final long DEFAULT_PROVISIONED_THROUGHPUT_VALUE = 10;

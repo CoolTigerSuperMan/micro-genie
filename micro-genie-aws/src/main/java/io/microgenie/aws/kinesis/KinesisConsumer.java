@@ -20,10 +20,11 @@ import com.google.common.base.Preconditions;
 
 /**
  * Kinesis Consumer (Uses KCL)
+ * 
  * @author shawn
  */
 public class KinesisConsumer implements Subscriber{
-
+	
 	private final String topic;
 	private final KinesisClientLibConfiguration config;
 	private final AmazonKinesisClient client;
@@ -32,20 +33,9 @@ public class KinesisConsumer implements Subscriber{
 	private AmazonDynamoDBClient dynamoClient;
 	private AmazonCloudWatchClient cloudwatchClient;
 	
+	
 	private final ExecutorService executor = Executors.newCachedThreadPool();
 
-	
-	
-	/***
-	 * Internally the following clients are automatically created {@link AmazonKinesisClient}, {@link AmazonDynamoDBClient}, {@link AmazonCloudWatchClient}
-	 * @param topic
-	 * @param config
-	 */
-	public KinesisConsumer(final String topic, final KinesisClientLibConfiguration config){
-		this(topic, config, new AmazonKinesisClient(), new AmazonDynamoDBClient(), new AmazonCloudWatchClient());
-	}
-	
-	
 	
 	/***
 	 * 
@@ -83,6 +73,9 @@ public class KinesisConsumer implements Subscriber{
 		this.executor.execute(this.worker);
 	}
 	
+	
+	
+	
 	@Override
 	public synchronized void stop() {
 		
@@ -98,6 +91,7 @@ public class KinesisConsumer implements Subscriber{
 			}catch(Exception ex){}
 		}
 	}
+	
 	
 	@Override
 	public String getTopic() {

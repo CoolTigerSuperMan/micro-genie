@@ -8,6 +8,7 @@ import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
+import io.microgenie.aws.kinesis.KinesisAdmin;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
@@ -63,22 +64,22 @@ public class AwsApplicationFactory extends ApplicationFactory{
 	}
 	
 
+	
 	private void createConfiguredFactories(final AwsConfig config) {
-		
 		
 		/*** Create any clients that specify configuration **/
 		if(config!=null){
-			
 			if(config.getKinesis()!=null || config.getDynamo()!=null){
 				this.dynamoClient = new AmazonDynamoDBClient();
-				
 				/** Kinesis KCL uses the cloudwatchClient **/
 				if(this.config.getKinesis() != null){
 					this.cloudwatchClient = new AmazonCloudWatchClient();
 					this.kinesisClient = new AmazonKinesisClient();	
-					events = new KinesisEventFactory(kinesisClient, config.getKinesis(), this.dynamoClient, this.cloudwatchClient);
+					final KinesisAdmin admin = new KinesisAdmin(kinesisClient);
+					events = new KinesisEventFactory(kinesisClient, admin, config.getKinesis(), this.dynamoClient, this.cloudwatchClient);
 				} 
 			}
+			
 			
 			if(config.getS3() != null){
 				this.s3Client = new AmazonS3Client();
@@ -209,7 +210,6 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		}
 		this.isInitialized = false;
 	}
-
 
 	public boolean isInitialized() {
 		return isInitialized;

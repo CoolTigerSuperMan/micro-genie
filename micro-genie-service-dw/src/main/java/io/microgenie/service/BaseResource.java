@@ -9,7 +9,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 
 
 /**
- * Base Resource containing Common helpers for Resources
+ * Base Rest resource providing helper methods common to rest api endpoints
  * @author shawn
  */
 public abstract class BaseResource {

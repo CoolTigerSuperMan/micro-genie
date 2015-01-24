@@ -7,6 +7,7 @@ import io.microgenie.application.queue.Producer;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.aws.SqsConfig;
 import io.microgenie.aws.SqsConsumerConfig;
+import io.microgenie.aws.SqsQueueConfig;
 import io.microgenie.commands.util.CollectionUtil;
 
 import java.util.List;
@@ -22,7 +23,16 @@ import com.google.common.collect.Maps;
 
 
 /**
- * SQS Client Factory
+ * SQS Client Factory enabling common Consumer / Producer patterns with 
+ * a standard message queue interface.
+ * <p>
+ * 
+ * Queue consumers are asynchronous and multithreaded and can be configured with an
+ * {@link SqsQueueConfig} instance. The SqsQueuefactory is also capable of initializing the 
+ * sqs Queues at start up by invoking methods on an internal {@link SqsQueueAdmin} instance.
+ * <p>
+ * Calling the {@link SqsFactory#close()} method will start up background consumers. 
+ * 
  * @author shawn
  */
 public class SqsFactory extends QueueFactory{
@@ -81,15 +91,13 @@ public class SqsFactory extends QueueFactory{
 	 */
 	@Override
 	public void initialize(){
-		
 		try{
 			if(this.config !=null){
 				/** Ensure that queues are all created, and if specified, block until all queues are ready **/
 				this.admin.initializeQueues(this.config.getQueues(), this.config.isBlockUntilReady());
-				
 				/** Should we create a producer? **/
 				if(config.isProduces()){
-					this.producer = new SqsProducer(sqs);
+					this.producer = new SqsProducer(sqs, this.admin);
 				}
 				/** Create and initialize any queue consumers **/
 				this.initializeConsumers(config.getConsumers());
@@ -115,9 +123,6 @@ public class SqsFactory extends QueueFactory{
 				LOGGER.info("consumer[{}].isRunning() is: {}", i, c.getValue().isRunning());
 			}
 		}
-		LOGGER.info("shutting down sqs client");
-		//this.sqs.shutdown();
-		LOGGER.info("sqs client shutdown complete");
 	}
 	
 	
@@ -132,7 +137,7 @@ public class SqsFactory extends QueueFactory{
 		if(CollectionUtil.hasElements(consumers)){
 			for(SqsConsumerConfig config: consumers){
 				config.createHandler();
-				final Consumer consumer = new SqsConsumer(this.sqs, config);
+				final Consumer consumer = new SqsConsumer(this.sqs, this.admin, config);
 				consumer.start(config.getHandlerInstance());
 				this.consumers.put(config.getQueue(), consumer);		
 			}

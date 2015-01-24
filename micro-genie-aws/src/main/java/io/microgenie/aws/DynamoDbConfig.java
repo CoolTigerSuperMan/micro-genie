@@ -12,8 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class DynamoDbConfig {
 
-	
-	private String packagePrefix;
+	private String scanPackage;
 	private List<Table> tables = new ArrayList<Table>();
 	private boolean blockUntilReady = true;
 	
@@ -290,24 +289,20 @@ public class DynamoDbConfig {
 			this.type = type;
 		}
 	}
-
 	@JsonProperty("tables")
 	public List<Table> getTables() {
 		return tables;
 	}
-	
 	@JsonProperty("tables")
 	public void setTables(List<Table> tables) {
 		this.tables = tables;
 	}
-
-	@JsonProperty("packageScanPrefix")
+	@JsonProperty("scanPackage")
 	public String getPackagePrefix() {
-		return packagePrefix;
+		return scanPackage;
 	}
-
-	@JsonProperty("packageScanPrefix")
-	public void setPackagePrefix(String packagePrefix) {
-		this.packagePrefix = packagePrefix;
+	@JsonProperty("scanPackage")
+	public void setPackagePrefix(String scanPackage) {
+		this.scanPackage = scanPackage;
 	}
 }

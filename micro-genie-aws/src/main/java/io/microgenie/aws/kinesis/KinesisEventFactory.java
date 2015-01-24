@@ -27,6 +27,10 @@ import com.google.common.collect.Maps;
 
 
 /***
+ * KinesisEventfactory provides a common pub/sub interface for the application. 
+ * <p> 
+ * The capability to create and return a {@link Publisher} and / or a {@link Subscriber}
+ * is also available
  * 
  * @author shawn
  *
@@ -47,18 +51,11 @@ public class KinesisEventFactory extends EventFactory {
 
 	private Map<String, Publisher> publishers = Maps.newHashMap();
 	private final Map<String, Subscriber> subscribers = Maps.newHashMap();
-	
-	
+
 	private final KinesisAdmin admin;
-	
 
 	
-	public KinesisEventFactory(final AmazonKinesisClient kinesisClient, final List<KinesisConfig> kinesisConfigs){
-		this(kinesisClient, kinesisConfigs, new AmazonDynamoDBClient(), new AmazonCloudWatchClient());
-	}
-	
-	
-	public KinesisEventFactory(final AmazonKinesisClient kinesisClient, final List<KinesisConfig> kinesisConfigs, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient){
+	public KinesisEventFactory(final AmazonKinesisClient kinesisClient,final KinesisAdmin admin, final List<KinesisConfig> kinesisConfigs, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient){
 		this.kinesisClient = kinesisClient;
 		this.kinesisConfigs = kinesisConfigs;
 		this.dynamoDbClient = dynamoDbClient;

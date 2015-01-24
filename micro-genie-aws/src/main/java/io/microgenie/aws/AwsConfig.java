@@ -8,14 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /***
  * AwsConfiguration
  * @author shawn
- *
  */
 public class AwsConfig {
 	
 	private String region;
 	private String accessKey;
 	private String secretKey;
-	
 	private DynamoDbConfig dynamo;
 	private SqsConfig sqs;
 	private List<KinesisConfig> kinesis;

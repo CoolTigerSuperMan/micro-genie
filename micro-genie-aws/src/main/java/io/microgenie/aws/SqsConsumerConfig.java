@@ -12,6 +12,7 @@ public class SqsConsumerConfig{
 	private int threads = 1; 	//Default to a thread count of one for consumers
 	private String queue;
 	private String handlerKey;
+	private int shutdownTimeMS = 2000;
 	private MessageHandler handlerInstance;
 	
 	@JsonProperty("queue")
@@ -38,6 +39,16 @@ public class SqsConsumerConfig{
 	public void setHandlerKey(String handler) {
 		this.handlerKey = handler;
 	}
+	@JsonProperty("shutdownWaitMs")
+	public int getShutdownTimeMS() {
+		return shutdownTimeMS;
+	}
+	@JsonProperty("shutdownWaitMs")
+	public void setShutdownTimeMS(int shutdownTimeMS) {
+		this.shutdownTimeMS = shutdownTimeMS;
+	}
+	
+	
 	public MessageHandler getHandlerInstance() {
 		return handlerInstance;
 	}

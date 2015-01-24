@@ -18,20 +18,27 @@
 
 
 		<jersey.version>2.13</jersey.version>
-		<commons-io.version>2.4</commons-io.version>
-
 		<joda.version>2.7</joda.version>
 		<jackson.api.version>2.4.0</jackson.api.version>
 		<com.fasterxml>2.4.3</com.fasterxml>
 
-		<slf4j.version>1.7.7</slf4j.version>
+		<commons-io.version>2.4</commons-io.version>
 		<guava.version>18.0</guava.version>
-		<logback.version>1.1.2</logback.version>
-		<h2.version>1.4.182</h2.version>
-		<assertj.version>1.7.0</assertj.version>
+
 		<org.apache.http.client>4.3.6</org.apache.http.client>
 		<org.apache.http.core>4.3.3</org.apache.http.core>
+
+		<slf4j.version>1.7.7</slf4j.version>
+		<logback.version>1.1.2</logback.version>
+
+
+		<assertj.version>1.7.0</assertj.version>
 		<com.google.code.findbugs.version>3.0.0</com.google.code.findbugs.version>
+
+		<h2.version>1.4.182</h2.version>
+		<org.hamcrest.version>1.3</org.hamcrest.version>
+		<org.mockito.version>1.10.8</org.mockito.version>
+		<junit.version>4.12</junit.version>
 	</properties>
 
 
@@ -87,19 +94,16 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 
@@ -109,6 +113,93 @@
 	<dependencyManagement>
 		<dependencies>
 
+
+
+			<!-- micro-genie -->
+			<dependency>
+				<groupId>io.microgenie</groupId>
+				<artifactId>micro-genie-aws</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.microgenie</groupId>
+				<artifactId>micro-genie-application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- dropwizard -->
+			<dependency>
+				<groupId>io.dropwizard.metrics</groupId>
+				<artifactId>metrics-healthchecks</artifactId>
+				<version>${io.dropwizard.metrics.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard.metrics</groupId>
+				<artifactId>metrics-annotation</artifactId>
+				<version>${io.dropwizard.metrics.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard.metrics</groupId>
+				<artifactId>metrics-core</artifactId>
+				<version>${io.dropwizard.metrics.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-core</artifactId>
+				<version>${io.dropwizard.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-lifecycle</artifactId>
+				<version>${io.dropwizard.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-views</artifactId>
+				<version>${io.dropwizard.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-views-freemarker</artifactId>
+				<version>${io.dropwizard.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-jersey</artifactId>
+				<version>${io.dropwizard.version}</version>
+			</dependency>
+
+
+
+			<!-- miscellaneous -->
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>javax.ws.rs-api</artifactId>
+				<version>${javax.ws.rs.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.reinert</groupId>
+				<artifactId>jjschema</artifactId>
+				<version>${jjschema.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${javax.validation.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${common-lang3.version}</version>
+			</dependency>
+
+			<!-- <dependency> <groupId>org.glassfish.jersey.bundles.repackaged</groupId> 
+				<artifactId>jersey-guava</artifactId> <version>${jersey.guava.version}</version> 
+				</dependency> -->
+				
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
@@ -126,7 +217,7 @@
 				<artifactId>httpcore</artifactId>
 				<version>${org.apache.http.core}</version>
 			</dependency>
-			
+
 
 			<dependency>
 				<groupId>joda-time</groupId>
@@ -227,24 +318,31 @@
 
 			<!-- Test Dependencies -->
 
+
+			<dependency>
+				<groupId>io.dropwizard</groupId>
+				<artifactId>dropwizard-testing</artifactId>
+				<version>${io.dropwizard.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-core</artifactId>
-				<version>1.3</version>
+				<version>${org.hamcrest.version}</version>
 				<scope>test</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<version>${junit.version}</version>
 				<scope>test</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
-				<version>1.10.8</version>
+				<version>${org.mockito.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

@@ -7,6 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 import io.microgenie.application.ApplicationFactory;
+import io.microgenie.service.bundle.AwsInitBundle;
+import io.microgenie.service.bundle.PublishJsonSchemaBundle;
+import io.microgenie.service.healthchecks.HealthCheckResource;
 
 import java.text.SimpleDateFormat;
 
@@ -73,6 +76,8 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 	@Override
 	public synchronized void initialize(Bootstrap<T> bootstrap) {
 	    swaggerDropwizard.onInitialize(bootstrap);
+		bootstrap.addBundle(new AwsInitBundle());
+		bootstrap.addBundle(new PublishJsonSchemaBundle());
 	    this.bootstrap(bootstrap);
 	}
 	
@@ -95,8 +100,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 		/** set object mapper data format pattern **/
 		environment.getObjectMapper()
         .setDateFormat(new SimpleDateFormat(configuration.getDateFormatPattern()));
-		
-		
+
 		/** Initialize the application factory **/
 		final ApplicationFactory appFactory = this.createApplicationFactory(configuration, environment);
 		this.manageApplicationFactory(appFactory, environment);
@@ -108,6 +112,9 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 
         /** Configure API documentation **/
         this.swaggerDropwizard.onRun(configuration, environment, configuration.getHost(), configuration.getPort());
+        
+        /** register the Health Check API endpoint **/
+        environment.jersey().register(new HealthCheckResource(environment.healthChecks()));
 	}
 	
 

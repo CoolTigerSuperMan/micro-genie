@@ -4,6 +4,7 @@ import io.microgenie.aws.SqsQueueConfig;
 import io.microgenie.commands.util.CollectionUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -13,16 +14,23 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
+import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 /***
- * Used to administer SQS Queues
+ * Used to administer SQS Queues and initialize the queues if they do not exist.
+ * <p> 
+ * Sqs Queue Admin also performs Queue name to Queue URL translations and keeps an internal cache
+ * once resolved
  * @author shawn
  */
 public class SqsQueueAdmin {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqsQueueAdmin.class);
 	
+	private final Map<String, String> queueUrlMap = Maps.newHashMap();
 	private final AmazonSQSClient sqs;
 
 	private volatile boolean shutdown = false;
@@ -60,6 +68,52 @@ public class SqsQueueAdmin {
 			}
 		}
 	}
+	
+	
+	
+	/**
+	 * Get the queue url. First an internal cache is checked, if the name to queueUrl mapping
+	 * is not found in the internal cache a call is made to the Sqs API. If a valid queue
+	 * url is returned the name -> queueUrl mapping will be cached locally 
+	 * @param queueName
+	 * @return queueUrl
+	 */
+	public String getQueueUrl(final String queueName){
+
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(queueName), "Queue Name is required in order to submit a message for sqs");
+		String url = queueUrlMap.get(queueName);
+		if(url!=null){
+			return url;
+		}else{
+			return this.getAndSetQueueUrl(queueName);
+		}
+	}
+	
+
+	
+	/**
+	 * Get a queue url from a queue name
+	 * @param queueName
+	 * @return queueUrl - For the specified queue name
+	 */
+	private synchronized String getAndSetQueueUrl(final String queueName){
+		try{
+
+			final String url = queueUrlMap.get(queueName); 
+			if(url != null){
+				return url;
+			}else{
+				final GetQueueUrlResult result = this.sqs.getQueueUrl(queueName);
+				if(result != null && !Strings.isNullOrEmpty(result.getQueueUrl())){
+						queueUrlMap.put(queueName, result.getQueueUrl());	
+						return result.getQueueUrl();
+				}				
+			}
+		}catch(QueueDoesNotExistException qne){
+			throw new RuntimeException(qne.getMessage(),qne);
+		}
+		return null;
+	}
 
 	
 	
@@ -77,7 +131,7 @@ public class SqsQueueAdmin {
 					return; //Queue is ready
 				}
 			}catch(AmazonServiceException asException){
-				/** not retriable **/
+				/** not retryable **/
 				throw new RuntimeException(asException.getMessage(), asException);
 			}catch(Exception e){
 				// Continue waiting

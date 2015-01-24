@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class KinesisConfig {
+	
 	private String topic;
 	private int shards;
 	

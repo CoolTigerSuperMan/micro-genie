@@ -13,6 +13,10 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 
 /**
+ * 
+ * S3 {@link FileStore} factory, for interacting with Blob content on S3
+ * primarily through {@link S3FileStore} and {@link S3Admin}
+ * 
  * @author shawn
  */
 public class S3BlobFactory extends FileStoreFactory{

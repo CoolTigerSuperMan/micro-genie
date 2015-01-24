@@ -11,15 +11,16 @@ import com.google.common.util.concurrent.ListeningExecutorService;
  *
  */
 public class ProduceCommand extends GenieRunnableCommand<String> {
+	
 	private Producer producer;
 	private Message message;
 	private String defaultValue;
 	protected ProduceCommand(Producer producer, Message message,ListeningExecutorService executor) {
 		this(producer, message, executor, null);
 	}
+	
 	/**
 	 * ProducerCommand
-	 * 
 	 * @param producer
 	 * @param message
 	 * @param executor

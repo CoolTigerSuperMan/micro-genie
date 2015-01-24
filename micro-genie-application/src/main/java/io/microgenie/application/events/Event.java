@@ -1,50 +1,37 @@
 package io.microgenie.application.events;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.nio.ByteBuffer;
 
 
 /**
  * Kinesis EventApi
  * @author shawn
  */
-public class Event implements EventApi<String, byte[]>{
+public class Event{
 	
 	private final String topic;
 	private final String schema;
 	private final String partitionKey;
-	private final ByteArrayOutputStream byteStream;
+	private final ByteBuffer buffer;
 
-	
 	public Event(final String topic, final String partitionKey, final byte[] data){
 		this(topic, partitionKey, data, null);
 	}
-
 	public Event(final String topic, final String partitionKey, final byte[] data, final String schema){
-		try{
 			this.topic = topic;
 			this.partitionKey = partitionKey;
-			this.byteStream = new ByteArrayOutputStream(data.length);
-			this.byteStream.write(data);
+			this.buffer = ByteBuffer.wrap(data);
 			this.schema = schema;
-		}catch(IOException io){
-			throw new RuntimeException(io.getMessage(),io);
-		}
 	}
-	
-	@Override
 	public String getTopic() {
 		return this.topic;
 	}
-	@Override
 	public String getPartitionKey() {
 		return this.partitionKey;
 	}
-	@Override
 	public byte[] getBody() {
-		return this.byteStream.toByteArray();
+		return this.buffer.array();
 	}
-	@Override
 	public String getSchema() {
 		return this.schema;
 	}
