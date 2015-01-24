@@ -24,7 +24,7 @@ aws:
  
     #DynamoDb Config - The package prefix to scan for DynamoDb mapper annotations
     dynamo:
-       packageScanPrefix: "io.microgenie"
+       scanPackage: "io.microgenie"
        
     # Kinesis Event - Pub / Sub Configuration
     kinesis:

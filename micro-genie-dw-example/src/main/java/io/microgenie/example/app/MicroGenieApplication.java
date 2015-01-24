@@ -11,7 +11,6 @@ import io.microgenie.models.Book;
 import io.microgenie.resources.BookResource;
 import io.microgenie.service.AppConfiguration;
 import io.microgenie.service.MicroService;
-import io.microgenie.service.bundles.InitializeAwsCommandBundle;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -71,6 +70,6 @@ public class MicroGenieApplication extends MicroService<AppConfiguration> {
 
 	@Override
 	protected void bootstrap(Bootstrap<AppConfiguration> bootstrap) {
-		bootstrap.addBundle(new InitializeAwsCommandBundle());
+		
 	}
 }
