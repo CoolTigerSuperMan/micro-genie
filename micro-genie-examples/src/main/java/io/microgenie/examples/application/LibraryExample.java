@@ -3,14 +3,12 @@ package io.microgenie.examples.application;
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventFactory;
-import io.microgenie.application.events.EventHandler;
 import io.microgenie.application.events.Publisher;
 import io.microgenie.application.events.Subscriber;
 import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.AwsConfig;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 import io.microgenie.examples.ExampleConfig;
-import io.microgenie.examples.application.EventHandlers.CheckOutRequestEventHandler;
 
 import java.io.IOException;
 import java.util.List;
