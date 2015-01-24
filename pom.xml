@@ -627,6 +627,7 @@
 		<module>micro-genie-commands</module>
 		<module>micro-genie-application</module>
 		<module>micro-genie-aws</module>
-		<module>micro-genie-service-dw</module>
+		
+		<module>micro-genie-dw-service</module>
 	</modules>
 </project>
