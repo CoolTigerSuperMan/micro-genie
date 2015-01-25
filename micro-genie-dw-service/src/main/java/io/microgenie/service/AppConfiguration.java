@@ -109,14 +109,19 @@ public class AppConfiguration extends Configuration {
 	 * @author shawn
 	 */
 	public static class SchemaContracts{
+		
 		private String publishDrive;
 		private String publishPath;
 		private String scanPackage;
+		
 		protected SchemaContracts(){}
-		public SchemaContracts(final String drive, final String path){
-			this.setDrive(drive);
-			this.setPath(path);
+		
+		public SchemaContracts(final String drive, final String path, final String scanPackage){
+			this.publishDrive = drive;
+			this.publishPath = path;
+			this.scanPackage = scanPackage;
 		}
+		
 		@JsonProperty("drive")
 		public String getDrive() {
 			return publishDrive;

@@ -25,7 +25,6 @@ public class Book {
 	/** Used to note that the book is not checked out by anyone. This is the default **/
 	public static final String CHECKED_OUT_BY_NOBODY = "NOBODY";
 
-	///public static final String GLOBAL_INDEX_ISBN_CHECKED_OUT_BY = "isbn-checkedOutBy-index";
 	
 	private String bookId;
 	private String libraryId;

@@ -100,7 +100,7 @@ public class LibraryExample {
 			
 			/** Create the libraries and stock each libraries with copies of our books **/
 			final Set<String> libraries = LibraryExample.generateLibraries();
-			final Set<Book> publishedBooks = LibraryExample.stockLibrariesShelves(libraries, bookRepository, NUMBER_OF_BOOK_COPIES);
+			final Set<Book> publishedBooks = LibraryExample.stockLibraryShelves(libraries, bookRepository, NUMBER_OF_BOOK_COPIES);
 			
 			/** run queries against our library books **/
 			LibraryExample.queryByIsbns(bookRepository, publishedBooks);
@@ -302,7 +302,7 @@ public class LibraryExample {
 	 * @param database - The database
 	 * @param bookCountPerLibrary - How many copies we should make of each book
 	 */
-	private static Set<Book> stockLibrariesShelves(final Set<String> libraries, final BookRepository bookRepository, int bookCountPerLibrary) {
+	private static Set<Book> stockLibraryShelves(final Set<String> libraries, final BookRepository bookRepository, int bookCountPerLibrary) {
 		
 		final Set<Book> books = Sets.newHashSet();
 		

@@ -22,6 +22,8 @@
 		<jackson.api.version>2.4.0</jackson.api.version>
 		<com.fasterxml>2.4.3</com.fasterxml>
 
+		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
+
 		<commons-io.version>2.4</commons-io.version>
 		<guava.version>18.0</guava.version>
 
@@ -94,11 +96,13 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
@@ -199,7 +203,7 @@
 			<!-- <dependency> <groupId>org.glassfish.jersey.bundles.repackaged</groupId> 
 				<artifactId>jersey-guava</artifactId> <version>${jersey.guava.version}</version> 
 				</dependency> -->
-				
+
 			<dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
@@ -325,8 +329,6 @@
 				<version>${io.dropwizard.version}</version>
 				<scope>test</scope>
 			</dependency>
-
-
 			<dependency>
 				<groupId>org.hamcrest</groupId>
 				<artifactId>hamcrest-core</artifactId>
@@ -341,7 +343,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
+				<artifactId>mockito-all</artifactId>
 				<version>${org.mockito.version}</version>
 				<scope>test</scope>
 			</dependency>
@@ -627,7 +629,7 @@
 		<module>micro-genie-commands</module>
 		<module>micro-genie-application</module>
 		<module>micro-genie-aws</module>
-		
+
 		<module>micro-genie-dw-service</module>
 	</modules>
 </project>

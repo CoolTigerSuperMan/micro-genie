@@ -27,7 +27,6 @@ public class EventHandlers {
 	public static final String TOPIC_CHECKOUT_BOOK_REQUEST = "CheckoutBookRequest";
 	public static final int TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS = 1;
 	
-	
 	public static final String TOPIC_BOOK_CHANGE_EVENT = "BookChangeEvent";
 	public static final int TOPIC_BOOK_CHANGE_EVENT_SHARDS = 1;
 	

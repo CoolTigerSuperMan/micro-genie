@@ -16,6 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<io.microgenie>0.0.1-SNAPSHOT</io.microgenie>
+		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
 	</properties>
 
 
@@ -27,6 +28,13 @@
 			<artifactId>micro-genie-dw-service</artifactId>
 			<version>${io.microgenie}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-views</artifactId>
+			<version>${io.dropwizard.version}</version>
+		</dependency>
+		
 	</dependencies>
 
 
