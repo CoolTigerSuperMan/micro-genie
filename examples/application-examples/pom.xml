@@ -8,11 +8,16 @@
 
 	<properties>
 
+		<!-- maven stuff -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-
+		
+		
+		<!-- application maven dependecy versions-->
+		<io.microgenie>0.0.1-SNAPSHOT</io.microgenie>
+		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
 		<micro-genie.version>0.0.1-SNAPSHOT</micro-genie.version>
 
 		<metrics3.version>3.1.0</metrics3.version>
@@ -28,8 +33,6 @@
 
 		<assertj.version>1.7.0</assertj.version>
 		<org.apache.http.client>4.3.6</org.apache.http.client>
-
-
 	</properties>
 
 	<dependencies>

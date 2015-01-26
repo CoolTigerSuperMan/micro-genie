@@ -2,16 +2,13 @@ package io.microgenie.aws;
 
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.blob.FileStoreFactory;
-import io.microgenie.application.commands.ApplicationCommandFactory;
 import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
-import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
-import io.microgenie.commands.core.CommandFactory;
 import io.microgenie.commands.util.CloseableUtil;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
@@ -34,10 +31,6 @@ public class AwsApplicationFactory extends ApplicationFactory {
 	private KinesisEventFactory events;
 	private SqsFactory queues;
 	private DynamoDbMapperFactory databases;
-	
-	private HttpFactory<String> http;
-	private ApplicationCommandFactory commands;
-	private boolean withCommands;
 
 	/** Amazon Clients **/
 	private AmazonDynamoDBClient dynamoClient;
@@ -51,13 +44,9 @@ public class AwsApplicationFactory extends ApplicationFactory {
 	 * 
 	 * @param config
 	 *            - Aws configuration
-	 * @param withCommands
-	 *            - whether or not the {@link CommandFactory} should also be
-	 *            initialized
 	 */
-	public AwsApplicationFactory(final AwsConfig config,final boolean withCommands) {
+	public AwsApplicationFactory(final AwsConfig config) {
 		this.config = config;
-		this.withCommands = withCommands;
 		this.createConfiguredFactories(config);
 	}
 
@@ -98,15 +87,7 @@ public class AwsApplicationFactory extends ApplicationFactory {
 				this.sqsClient = new AmazonSQSClient();
 				queues = new SqsFactory(this.sqsClient, config.getSqs());
 			}
-			if (this.withCommands) {
-				commands = new ApplicationCommandFactory(this);
-			}
 		}
-	}
-
-	@Override
-	public HttpFactory<String> http() {
-		return http;
 	}
 
 	@Override
@@ -131,10 +112,10 @@ public class AwsApplicationFactory extends ApplicationFactory {
 		return (T)databases;
 	}
 
-	@Override
-	public ApplicationCommandFactory commands() {
-		return commands;
-	}
+//	@Override
+//	public ApplicationCommandFactory commands() {
+//		return commands;
+//	}
 
 
 	@Override
@@ -143,9 +124,11 @@ public class AwsApplicationFactory extends ApplicationFactory {
 		CloseableUtil.closeQuietly(databases);
 		CloseableUtil.closeQuietly(files);
 		CloseableUtil.closeQuietly(queues);
-		CloseableUtil.closeQuietly(http);
 		CloseableUtil.closeQuietly(events);
-		CloseableUtil.closeQuietly(commands);
+		
+//		CloseableUtil.closeQuietly(http);
+//		CloseableUtil.closeQuietly(commands);
+		
 		if (this.kinesisClient != null) {
 			this.kinesisClient.shutdown();
 		}

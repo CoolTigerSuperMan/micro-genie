@@ -10,6 +10,7 @@ import io.microgenie.application.commands.BlobSpecs.DefaultFileInputSpec;
 import io.microgenie.application.commands.FileStoreCommnandFactory.SaveFileInputCommand;
 import io.microgenie.application.commands.FileStoreCommnandFactory.ToFileFunction;
 import io.microgenie.application.commands.QueueCommandFactory.ToMessageFunction;
+import io.microgenie.application.http.ApacheHttpFactory;
 import io.microgenie.application.queue.Message;
 import io.microgenie.application.queue.MessageHandler;
 import io.microgenie.application.queue.ProduceInputCommand;
@@ -62,11 +63,12 @@ public class CommandExamples {
 	 */
 	public static void main(String[] args) throws TimeoutException,ExecutionException, IOException, InterruptedException {
 
+		CommandExamples.initUrls();
+		
 		final Properties properties = ExampleConfig.getProperties(ExampleConfig.PROPERTY_FILE_NAME);
 		final AwsConfig config  = ExampleConfig.createConfig(ExampleConfig.PROPERTY_FILE_NAME);
-		
-		CommandExamples.initUrls();
-		try (ApplicationFactory app = new AwsApplicationFactory(config, true)) {
+
+		try (ApplicationFactory app = new AwsApplicationFactory(config)) {
 			CommandExamples.executeGenieContainer(app, properties);
 		}
 	}
@@ -81,10 +83,15 @@ public class CommandExamples {
 	 * @throws ExecutionException 
 	 * @throws TimeoutException 
 	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public static void executeGenieContainer(final ApplicationFactory app, final Properties properties) throws TimeoutException, ExecutionException, InterruptedException {
+	public static void executeGenieContainer(final ApplicationFactory app, final Properties properties) throws TimeoutException, ExecutionException, InterruptedException, IOException {
 		
-		final ApplicationCommandFactory commands = app.commands();
+		
+		final ApplicationCommandFactory commands = new ApplicationCommandFactory(app, new ApacheHttpFactory());
+		
+		
+		
 		final String defaultBucket = properties.getProperty(ExampleConfig.BUCKET_PROPERTY);
 		final String queue = properties.getProperty(ExampleConfig.FILE_SAVED_QUEUE_PROPERTY);
 		
@@ -120,17 +127,20 @@ public class CommandExamples {
 		
 		final List<Object> results = result.allResults();
 		LOGGER.info("Commands Executed: {}", results.size());
+		
+		commands.close();
 	}
 
 	
 	/***
 	 * Execute In parallel
 	 * @param commands
+	 * @throws IOException 
 	 */
-	public static void executeGenieContainer1(final ApplicationFactory app, final Properties properties) {
+	public static void executeGenieContainer1(final ApplicationFactory app, final Properties properties) throws IOException {
 
+		final ApplicationCommandFactory commands = new ApplicationCommandFactory(app, new ApacheHttpFactory());
 		
-		final ApplicationCommandFactory commands = app.commands();
 		
 		/** GOOGLE **/
 		GenieInputCommand<String, FilePath> saveGoogleInput = commands.saveFile(FilePath.as(properties.getProperty(ExampleConfig.BUCKET_PROPERTY), "pages/google.html"), new PageToFile());
@@ -160,6 +170,8 @@ public class CommandExamples {
 		
 		final List<Object> results = result.allResults();
 		System.out.println(results.size());
+		
+		commands.close();
 	}
 
 	

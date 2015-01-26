@@ -64,9 +64,7 @@ public class MicroGenieApplication extends MicroService<AppConfiguration> {
 	@Override
 	protected ApplicationFactory createApplicationFactory(final AppConfiguration configuration, final Environment environment) {
 		
-		final AwsApplicationFactory appFactory = new AwsApplicationFactory(configuration.getAws(), configuration.isUseCommands());
-		//appFactory.queues().consume(queue, threadCount, handler);
-		
+		final AwsApplicationFactory appFactory = new AwsApplicationFactory(configuration.getAws());
 		final DynamoDbMapperFactory database = appFactory.database();
 		
 		/** Register any application repositories **/

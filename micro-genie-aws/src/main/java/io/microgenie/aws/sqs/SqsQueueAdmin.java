@@ -59,13 +59,12 @@ public class SqsQueueAdmin {
 	
 	/**
 	 * Initialize Queues
-	 * @param queues
+	 * @param queue
 	 */
 	public void initializeQueue(SqsQueueConfig queue, final boolean blockUntilReady){
 		
 		final CreateQueueRequest request = new CreateQueueRequest(queue.getName())
-		.withAttributes(queue.createAttributes());
-		
+		.withAttributes(queue.createAttributes());		
 		this.sqs.createQueue(request);
 
 		/** 

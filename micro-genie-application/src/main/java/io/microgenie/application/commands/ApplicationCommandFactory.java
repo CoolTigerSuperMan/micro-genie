@@ -27,6 +27,7 @@ import io.microgenie.application.commands.HttpCommandFactory.HttpPutInputCommand
 import io.microgenie.application.commands.HttpCommandFactory.ToEntityRequestFunction;
 import io.microgenie.application.commands.QueueCommandFactory.ToMessageFunction;
 import io.microgenie.application.events.Event;
+import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.ProduceInputCommand;
 import io.microgenie.application.queue.QueueSpecs.DefaultQueueInputSpec;
 import io.microgenie.commands.concurrency.ExecutorRegistry;
@@ -46,16 +47,16 @@ import java.util.concurrent.ExecutionException;
 public class ApplicationCommandFactory extends CommandFactory {
 
 	private final FileStoreCommnandFactory files;
-	private final HttpCommandFactory http;
 	private final QueueCommandFactory queues;
 	private final EventCommandFactory events;
+	private final HttpCommandFactory http;
 	
 
-	public ApplicationCommandFactory(final ApplicationFactory app) {
+	public ApplicationCommandFactory(final ApplicationFactory app, HttpFactory<String> http) {
 		this.files = new FileStoreCommnandFactory(app.blobs());
-		this.http = new HttpCommandFactory(app.http());
 		this.queues = new QueueCommandFactory(app.queues());
 		this.events = new EventCommandFactory(app.events());
+		this.http = new HttpCommandFactory(http);
 	}
 	
 	

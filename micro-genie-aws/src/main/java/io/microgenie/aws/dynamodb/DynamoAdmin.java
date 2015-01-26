@@ -557,7 +557,12 @@ public class DynamoAdmin {
 	
 	
 	
-	
+	/***
+	 * 
+	 * @param clazz
+	 * @return tableStatus
+	 * @throws ResourceNotFoundException
+	 */
 	public String getTableStatus(Class<?> clazz) throws ResourceNotFoundException{
 		final String tableName = this.getClassAnnotationValue(clazz, DynamoDBTable.class, String.class, "tableName");
 		if(!Strings.isNullOrEmpty(tableName)){
@@ -569,7 +574,7 @@ public class DynamoAdmin {
 	
 	/***
 	 * Get Table Status
-	 * @param clazz
+	 * @param tableName
 	 * @return status
 	 */
 	public String getTableStatus(final String tableName) throws ResourceNotFoundException{
@@ -583,7 +588,7 @@ public class DynamoAdmin {
 	
 	/***
 	 * Describe Table
-	 * @param clazz
+	 * @param tableName
 	 * @return describeTableResult
 	 */
 	private DescribeTableResult describeTable(final String tableName) throws ResourceNotFoundException{

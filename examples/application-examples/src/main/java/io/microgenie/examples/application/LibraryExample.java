@@ -73,16 +73,10 @@ public class LibraryExample {
 		final DynamoMapperRepository mapperRepository = DynamoMapperRepository.create(new AmazonDynamoDBClient());
 		
 		
-		/*** TODO - Need to add the 'wait until table creation complete' logic **/
-		try (ApplicationFactory app = new AwsApplicationFactory(aws, false)) {
+		
+		try (ApplicationFactory app = new AwsApplicationFactory(aws)) {
 			
-			/** Create Event client properties and a publisher  **/
-			
-			
-			
-			
-
-			
+			/** Create publisher  **/
 			final Publisher publisher = app.events().createPublisher(EventHandlers.DEFAULT_CLIENT_ID);
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");

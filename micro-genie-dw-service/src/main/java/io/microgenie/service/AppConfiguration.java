@@ -25,7 +25,6 @@ public class AppConfiguration extends Configuration {
 	private ApplicationFactory appFactory;
 
 	private AwsConfig aws;
-	private boolean useCommands = false;
 	
 	
 	@JsonProperty("host")
@@ -60,15 +59,6 @@ public class AppConfiguration extends Configuration {
 	public void setAws(AwsConfig aws) {
 		this.aws = aws;
 	}
-	@JsonProperty("useCommands")
-	public boolean isUseCommands() {
-		return useCommands;
-	}
-	@JsonProperty("useCommands")
-	public void setUseCommands(boolean useCommands) {
-		this.useCommands = useCommands;
-	}
-
 	@JsonProperty("schemaContracts")
 	public SchemaContracts getSchemaContracts() {
 		return schemaContracts;
@@ -96,7 +86,7 @@ public class AppConfiguration extends Configuration {
      */
 	public ApplicationFactory buildAppFactory(final ObjectMapper mapper) throws IllegalStateException {
 		if(this.aws!=null){
-			this.appFactory = new AwsApplicationFactory(this.getAws(), this.useCommands); 
+			this.appFactory = new AwsApplicationFactory(this.getAws()); 
 			return appFactory;
 		}
 		throw new IllegalStateException("No Valid Configuration was found, unable to build the application Factory");

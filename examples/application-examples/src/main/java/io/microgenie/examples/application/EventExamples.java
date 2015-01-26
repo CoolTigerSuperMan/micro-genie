@@ -41,7 +41,7 @@ public class EventExamples {
 		final String topicOne = props.getProperty(ExampleConfig.TOPIC_1_NAME);
 		final String topicTwo = props.getProperty(ExampleConfig.TOPIC_2_NAME);
 		
-		try (ApplicationFactory app = new AwsApplicationFactory(config, false)) {
+		try (ApplicationFactory app = new AwsApplicationFactory(config)) {
 			app.events().subcribe(topicOne, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicOne));
 			app.events().subcribe(topicTwo, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicTwo));
 

@@ -71,7 +71,6 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 *
 	 *</pre>
 	 * 
-	 * @param s3Client - {@link AmazonS3Client}
 	 */
 	public PublishJsonSchemaBundle(){
 		this(new AmazonS3Client());

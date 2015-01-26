@@ -140,7 +140,6 @@
 					<artifactId>jsr311-api</artifactId>
 					<groupId>javax.ws.rs</groupId>
 				</exclusion>
-
 				<exclusion>
 					<groupId>org.javassist</groupId>
 					<artifactId>javassist</artifactId>
@@ -153,12 +152,10 @@
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
-				<!-- 
 				<exclusion>
 					<groupId>io.dropwizard</groupId>
 					<artifactId>dropwizard-assets</artifactId>
 				</exclusion>
-				 -->
 			</exclusions>
 		</dependency>
 

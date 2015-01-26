@@ -14,8 +14,15 @@
 
 
 	<properties>
+		
+		<!-- maven stuff -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.7</java.version>
+		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+		
+		
+		<!-- application maven dependecy versions-->
 		<io.microgenie>0.0.1-SNAPSHOT</io.microgenie>
 		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
 	</properties>
@@ -35,11 +42,27 @@
 			<artifactId>dropwizard-views</artifactId>
 			<version>${io.dropwizard.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 
 
 	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${mavenPluginPluginVersion}</version>
+					<configuration>
+						<!-- put your configurations here -->
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
