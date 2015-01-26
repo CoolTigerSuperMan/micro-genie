@@ -60,7 +60,7 @@ public class SqsConsumerConfig{
 	 * 
 	 * @throws ClassNotFoundException
 	 */
-	public void createHandler() throws ClassNotFoundException{
+	public MessageHandler createHandler() throws ClassNotFoundException{
 		if(this.handlerInstance==null){
 			@SuppressWarnings("unchecked")
 			Class<MessageHandler> handler = (Class<MessageHandler>)Class.forName(handlerKey);
@@ -70,7 +70,9 @@ public class SqsConsumerConfig{
 				throw new RuntimeException(ex.getMessage(), ex);
 			}	
 		}
+		return this.handlerInstance;
 	}
+	
 	
 	
 	/***
@@ -83,6 +85,7 @@ public class SqsConsumerConfig{
 		config.setHandlerKey(this.handlerKey);
 		config.setQueue(this.queue);
 		config.setThreads(this.threads);
+		config.setThreads(shutdownTimeMS);
 		return config;
 	}
 }

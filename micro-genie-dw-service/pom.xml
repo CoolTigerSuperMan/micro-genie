@@ -153,10 +153,12 @@
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
+				<!-- 
 				<exclusion>
 					<groupId>io.dropwizard</groupId>
 					<artifactId>dropwizard-assets</artifactId>
 				</exclusion>
+				 -->
 			</exclusions>
 		</dependency>
 

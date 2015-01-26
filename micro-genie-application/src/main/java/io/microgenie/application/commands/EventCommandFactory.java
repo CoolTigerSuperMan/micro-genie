@@ -37,13 +37,6 @@ public class EventCommandFactory extends CommandFactory{
 	}
 
 	
-
-	@Override
-	public void initialize() {
-		
-	}
-	
-	
 	/***
 	 * If the {@link ThreadCommandFactory} was created by this instance it will be closed
 	 */

@@ -77,6 +77,7 @@ public class ApacheHttpFactory extends HttpFactory<String> {
 	public ApacheHttpFactory(final ObjectMapper mapper, final ResponseHandler<String> responseHandler) {
 		this.mapper = mapper;
 		this.responseHandler = responseHandler;
+		this.httpClient = HttpClientBuilder.create().build();
 	}
 	
 
@@ -172,10 +173,6 @@ public class ApacheHttpFactory extends HttpFactory<String> {
 	}
 	
 
-	@Override
-	public void initialize() {
-		this.httpClient = HttpClientBuilder.create().build();
-	}
 	@Override
 	public void close() throws IOException {
 		CloseableUtil.closeQuietly(this.httpClient);

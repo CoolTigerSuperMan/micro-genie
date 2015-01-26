@@ -8,7 +8,6 @@ import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.http.HttpFactory;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
-import io.microgenie.aws.kinesis.KinesisAdmin;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
@@ -21,168 +20,125 @@ import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 
-
-
 /***
  * AWS Application factory
+ * 
  * @author shawn
  */
-public class AwsApplicationFactory extends ApplicationFactory{
+public class AwsApplicationFactory extends ApplicationFactory {
 
-	private volatile boolean isInitialized;
-	
+
 	private final AwsConfig config;
+
+	private S3BlobFactory files;
+	private KinesisEventFactory events;
+	private SqsFactory queues;
+	private DynamoDbMapperFactory databases;
 	
-	private FileStoreFactory files;
-	private EventFactory events;
-	private QueueFactory queues;
-	private DatabaseFactory databases;
 	private HttpFactory<String> http;
 	private ApplicationCommandFactory commands;
 	private boolean withCommands;
-	
-	
-	/**Amazon Clients **/
+
+	/** Amazon Clients **/
 	private AmazonDynamoDBClient dynamoClient;
 	private AmazonCloudWatchClient cloudwatchClient;
 	private AmazonKinesisClient kinesisClient;
 	private AmazonSQSClient sqsClient;
 	private AmazonS3Client s3Client;
-	
-	
-	
-	
+
 	/**
 	 * Default Constructor to close thread group factory
-	 * @param config - Aws configuration
-	 * @param withCommands - whether or not the {@link CommandFactory} should also be initialized
+	 * 
+	 * @param config
+	 *            - Aws configuration
+	 * @param withCommands
+	 *            - whether or not the {@link CommandFactory} should also be
+	 *            initialized
 	 */
-	public AwsApplicationFactory(final AwsConfig config, final boolean withCommands){
+	public AwsApplicationFactory(final AwsConfig config,final boolean withCommands) {
 		this.config = config;
 		this.withCommands = withCommands;
 		this.createConfiguredFactories(config);
 	}
-	
 
-	
-	private void createConfiguredFactories(final AwsConfig config) {
+	/***
+	 * Implementations that subclass {@link AwsApplicationFactory} should
+	 * override this method to create implementation specific factories for
+	 * events, http, queues, etc.. where an aws service is not being used.
+	 * 
+	 * @param config
+	 */
+	protected void createConfiguredFactories(final AwsConfig config) {
+
 		
-		/*** Create any clients that specify configuration **/
-		if(config!=null){
-			if(config.getKinesis()!=null || config.getDynamo()!=null){
+		/*** Create any clients that have been configured **/
+		if (config != null) {
+			
+			if (config.getKinesis() != null || config.getDynamo() != null) {
+
+				/** both kinesis and dynamodb rely on the AmazonDynamoDbClient **/
 				this.dynamoClient = new AmazonDynamoDBClient();
+				
 				/** Kinesis KCL uses the cloudwatchClient **/
-				if(this.config.getKinesis() != null){
+				if (this.config.getKinesis() != null) {
+					this.kinesisClient = new AmazonKinesisClient();
 					this.cloudwatchClient = new AmazonCloudWatchClient();
-					this.kinesisClient = new AmazonKinesisClient();	
-					final KinesisAdmin admin = new KinesisAdmin(kinesisClient);
-					events = new KinesisEventFactory(kinesisClient, admin, config.getKinesis(), this.dynamoClient, this.cloudwatchClient);
-				} 
+					events = new KinesisEventFactory(kinesisClient, this.dynamoClient, this.cloudwatchClient);
+				}
 			}
 			
-			
-			if(config.getS3() != null){
+			if (config.getS3() != null) {
 				this.s3Client = new AmazonS3Client();
-				files = new S3BlobFactory(this.s3Client, config.getS3());		
+				files = new S3BlobFactory(this.s3Client, config.getS3().getDefaultDrive());
 			}
-			if(config.getDynamo() != null){
-				databases = new DynamoDbMapperFactory(config.getDynamo().getPackagePrefix(), this.dynamoClient);
+			if (config.getDynamo() != null) {
+				databases = new DynamoDbMapperFactory(this.dynamoClient);
 			}
-			if(config.getSqs() != null){
+			if (config.getSqs() != null) {
 				this.sqsClient = new AmazonSQSClient();
 				queues = new SqsFactory(this.sqsClient, config.getSqs());
 			}
-			if(this.withCommands){
+			if (this.withCommands) {
 				commands = new ApplicationCommandFactory(this);
 			}
 		}
 	}
 
-
 	@Override
 	public HttpFactory<String> http() {
 		return http;
 	}
+
 	@Override
 	public EventFactory events() {
 		return events;
 	}
+
 	@Override
 	public QueueFactory queues() {
 		return queues;
 	}
+
 	@Override
 	public FileStoreFactory blobs() {
-		return  files;
+		return files;
 	}
+
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public DatabaseFactory database() {
-		return databases;
+	public <T extends DatabaseFactory> T database() {
+		return (T)databases;
 	}
+
 	@Override
 	public ApplicationCommandFactory commands() {
 		return commands;
 	}
-	
-	
 
-	
+
 	@Override
-	public synchronized void initialize() {
-		
-		if(config!=null){
-			if(!this.isInitialized){
-				if(http!=null){
-					http.initialize();
-				}
-				if(events!=null){
-					events.initialize();	
-				}
-				if(databases!=null){
-					databases.initialize();	
-				}
-				if(files!=null){
-					files.initialize();	
-				}
-				if(queues !=null){
-					queues.initialize();
-				}
-				if(commands!=null){
-					commands.initialize();
-				}
-				this.isInitialized = true;
-			}	
-		}
-	}
-	
-	@Override
-	public void registerFiles(final FileStoreFactory files) {
-		this.files = files;
-	}
-	@Override
-	public void registerQueues(final QueueFactory queues) {
-		this.queues = queues;
-	}
-	@Override
-	public void registerEvents(final EventFactory events) {
-		this.events = events;
-	}
-	@Override
-	public void registerDatabase(final DatabaseFactory database) {
-		this.databases = database;
-	}
-	@Override
-	public void registerHttp(final HttpFactory<String> http) {
-		this.http = http;
-	}
-	@Override
-	public void registerCommands(final ApplicationCommandFactory commands) {
-		this.commands = commands;
-	}
-	
-	
-	@Override
-	public void close(){
+	public void close() {
 
 		CloseableUtil.closeQuietly(databases);
 		CloseableUtil.closeQuietly(files);
@@ -190,28 +146,23 @@ public class AwsApplicationFactory extends ApplicationFactory{
 		CloseableUtil.closeQuietly(http);
 		CloseableUtil.closeQuietly(events);
 		CloseableUtil.closeQuietly(commands);
-		if (this.kinesisClient!=null){
+		if (this.kinesisClient != null) {
 			this.kinesisClient.shutdown();
 		}
-		if(this.cloudwatchClient!=null){
-			this.cloudwatchClient.shutdown();	
-		}	
-		if(this.sqsClient!=null){
-			this.sqsClient.shutdown();	
+		if (this.cloudwatchClient != null) {
+			this.cloudwatchClient.shutdown();
 		}
-		if(this.dynamoClient!=null){
-			this.dynamoClient.shutdown();	
+		if (this.sqsClient != null) {
+			this.sqsClient.shutdown();
 		}
-		if(this.kinesisClient!=null){
-			this.kinesisClient.shutdown();	
+		if (this.dynamoClient != null) {
+			this.dynamoClient.shutdown();
 		}
-		if(this.s3Client !=null){
-			this.s3Client.shutdown();	
+		if (this.kinesisClient != null) {
+			this.kinesisClient.shutdown();
 		}
-		this.isInitialized = false;
-	}
-
-	public boolean isInitialized() {
-		return isInitialized;
+		if (this.s3Client != null) {
+			this.s3Client.shutdown();
+		}
 	}
 }

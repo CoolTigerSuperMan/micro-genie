@@ -21,5 +21,5 @@ public abstract class FileStoreFactory implements Closeable {
 	
 	public abstract String getDefaultDrive();
 	
-	public abstract void initialize();
+	//public abstract void initialize();
 }

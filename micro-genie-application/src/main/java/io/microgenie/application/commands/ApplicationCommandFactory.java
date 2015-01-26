@@ -152,9 +152,6 @@ public class ApplicationCommandFactory extends CommandFactory {
 		return this.events.submit(topic, toEventFunction);
 	}
 	@Override
-	public void initialize() {}
-	
-	@Override
 	public void close() throws IOException{
 		ExecutorRegistry.INSTANCE.shutdown();
 	}

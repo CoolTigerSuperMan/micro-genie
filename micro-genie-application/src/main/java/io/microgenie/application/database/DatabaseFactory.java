@@ -23,7 +23,7 @@ public abstract class DatabaseFactory implements Closeable {
 	public DatabaseFactory(){}
 
 	
-	public abstract void initialize();
+	//public abstract void initialize();
 	
 	
 	

@@ -372,6 +372,4 @@ public class FileStoreCommnandFactory extends CommandFactory {
 	
 	@Override
 	public void close() throws IOException {}
-	@Override
-	public void initialize() {}
 }

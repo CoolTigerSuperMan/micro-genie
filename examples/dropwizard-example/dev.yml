@@ -15,10 +15,10 @@ aws:
     #SQS Configuration - TODO - add ability to specify more queue infomation
     sqs:
         queues:
-            - name: "FileSavedQueue"
+            - name: "CheckOutRequest"
         produces: true
         consumers:
-            - queue: FileSavedQueue
+            - queue: CheckOutRequest
               threads: 3
  
  
@@ -28,8 +28,8 @@ aws:
        
     # Kinesis Event - Pub / Sub Configuration
     kinesis:
-       - topic: "FileSavedAuditEvent"
-         shards: 3
+       - topic: "BookChangeEvent"
+         shards: 1
 
     
 ## Standard Dropwizard Configurations

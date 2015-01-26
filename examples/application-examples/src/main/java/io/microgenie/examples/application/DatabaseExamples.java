@@ -53,7 +53,6 @@ public class DatabaseExamples {
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository));
-			app.initialize();
 			
 			LOGGER.info("initialization of book repository complete");
 

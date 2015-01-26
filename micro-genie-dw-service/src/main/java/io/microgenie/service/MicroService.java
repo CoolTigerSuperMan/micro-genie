@@ -126,7 +126,6 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 		final Managed managedAppFactory = new Managed() {
 			@Override
 			public void start() throws Exception {
-				appFactory.initialize();
 			}
 			@Override
 			public void stop() throws Exception {

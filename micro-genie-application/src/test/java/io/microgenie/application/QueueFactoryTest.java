@@ -67,23 +67,17 @@ public class QueueFactoryTest {
 			return null;
 		}
 		@Override
-		public void submit(Message message) {
+		public void produce(Message message) {
 			producer.submit(message);
 		}
 		@Override
-		public void submitBatch(List<Message> messages) {
+		public void produceBatch(List<Message> messages) {
 			producer.submitBatch(messages);
 		}
 		@Override
-		public void consume(String queue, MessageHandler handler) {
+		public void consume(final String queue, final int threads, final MessageHandler handler) {
 			
 		}
-
-		@Override
-		public void initialize() {
-			
-		}
-		
 	}
 	
 	/**

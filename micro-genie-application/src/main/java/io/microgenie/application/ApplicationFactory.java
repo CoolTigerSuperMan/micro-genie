@@ -20,24 +20,13 @@ public abstract class ApplicationFactory implements Closeable{
 
 	public ApplicationFactory(){}
 	
-	/** Register application command factories **/
-	public abstract void registerFiles(final FileStoreFactory files);
-	public abstract void registerQueues(final QueueFactory queues);
-	public abstract void registerEvents(final EventFactory events);
-	public abstract void registerDatabase(final DatabaseFactory database);
-	public abstract void registerHttp(final HttpFactory<String> http);
-	public abstract void registerCommands(final ApplicationCommandFactory commands);
-	
+
 	/** Access to application command factories **/
 	public abstract  HttpFactory<String> http();
 	public abstract  EventFactory events();
 	public abstract  QueueFactory queues();
 	public abstract  FileStoreFactory blobs();
-	public abstract  DatabaseFactory database();
+	public abstract <T extends DatabaseFactory>  T database();
 	public abstract  ApplicationCommandFactory commands();
-
-	/** Initialize application command factories **/
-	public abstract void initialize();
-
-	public abstract boolean isInitialized();
+	
 }

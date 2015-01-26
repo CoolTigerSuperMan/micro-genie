@@ -6,7 +6,6 @@ import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.events.EventHandler;
 import io.microgenie.application.events.Publisher;
 import io.microgenie.application.events.Subscriber;
-import io.microgenie.aws.KinesisConfig;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,26 +41,21 @@ public class KinesisEventFactory extends EventFactory {
 	private static final String WORKER_ID_TEMPLATE = "kinesis-%s-%s";
 	private static final String DEFAULT_CLIENT_ID = "default-client";
 	
-	
-	private final AmazonKinesisClient kinesisClient;
-	private final List<KinesisConfig> kinesisConfigs;
+	private final AmazonKinesisClient kinesisClient;	
 	private final AmazonDynamoDBClient dynamoDbClient;
 	private final AmazonCloudWatchClient cloudwatchClient;
-	
 
-	private Map<String, Publisher> publishers = Maps.newHashMap();
+	
+	private final Map<String, Publisher> publishers = Maps.newHashMap();
 	private final Map<String, Subscriber> subscribers = Maps.newHashMap();
 
-	private final KinesisAdmin admin;
-
 	
-	public KinesisEventFactory(final AmazonKinesisClient kinesisClient,final KinesisAdmin admin, final List<KinesisConfig> kinesisConfigs, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient){
+	public KinesisEventFactory(final AmazonKinesisClient kinesisClient, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient){
 		this.kinesisClient = kinesisClient;
-		this.kinesisConfigs = kinesisConfigs;
 		this.dynamoDbClient = dynamoDbClient;
 		this.cloudwatchClient = cloudwatchClient;
-		this.admin = new KinesisAdmin(this.kinesisClient);
 	}
+	
 	@Override
 	public void publish(Event event) {
 		this.publish(DEFAULT_CLIENT_ID, event);
@@ -90,7 +84,6 @@ public class KinesisEventFactory extends EventFactory {
 	public synchronized  Subscriber createSubscriber(final String topic, final String clientId) {
 		
 		final String clientIdToUse = Strings.isNullOrEmpty(clientId)? DEFAULT_CLIENT_ID : clientId;
-		
 		Subscriber subscriber = this.subscribers.get(topic);
 		if(subscriber == null){
 			LOGGER.debug("creating kinsis subscriber for topic {} - clientId: {}", topic, clientIdToUse);
@@ -123,15 +116,6 @@ public class KinesisEventFactory extends EventFactory {
 
 
 
-	/***
-	 * Initialize the Kinesis Event factory and ensure topics are created
-	 */
-	@Override
-	public void initialize() {
-		this.createTopics();
-	}
-
-
 
 	@Override
 	public void subcribe(String topic, String clientId, EventHandler handler) {
@@ -155,16 +139,6 @@ public class KinesisEventFactory extends EventFactory {
 
 
 
-	/***
-	 * Create Topics
-	 */
-	private void createTopics() {
-		for(KinesisConfig kinesisConfig : kinesisConfigs){
-			this.admin.createTopic(kinesisConfig.getTopic(), kinesisConfig.getShards());
-		}
-	}
-	
-
 	
 	/***
 	 * Close all publishers and subscribers
@@ -176,8 +150,8 @@ public class KinesisEventFactory extends EventFactory {
 			subscriptionEntry.getValue().stop();
 		}
 		this.subscribers.clear();
-		for(java.util.Map.Entry<String, Publisher> subscriptionEntry : this.publishers.entrySet()){
-			subscriptionEntry.getValue().close();
+		for(java.util.Map.Entry<String, Publisher> publisherEntry : this.publishers.entrySet()){
+			publisherEntry.getValue().close();
 		}
 		this.publishers.clear();
 	}

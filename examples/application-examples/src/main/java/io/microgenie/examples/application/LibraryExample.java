@@ -45,9 +45,9 @@ public class LibraryExample {
 	private static final String TOM_SAWYER_ISBN = "978-1402712166";
 	private static final String OF_MICE_AND_MEN_ISBN = "978-0749717100";
 
+	
 	/** Number of copies for each library **/
 	private static final int NUMBER_OF_BOOK_COPIES = 5;
-	
 	
 	/** User to check book out **/
 	private static final String USER = "shagwood";
@@ -87,7 +87,6 @@ public class LibraryExample {
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository, MAPPER, publisher));
-			app.initialize();
 			LOGGER.info("Executing library examples.....");
 
 			

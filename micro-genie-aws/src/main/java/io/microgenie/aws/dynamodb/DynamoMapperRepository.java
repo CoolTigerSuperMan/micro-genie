@@ -7,11 +7,13 @@ import java.util.Map.Entry;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
@@ -232,6 +234,8 @@ public class DynamoMapperRepository {
 	}
 	
 	
+	
+	
 	/***
 	 * Query DynamoDb using the given query expression
 	 * @param clazz - The Java class specifying the return type
@@ -242,6 +246,7 @@ public class DynamoMapperRepository {
 		final PaginatedQueryList<T> itemList = mapper.query(clazz, queryExpression);
 		return itemList;
 	}
+	
 	
 	
 	
@@ -256,6 +261,8 @@ public class DynamoMapperRepository {
 		final PaginatedScanList<T> itemList = mapper.scan(clazz, scanExpression);
 		return itemList;
 	}
+	
+	
 	
 	
 	/***
@@ -292,6 +299,7 @@ public class DynamoMapperRepository {
 	}
 	
 	
+	
 	/***
 	 * Construct an expected attribute value
 	 * 
@@ -307,6 +315,7 @@ public class DynamoMapperRepository {
 		.withExists(exists)
 		.withValue(new AttributeValue(value));
 	}
+	
 	
 	
 	/***
@@ -325,14 +334,30 @@ public class DynamoMapperRepository {
 	}
 
 
+	
+	
+	
+	/***
+	 * Create a DynamoMapper repository. This defaults the SaveBehavior to {@link SaveBehavior#UPDATE}
+	 * 
+	 * @param dynamoClient
+	 * @return mapperRepository - {@link DynamoMapperRepository}
+	 */
+	public static DynamoMapperRepository create(final AmazonDynamoDBClient dynamoClient) {
+		return DynamoMapperRepository.create(dynamoClient, new DynamoDBMapperConfig(SaveBehavior.UPDATE));
+	}
+	
+	
+	
 	/***
 	 * Create a DynamoMapper repository
 	 * 
-	 * @param amazonDynamoDBClient
+	 * @param dynamoClient - {@link AmazonDynamoDBClient}
+	 * @param config - {@link DynamoDBMapperConfig} 
 	 * @return mapperRepository - {@link DynamoMapperRepository}
 	 */
-	public static DynamoMapperRepository create(final AmazonDynamoDBClient amazonDynamoDBClient) {
-		final DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(amazonDynamoDBClient);
+	public static DynamoMapperRepository create(final AmazonDynamoDBClient dynamoClient, final DynamoDBMapperConfig config) {
+		final DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoClient);
 		final DynamoMapperRepository mapperRepository = new DynamoMapperRepository(dynamoDBMapper);
 		return mapperRepository;
 	}

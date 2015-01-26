@@ -11,17 +11,12 @@ import io.microgenie.commands.core.FunctionCommands.Func3;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /***
  * QueueFactory
  * @author shawn
  */
 public class QueueCommandFactory extends CommandFactory {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueueCommandFactory.class);
-	
 	private final QueueFactory queueFactory;
 
 	/**
@@ -64,10 +59,5 @@ public class QueueCommandFactory extends CommandFactory {
 	public void close() throws IOException {}
 
 
-	@Override
-	public void initialize() {
-		LOGGER.info("Initalizing Queues for queue command factory");
-	}
-	
 	public interface ToMessageFunction<I> extends Func3<String,String,I, Message>{}
 }

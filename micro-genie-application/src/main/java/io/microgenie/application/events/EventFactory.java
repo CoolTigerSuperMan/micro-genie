@@ -17,7 +17,7 @@ public abstract class EventFactory implements Closeable {
 	public EventFactory(){}
 	
 	
-	public abstract void initialize();
+	//public abstract void initialize();
 	
 	public abstract void publish(final Event event);
 	public abstract void publish(final List<Event> events);

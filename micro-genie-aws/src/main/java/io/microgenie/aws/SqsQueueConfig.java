@@ -59,19 +59,17 @@ public class SqsQueueConfig {
 	public final static String VISIBILITY_TIMEOUT = "VisibilityTimeout"; 
 	
 	
-	private final Map<String, String> attributes = new HashMap<String, String>();
-	
+
+	@JsonProperty("name")
 	public String getName() {
 		return name;
 	}
+	@JsonProperty("name")
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
-
 	
+
 	
 	/**
 	 * When publishing messages to a queue where delay seconds is set, the queue will act as a delayed queue
@@ -141,21 +139,28 @@ public class SqsQueueConfig {
 	}
 	
 	
+	
+	protected Map<String, String> getAttributes() {
+		return this.createAttributes();
+	}
+	
 	/***
-	 * Load SQS Attributes into the attribute map
+	 * Create SQS Attribute Map from configuration settings
 	 */
-	public void loadAttributes() {
+	public Map<String, String> createAttributes() {
+		final Map<String, String> attributes = new HashMap<String, String>();
 		if(this.maximumMessageSize>0){
-			this.attributes.put(MAXIMUM_MESSAGE_SIZE, String.valueOf(this.maximumMessageSize));	
+			attributes.put(MAXIMUM_MESSAGE_SIZE, String.valueOf(this.maximumMessageSize));	
 		}
 		if(this.messageRetentionPeriod>0){
-			this.attributes.put(MESSAGE_RETENTION_PERIOD, String.valueOf(this.messageRetentionPeriod));	
+			attributes.put(MESSAGE_RETENTION_PERIOD, String.valueOf(this.messageRetentionPeriod));	
 		}
 		if(this.visibilityTimeout>0){
-			this.attributes.put(VISIBILITY_TIMEOUT, String.valueOf(this.visibilityTimeout));	
+			attributes.put(VISIBILITY_TIMEOUT, String.valueOf(this.visibilityTimeout));	
 		}
 		if(this.delaySeconds>0){
-			this.attributes.put(DELAY_SECONDS, String.valueOf(this.delaySeconds));	
+			attributes.put(DELAY_SECONDS, String.valueOf(this.delaySeconds));	
 		}
+		return attributes;
 	}
 }

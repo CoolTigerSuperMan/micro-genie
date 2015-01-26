@@ -5,12 +5,10 @@ import io.microgenie.application.blob.FileContentStream;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.blob.FileStore;
 import io.microgenie.application.blob.FileStoreFactory;
-import io.microgenie.aws.S3Config;
 
 import java.io.IOException;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 
 /**
  * 
@@ -23,22 +21,19 @@ public class S3BlobFactory extends FileStoreFactory{
 
 	
 	private final String defaultBucket;
-	private final S3Config config;
-	
 	private FileStore fileStore;
-	private S3Admin admin;
-	
 	private AmazonS3Client s3; 
 
 	
 	/**
 	 * Constructs an S3 File Store implementation of CommandFactory
-	 * @param config - default bucket to user if not specified when interacting with s3
+	 * @param s3Client
+	 * @param defaultBucket - default bucket
 	 */
-	public S3BlobFactory(final AmazonS3Client s3Client, final S3Config config){
+	public S3BlobFactory(final AmazonS3Client s3Client, final String defaultBucket){
 		this.s3 = s3Client;
-		this.config = config;
-		this.defaultBucket = config.getDefaultDrive();
+		this.defaultBucket = defaultBucket;
+		this.fileStore = new S3FileStore(defaultBucket, s3);
 	}
 	
 
@@ -68,13 +63,6 @@ public class S3BlobFactory extends FileStoreFactory{
 		return this.defaultBucket;
 	}
 	
-	@Override
-	public void initialize() {
-		this.s3 = new AmazonS3Client();
-		this.fileStore = new S3FileStore(defaultBucket, s3);
-		this.admin = new S3Admin(s3);
-		this.createBuckets();
-	} 
 	
 	
 	/***
@@ -84,16 +72,5 @@ public class S3BlobFactory extends FileStoreFactory{
 	@Override
 	public void close() throws IOException{
 		this.fileStore.close();
-	}
-
-	
-	/***
-	 * Create any bucket configurations
-	 */
-	private void createBuckets(){
-		this.admin.createBucket(this.defaultBucket, CannedAccessControlList.BucketOwnerFullControl);
-		for(String bucket : this.config.getBuckets()){
-			this.admin.createBucket(bucket, CannedAccessControlList.BucketOwnerFullControl);	
-		}
 	}
 }

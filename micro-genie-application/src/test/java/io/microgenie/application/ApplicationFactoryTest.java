@@ -12,6 +12,7 @@ import java.io.IOException;
 
 
 
+
 import io.microgenie.application.blob.FileStoreFactory;
 import io.microgenie.application.commands.ApplicationCommandFactory;
 import io.microgenie.application.database.DatabaseFactory;
@@ -36,8 +37,7 @@ import org.junit.runner.RunWith;
 public class ApplicationFactoryTest {
 	
 	@SuppressWarnings("unchecked")
-	private final static HttpFactory<String> http = (HttpFactory<String>)mock(HttpFactory.class);
-	
+	private final static HttpFactory<String> http = mock(HttpFactory.class);
 	private final static QueueFactory queues = mock(QueueFactory.class);
 	private final static FileStoreFactory files = mock(FileStoreFactory.class);
 	private final static DatabaseFactory databases = mock(DatabaseFactory.class);
@@ -52,14 +52,7 @@ public class ApplicationFactoryTest {
 	 * Setup 
 	 */
 	@Before
-	public  void setup(){
-		appFactory.registerDatabase(databases);
-		appFactory.registerQueues(queues);
-		appFactory.registerFiles(files);
-		appFactory.registerEvents(events);
-		appFactory.registerCommands(commands);
-		appFactory.registerHttp(http);
-	}
+	public  void setup(){}
 	
 	
 	@Test
@@ -82,68 +75,31 @@ public class ApplicationFactoryTest {
 	 */
 	static class MockApplicationFactory extends ApplicationFactory {
 		
-		private volatile boolean isInitialized;
-		private QueueFactory queues;
-		private DatabaseFactory databases;
-		private FileStoreFactory files;
-		private ApplicationCommandFactory commands;
-		private EventFactory events;
-		private HttpFactory<String> http;
-		@Override
-		public void registerQueues(QueueFactory queues) {
-			this.queues = queues;
-		}
-		@Override
-		public void registerHttp(HttpFactory<String> http) {
-			this.http = http;
-		}
-		@Override
-		public void registerFiles(FileStoreFactory files) {
-			this.files = files;
-		}
-		@Override
-		public void registerEvents(EventFactory events) {
-			this.events = events;
-		}
-		@Override
-		public void registerDatabase(DatabaseFactory database) {
-			this.databases = database;
-		}
-		@Override
-		public void registerCommands(ApplicationCommandFactory commands) {
-			this.commands = commands;
-		}
 		@Override
 		public QueueFactory queues() {
-			return this.queues;
+			return queues;
 		}		
 		@Override
 		public HttpFactory<String> http() {
-			return this.http;
+			return http;
 		}
 		@Override
 		public EventFactory events() {
-			return this.events;
+			return events;
 		}
+		
+		@SuppressWarnings("unchecked")
 		@Override
 		public DatabaseFactory database() {
-			return this.databases;
+			return databases;
 		}
 		@Override
 		public ApplicationCommandFactory commands() {
-			return this.commands;
+			return commands;
 		}
 		@Override
 		public FileStoreFactory blobs() {
-			return this.files;
-		}
-		@Override
-		public void initialize() {
-			this.isInitialized = true;
-		}
-		@Override
-		public boolean isInitialized() {
-			return isInitialized;
+			return files;
 		}
 		@Override
 		public void close() throws IOException {

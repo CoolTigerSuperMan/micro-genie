@@ -67,7 +67,6 @@ public class CommandExamples {
 		
 		CommandExamples.initUrls();
 		try (ApplicationFactory app = new AwsApplicationFactory(config, true)) {
-			app.initialize();
 			CommandExamples.executeGenieContainer(app, properties);
 		}
 	}
@@ -102,7 +101,7 @@ public class CommandExamples {
 		 * 			.into(queue().publish(claimCheckSpec)))
 		 * 
 		 */
-		app.queues().consume(queue, new OutputMessageHandler());
+		app.queues().consume(queue, 1, new OutputMessageHandler());
 		
 		final CommandResult<String> result = 
 				commands.get(GOOGLE)

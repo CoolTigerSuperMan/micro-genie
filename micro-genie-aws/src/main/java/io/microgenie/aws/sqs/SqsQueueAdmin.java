@@ -1,5 +1,6 @@
 package io.microgenie.aws.sqs;
 
+import io.microgenie.aws.SqsConfig;
 import io.microgenie.aws.SqsQueueConfig;
 import io.microgenie.commands.util.CollectionUtil;
 
@@ -42,30 +43,56 @@ public class SqsQueueAdmin {
 	}
 	
 	
+	
 	/**
 	 * Initialize Queues
 	 * @param queues
 	 */
 	public void initializeQueues(final List<SqsQueueConfig> queues, final boolean blockUntilReady){
-		
 		if(CollectionUtil.hasElements(queues)){
 			for(SqsQueueConfig queue: queues){
-				queue.loadAttributes();
-				final CreateQueueRequest request = new CreateQueueRequest(queue.getName())
-				.withAttributes(queue.getAttributes());
-				this.sqs.createQueue(request);
+				this.initializeQueue(queue, blockUntilReady);
 			}
+		}
+	}
+	
+	
+	/**
+	 * Initialize Queues
+	 * @param queues
+	 */
+	public void initializeQueue(SqsQueueConfig queue, final boolean blockUntilReady){
+		
+		final CreateQueueRequest request = new CreateQueueRequest(queue.getName())
+		.withAttributes(queue.createAttributes());
+		
+		this.sqs.createQueue(request);
 
-			/** TODO - This does not currently correctly capture the start time, 
-			 * still need to capture the time the create call was made 
-			 *
-			 * if blockUntilReady is true, Ensure all queues are created before continuing
-			 * **/
-			if(blockUntilReady){
-				for(SqsQueueConfig config : queues){
-					this.ensureQueueIsReady(config);
-				}				
+		/** 
+		 * if blockUntilReady is true, Ensure the queue is created before returning
+		 * **/
+		if(blockUntilReady){
+			this.ensureQueueIsReady(queue);
+		}				
+	}
+	
+	
+	
+	/***
+	 * Initialize  the following:
+	 * <li>SQS Admin</li>
+	 * <li>SQS Queues</li>
+	 * <li>SQS Producer</li>
+	 * <li>SQS Consumers</li>
+	 */
+	public void initialize(final SqsConfig config){
+		try{
+			if(config !=null){
+				/** Ensure that queues are all created, and if specified, block until all queues are ready **/
+				this.initializeQueues(config.getQueues(), config.isBlockUntilReady());
 			}
+		}catch(Exception ex){
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 	
@@ -78,7 +105,7 @@ public class SqsQueueAdmin {
 	 * @param queueName
 	 * @return queueUrl
 	 */
-	public String getQueueUrl(final String queueName){
+	public String getQueueUrl(final String queueName) throws QueueDoesNotExistException{
 
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(queueName), "Queue Name is required in order to submit a message for sqs");
 		String url = queueUrlMap.get(queueName);
@@ -96,7 +123,7 @@ public class SqsQueueAdmin {
 	 * @param queueName
 	 * @return queueUrl - For the specified queue name
 	 */
-	private synchronized String getAndSetQueueUrl(final String queueName){
+	private synchronized String getAndSetQueueUrl(final String queueName) throws QueueDoesNotExistException{
 		try{
 
 			final String url = queueUrlMap.get(queueName); 
@@ -110,7 +137,9 @@ public class SqsQueueAdmin {
 				}				
 			}
 		}catch(QueueDoesNotExistException qne){
-			throw new RuntimeException(qne.getMessage(),qne);
+			throw qne;
+		}catch(Exception ex){
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 		return null;
 	}

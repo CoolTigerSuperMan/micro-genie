@@ -377,9 +377,6 @@ public class HttpCommandFactory extends CommandFactory{
 
 
 	@Override
-	public void initialize() {}
-
-	@Override
 	public void close() throws IOException {}
 
 

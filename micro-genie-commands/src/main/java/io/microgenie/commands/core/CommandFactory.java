@@ -60,11 +60,4 @@ public abstract class CommandFactory implements Closeable {
 	public <A, B, C, D, E, R> GenieContainer<R> withFunction(Func5<A, B, C, D, E, R> function, Input5<A, B, C, D, E> input){
 		return new FunctionalCommand5<A, B, C, D, E, R>(function, input, DEFAULT_FUNCTION_COMMAND, ExecutorRegistry.INSTANCE.get(DEFAULT_FUNCTION_COMMAND));
 	}
-	
-	
-	/**
-	 * Used to invoke initialization for all command factory implementations
-	 */
-	public abstract void initialize();
-
 }
