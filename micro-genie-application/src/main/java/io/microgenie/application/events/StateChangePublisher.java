@@ -382,6 +382,10 @@ public class StateChangePublisher {
 	 * @return map - a map containing action to topic lookups
 	 */
 	private Map<String, String> getActions(Class<?> model) {
+		if(this.config.getEvents()==null){
+			throw new NullPointerException(String.format("No Events have been configured, unable to lookup topics by action for model %s", model.getName()));
+		}
+		
 		Map<String, String> actions = this.config.getEvents().get(model.getName());
 		if(actions==null){
 			/** try with the simple name **/

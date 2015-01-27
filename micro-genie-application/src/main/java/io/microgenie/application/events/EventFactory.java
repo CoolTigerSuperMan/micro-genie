@@ -1,5 +1,7 @@
 package io.microgenie.application.events;
 
+import io.microgenie.application.StateChangeConfiguration;
+
 import java.io.Closeable;
 import java.util.List;
 
@@ -27,8 +29,8 @@ public abstract class EventFactory implements Closeable {
 	public abstract Publisher createPublisher(final String clientId);
 	public abstract Subscriber createSubscriber(final String topic, final String clientId);
 	
+	public abstract StateChangePublisher createChangePublisher(final String clientId, final StateChangeConfiguration stateChangeConfig);
 	
-	public abstract StateChangePublisher createChangePublisher(String clientId);
 	
 	/***
 	 * Subscribe to the given topic, providing an event handler that will process all

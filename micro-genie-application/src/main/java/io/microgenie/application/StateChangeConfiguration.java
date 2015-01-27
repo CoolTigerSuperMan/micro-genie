@@ -14,37 +14,20 @@ import java.util.Map;
  * 
  *	stateChanges: 
  * 		Book:
- * 			deleted: StudyDeleted
- * 			created: StudyCreated
- * 	    	modified: StudyModified
+ * 			Deleted: BookDeleted
+ * 			Created: BookCreated
+ * 	    	Updated: BookModified
  */
 public class StateChangeConfiguration{
 	private Map<String, Map<String, String>> events;
-	
 	public StateChangeConfiguration(){}
-	
+	public StateChangeConfiguration(final Map<String, Map<String, String>> events){
+		this.events = events;
+	}
 	public Map<String, Map<String, String>> getEvents() {
 		return events;
 	}
 	public void setEvents(Map<String, Map<String, String>> events) {
 		this.events = events;
 	}
-	
-	
-//	public static class ActionTopicPair {
-//		private String action;
-//		private String topic;
-//		public String getAction() {
-//			return action;
-//		}
-//		public void setAction(String action) {
-//			this.action = action;
-//		}
-//		public String getTopic() {
-//			return topic;
-//		}
-//		public void setTopic(String topic) {
-//			this.topic = topic;
-//		} 
-//	}	
 }

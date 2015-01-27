@@ -2,6 +2,7 @@ package io.microgenie.service;
 
 import io.dropwizard.Configuration;
 import io.microgenie.application.ApplicationFactory;
+import io.microgenie.application.StateChangeConfiguration;
 import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.AwsConfig;
 
@@ -20,6 +21,7 @@ public class AppConfiguration extends Configuration {
 	private String host;
 	private int port;
 	private SchemaContracts schemaContracts;
+	private StateChangeConfiguration stateChanges;
 	
 	private String dateFormatPattern = ISO_8601_DATE_FORMAT;
 	private ApplicationFactory appFactory;
@@ -90,6 +92,16 @@ public class AppConfiguration extends Configuration {
 			return appFactory;
 		}
 		throw new IllegalStateException("No Valid Configuration was found, unable to build the application Factory");
+	}
+
+
+	@JsonProperty("stateChanges")
+	public StateChangeConfiguration getStateChanges() {
+		return stateChanges;
+	}
+	@JsonProperty("stateChanges")
+	public void setStateChanges(StateChangeConfiguration stateChanges) {
+		this.stateChanges = stateChanges;
 	}
 
 

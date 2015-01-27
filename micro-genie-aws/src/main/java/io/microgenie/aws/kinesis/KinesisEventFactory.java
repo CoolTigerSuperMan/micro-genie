@@ -125,9 +125,9 @@ public class KinesisEventFactory extends EventFactory {
 
 
 	@Override
-	public StateChangePublisher createChangePublisher(final String clientId) {
+	public StateChangePublisher createChangePublisher(final String clientId, StateChangeConfiguration stateChangeConfig) {
 		final Publisher publisher = this.createPublisher(clientId);
-		final StateChangePublisher changePublisher = new StateChangePublisher(new StateChangeConfiguration(), publisher);
+		final StateChangePublisher changePublisher = new StateChangePublisher(stateChangeConfig, publisher);
 		return changePublisher;
 	}
 	

@@ -1,9 +1,9 @@
 package io.microgenie.examples.application;
 
 import io.microgenie.application.ApplicationFactory;
+import io.microgenie.application.StateChangeConfiguration;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventFactory;
-
 import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.application.events.Subscriber;
 import io.microgenie.aws.AwsApplicationFactory;
@@ -81,12 +81,11 @@ public class LibraryExample {
 		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
 			
 			/** Create publisher  **/
-			final StateChangePublisher publisher = app.events().createChangePublisher(EventHandlers.DEFAULT_CLIENT_ID);
+			final StateChangePublisher publisher = app.events().createChangePublisher(EventHandlers.DEFAULT_CLIENT_ID, new StateChangeConfiguration());
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository, publisher));
 			LOGGER.info("Executing library examples.....");
-
 			
 			final EventFactory events = app.events();
 			final BookRepository bookRepository = app.database().repos(Book.class);
