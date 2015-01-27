@@ -86,7 +86,7 @@ public class AppConfiguration extends Configuration {
      */
 	public ApplicationFactory buildAppFactory(final ObjectMapper mapper) throws IllegalStateException {
 		if(this.aws!=null){
-			this.appFactory = new AwsApplicationFactory(this.getAws()); 
+			this.appFactory = new AwsApplicationFactory(this.getAws(), mapper); 
 			return appFactory;
 		}
 		throw new IllegalStateException("No Valid Configuration was found, unable to build the application Factory");

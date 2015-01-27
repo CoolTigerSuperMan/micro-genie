@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.amazonaws.services.kinesis.model.PutRecordRequest;
 import com.amazonaws.services.kinesis.model.PutRecordResult;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -26,6 +28,7 @@ public class KinesisProducer implements Publisher{
 	private static final Logger LOGGER = LoggerFactory.getLogger(KinesisProducer.class);
 
 	private final String clientId;
+	private final ObjectMapper mapper;
 	private final AmazonKinesisClient client;
 
 
@@ -33,8 +36,9 @@ public class KinesisProducer implements Publisher{
 	 * Kinesis Publisher
 	 * @param client
 	 */
-	public KinesisProducer(final String clientId, final AmazonKinesisClient client) {
+	public KinesisProducer(final String clientId, final ObjectMapper mapper, final AmazonKinesisClient client) {
 		this.clientId = clientId;
+		this.mapper = mapper;
 		this.client = client;
 	}
 	
@@ -45,25 +49,34 @@ public class KinesisProducer implements Publisher{
 	@Override
 	public void submit(final Event event) {
 		
-		Preconditions.checkNotNull(event, "event cannot be null");
-		Preconditions.checkNotNull(event.getBody(), "event body cannot be null");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(event.getTopic()), "Topic is required");
-		Preconditions.checkNotNull(event.getPartitionKey(), "Partition key cannot be null");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(event.getPartitionKey().toString()), "PartitionKey is required");
+		try {
+			
+			Preconditions.checkNotNull(event, "event cannot be null");
+			Preconditions.checkNotNull(event.getEventData(), "event data cannot be null");
+			Preconditions.checkArgument(!Strings.isNullOrEmpty(event.getTopic()), "Topic is required");
+			Preconditions.checkNotNull(event.getPartitionKey(), "Partition key cannot be null");
+			Preconditions.checkArgument(!Strings.isNullOrEmpty(event.getPartitionKey().toString()), "PartitionKey is required");
+			
+			/** serialize the event **/
+			byte[] bytes = this.mapper.writeValueAsBytes(event);
+	
+			final PutRecordRequest putRecordRequest = new PutRecordRequest();
+			putRecordRequest.setStreamName(event.getTopic());
+			putRecordRequest.setPartitionKey(event.getPartitionKey().toString());
+			putRecordRequest.setData(ByteBuffer.wrap(bytes));
+			
+			//putRecordRequest.setSequenceNumberForOrdering( sequenceNumberOfPreviousRecord );
+			
+			final PutRecordResult putRecordResult = client.putRecord(putRecordRequest);
+			LOGGER.trace("published message to stream: {} partitionKey: {}, sequenceNumberForOrdering: {}, returnedSequenceNumber:{}", 
+						putRecordRequest.getStreamName(), 
+						putRecordRequest.getPartitionKey(), 
+						putRecordRequest.getSequenceNumberForOrdering(), 
+						putRecordResult.getSequenceNumber());
 		
-		final PutRecordRequest putRecordRequest = new PutRecordRequest();
-		putRecordRequest.setStreamName(event.getTopic());
-		putRecordRequest.setData(ByteBuffer.wrap(event.getBody()));
-		putRecordRequest.setPartitionKey(event.getPartitionKey().toString());  
-		
-		//putRecordRequest.setSequenceNumberForOrdering( sequenceNumberOfPreviousRecord );
-		
-		final PutRecordResult putRecordResult = client.putRecord(putRecordRequest);
-		LOGGER.trace("published message to stream: {} partitionKey: {}, sequenceNumberForOrdering: {}, returnedSequenceNumber:{}", 
-					putRecordRequest.getStreamName(), 
-					putRecordRequest.getPartitionKey(), 
-					putRecordRequest.getSequenceNumberForOrdering(), 
-					putRecordResult.getSequenceNumber());
+		} catch (JsonProcessingException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	

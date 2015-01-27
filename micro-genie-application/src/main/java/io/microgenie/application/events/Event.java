@@ -1,6 +1,10 @@
 package io.microgenie.application.events;
 
-import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.UUID;
+
+import com.google.common.base.Strings;
+
 
 
 /**
@@ -9,19 +13,35 @@ import java.nio.ByteBuffer;
  */
 public class Event{
 	
+	private final String id = UUID.randomUUID().toString();
+	private final String correlationId;
 	private final String topic;
-	private final String schema;
 	private final String partitionKey;
-	private final ByteBuffer buffer;
+	private final EventData data;
 
-	public Event(final String topic, final String partitionKey, final byte[] data){
-		this(topic, partitionKey, data, null);
+	
+	public Event(final String topic, final String partitionKey, final EventData data){
+		this(topic, partitionKey, null, data);	
 	}
-	public Event(final String topic, final String partitionKey, final byte[] data, final String schema){
-			this.topic = topic;
-			this.partitionKey = partitionKey;
-			this.buffer = ByteBuffer.wrap(data);
-			this.schema = schema;
+	
+	public Event(final String topic, final String partitionKey, final String correlationId, final EventData data){
+		this.topic = topic;
+		this.partitionKey = partitionKey;
+		this.data = data;	
+		if(Strings.isNullOrEmpty(correlationId)){
+			this.correlationId = this.id;
+		}else{
+			this.correlationId = correlationId;
+		}
+	}
+	
+
+	
+	public String getId() {
+		return id;
+	}
+	public String getCorrelationId() {
+		return correlationId;
 	}
 	public String getTopic() {
 		return this.topic;
@@ -29,10 +49,12 @@ public class Event{
 	public String getPartitionKey() {
 		return this.partitionKey;
 	}
-	public byte[] getBody() {
-		return this.buffer.array();
+	public EventData getEventData() {
+		return data;
 	}
-	public String getSchema() {
-		return this.schema;
+	
+	public static Event create(final String topic, final String key, final Map<String, Object> data){
+		final EventData eventData = new EventData(null, data);
+		return new Event(topic, key, eventData);
 	}
 }

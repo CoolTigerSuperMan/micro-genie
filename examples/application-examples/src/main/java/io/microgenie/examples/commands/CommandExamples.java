@@ -68,7 +68,7 @@ public class CommandExamples {
 		final Properties properties = ExampleConfig.getProperties(ExampleConfig.PROPERTY_FILE_NAME);
 		final AwsConfig config  = ExampleConfig.createConfig(ExampleConfig.PROPERTY_FILE_NAME);
 
-		try (ApplicationFactory app = new AwsApplicationFactory(config)) {
+		try (ApplicationFactory app = new AwsApplicationFactory(config, ExampleConfig.OBJECT_MAPPER)) {
 			CommandExamples.executeGenieContainer(app, properties);
 		}
 	}

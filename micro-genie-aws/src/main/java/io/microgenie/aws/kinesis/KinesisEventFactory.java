@@ -1,10 +1,12 @@
 package io.microgenie.aws.kinesis;
 
 
+import io.microgenie.application.StateChangeConfiguration;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.events.EventHandler;
 import io.microgenie.application.events.Publisher;
+import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.application.events.Subscriber;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.amazonaws.services.kinesis.clientlibrary.lib.worker.KinesisClientLibConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -41,6 +44,8 @@ public class KinesisEventFactory extends EventFactory {
 	private static final String WORKER_ID_TEMPLATE = "kinesis-%s-%s";
 	private static final String DEFAULT_CLIENT_ID = "default-client";
 	
+	private final ObjectMapper mapper;
+	
 	private final AmazonKinesisClient kinesisClient;	
 	private final AmazonDynamoDBClient dynamoDbClient;
 	private final AmazonCloudWatchClient cloudwatchClient;
@@ -50,7 +55,8 @@ public class KinesisEventFactory extends EventFactory {
 	private final Map<String, Subscriber> subscribers = Maps.newHashMap();
 
 	
-	public KinesisEventFactory(final AmazonKinesisClient kinesisClient, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient){
+	public KinesisEventFactory(final AmazonKinesisClient kinesisClient, final AmazonDynamoDBClient dynamoDbClient, final AmazonCloudWatchClient cloudwatchClient, final ObjectMapper mapper){
+		this.mapper = mapper;
 		this.kinesisClient = kinesisClient;
 		this.dynamoDbClient = dynamoDbClient;
 		this.cloudwatchClient = cloudwatchClient;
@@ -77,6 +83,7 @@ public class KinesisEventFactory extends EventFactory {
 	
 	
 	
+	
 	/****
 	 * Create subscriber if it has not already been created
 	 */
@@ -88,7 +95,7 @@ public class KinesisEventFactory extends EventFactory {
 		if(subscriber == null){
 			LOGGER.debug("creating kinsis subscriber for topic {} - clientId: {}", topic, clientIdToUse);
 			final KinesisClientLibConfiguration config = createConsumerConfig(topic, clientIdToUse);
-			subscriber = new KinesisConsumer(topic, config, this.kinesisClient, this.dynamoDbClient, this.cloudwatchClient);
+			subscriber = new KinesisConsumer(topic, config, this.kinesisClient, this.dynamoDbClient, this.cloudwatchClient, this.mapper);
 			this.subscribers.put(topic, subscriber);
 		}
 		return subscriber;
@@ -108,7 +115,7 @@ public class KinesisEventFactory extends EventFactory {
 		Publisher publisher = publishers.get(clientIdToUse);
 		if(publisher==null){
 			LOGGER.debug("creating kinsis publisher");
-			publisher = new KinesisProducer(clientIdToUse, this.kinesisClient);
+			publisher = new KinesisProducer(clientIdToUse, this.mapper, this.kinesisClient);
 			publishers.put(clientIdToUse, publisher);
 		}
 		return publisher;
@@ -116,6 +123,15 @@ public class KinesisEventFactory extends EventFactory {
 
 
 
+
+	@Override
+	public StateChangePublisher createChangePublisher(final String clientId) {
+		final Publisher publisher = this.createPublisher(clientId);
+		final StateChangePublisher changePublisher = new StateChangePublisher(new StateChangeConfiguration(), publisher);
+		return changePublisher;
+	}
+	
+	
 
 	@Override
 	public void subcribe(String topic, String clientId, EventHandler handler) {

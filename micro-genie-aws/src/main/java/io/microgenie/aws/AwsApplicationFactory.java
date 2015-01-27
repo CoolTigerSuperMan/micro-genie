@@ -16,6 +16,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /***
  * AWS Application factory
@@ -25,6 +26,7 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 public class AwsApplicationFactory extends ApplicationFactory {
 
 
+	private final ObjectMapper mapper;
 	private final AwsConfig config;
 
 	private S3BlobFactory files;
@@ -45,8 +47,9 @@ public class AwsApplicationFactory extends ApplicationFactory {
 	 * @param config
 	 *            - Aws configuration
 	 */
-	public AwsApplicationFactory(final AwsConfig config) {
+	public AwsApplicationFactory(final AwsConfig config,final ObjectMapper mapper) {
 		this.config = config;
+		this.mapper = mapper;
 		this.createConfiguredFactories(config);
 	}
 
@@ -72,7 +75,7 @@ public class AwsApplicationFactory extends ApplicationFactory {
 				if (this.config.getKinesis() != null) {
 					this.kinesisClient = new AmazonKinesisClient();
 					this.cloudwatchClient = new AmazonCloudWatchClient();
-					events = new KinesisEventFactory(kinesisClient, this.dynamoClient, this.cloudwatchClient);
+					events = new KinesisEventFactory(kinesisClient, this.dynamoClient, this.cloudwatchClient, this.mapper);
 				}
 			}
 			

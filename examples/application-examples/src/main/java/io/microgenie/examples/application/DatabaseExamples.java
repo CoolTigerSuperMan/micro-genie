@@ -49,7 +49,7 @@ public class DatabaseExamples {
 		
 		
 		/*** TODO - Need to add the 'wait until table creation complete' logic **/
-		try (ApplicationFactory app = new AwsApplicationFactory(aws)) {
+		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
 			app.database().registerRepo(Book.class, new BookRepository(mapperRepository));

@@ -16,10 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 
 public class ExampleConfig {
+	
+	
+	public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
 	public static final ExampleProperties appProperties = new ExampleProperties();
 	

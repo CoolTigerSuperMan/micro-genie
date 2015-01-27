@@ -1,6 +1,7 @@
 package io.microgenie.examples.application;
 
 import io.microgenie.application.events.Event;
+import io.microgenie.application.events.EventData;
 import io.microgenie.application.events.EventHandler;
 
 import java.util.List;
@@ -9,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 
@@ -36,28 +36,23 @@ public class EventHandlers {
 	 *
 	 */
 	static class CheckOutRequestEventHandler implements EventHandler{
-		private final ObjectMapper mapper;
 		private final BookRepository repository;
-		public CheckOutRequestEventHandler(final ObjectMapper mapper, final BookRepository repository){
-			this.mapper = mapper;
+		public CheckOutRequestEventHandler(final BookRepository repository){
 			this.repository = repository;
 		}
 		@Override
 		public void handle(Event event) {
 			
+			final EventData eventData = event.getEventData();
 			
-			final byte[] body = event.getBody();
 			try {
-				final CheckoutBookRequest checkoutRequest = this.mapper.readValue(body, CheckoutBookRequest.class);
+				final String bookId = new String(eventData.getData().get("bookId").toString());
+				final String userId = new String(eventData.getData().get("userId").toString());
 				
-				
-				final Book book = this.repository.get(checkoutRequest.getBookId());
-				
+				final Book book = this.repository.get(bookId);
 				
 				if(Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
-					
-					
-					book.setCheckedOutBy(checkoutRequest.getUserId());
+					book.setCheckedOutBy(userId);
 					this.repository.saveIf(book,ComparisonOperator.EQ, "checkedOutBy", Book.CHECKED_OUT_BY_NOBODY);
 					LOGGER.info("=========================== SAVING BOOK CHECKOUT REQUEST ===========================");
 				}
@@ -84,23 +79,27 @@ public class EventHandlers {
 	 *
 	 */
 	static class BookChangeEventHandler implements EventHandler{
-		private final ObjectMapper mapper;
-		public BookChangeEventHandler(final ObjectMapper mapper){
-			this.mapper = mapper;
-		}
+		public BookChangeEventHandler(){}
 		@Override
 		public void handle(Event event) {
-			final byte[] body = event.getBody();
+			
+			final EventData eventData = event.getEventData();
+			
 			try {
-				final Book book = this.mapper.readValue(body, Book.class);				
-				if(!Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
-					LOGGER.info("========================= Book has successfully been checked out ========================", book.toString());
-					LOGGER.info("**** received book change event {}", book.toString());
+
+				final Object bookId = eventData.getData().get("bookId");
+				final Object checkedOutBy = eventData.getData().get("checkedOutBy");
+				
+				if(!Book.CHECKED_OUT_BY_NOBODY.equals(checkedOutBy)){
+					LOGGER.info("========================= Book has successfully been checked out ========================");
+					LOGGER.info("**** received book change event: eventId: {}, eventCorrelationId:{},  bookId: {} checkedOutBy:{}", 
+							event.getId(), event.getCorrelationId(), bookId, checkedOutBy);
 				}
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
+		
 		@Override
 		public void handle(List<Event> events) {
 			for(Event event : events){

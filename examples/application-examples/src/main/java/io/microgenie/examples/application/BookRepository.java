@@ -1,8 +1,7 @@
 package io.microgenie.examples.application;
 
 import io.microgenie.application.database.EntityRepository;
-import io.microgenie.application.events.Event;
-import io.microgenie.application.events.Publisher;
+import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 /***
@@ -24,21 +21,34 @@ import com.google.common.base.Strings;
  */
 public class BookRepository extends EntityRepository<Book, String, String> {
 
+	public static final String TOPIC_BOOK_CHANGE = "BookChange";
+	
 	public static int DEFAULT_PAGE_LIMIT = 1000;
 
 	private final DynamoMapperRepository mapper;
-	private final Publisher publisher;
-	private final ObjectMapper objectMapper;
+	private final StateChangePublisher changePublisher;
 
-	public BookRepository(final DynamoMapperRepository mapper,
-			final ObjectMapper objectMapper, final Publisher publisher) {
+	
+	/***
+	 * Construct a book repository that publishes state changes
+	 * @param mapper
+	 * @param changePublisher
+	 */
+	public BookRepository(final DynamoMapperRepository mapper, final StateChangePublisher changePublisher) {
 		this.mapper = mapper;
-		this.objectMapper = objectMapper;
-		this.publisher = publisher;
+		this.changePublisher = changePublisher;
 	}
 
-	public List<Book> getBooksFromLibrary(final String libraryId,
-			final String isbn) {
+	
+	
+	
+	/***
+	 * Get all copies of a given ISBN from a specific library 
+	 * @param libraryId
+	 * @param isbn
+	 * @return bookList
+	 */
+	public List<Book> getBooksFromLibrary(final String libraryId, final String isbn) {
 		final Book book = new Book();
 		book.setLibraryId(libraryId);
 		book.setIsbn(isbn);
@@ -58,6 +68,13 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 		return books;
 	}
 
+	
+	
+	/***
+	 * Get Books by Id
+	 * @param isbn
+	 * @return bookList
+	 */
 	public List<Book> getBooksByIsbn(final String isbn) {
 		final Book book = new Book();
 		book.setIsbn(isbn);
@@ -66,22 +83,43 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 		return books;
 	}
 
+	
+	
+	
+	/***
+	 * Delete a book and publish a notification of deleted values
+	 */
 	@Override
 	public void delete(Book book) {
+		final Book existing = this.get(book.getBookId());
 		mapper.delete(book);
+		this.changePublisher.publishDeleted(book.getIsbn(), existing);
 	}
 
+	
+	
+	
+	/***
+	 * Save a book and publish a notification of modified values
+	 */
 	@Override
 	public void save(Book book) {
+		final Book existingBook = mapper.get(Book.class, book.getIsbn());
 		mapper.save(book);
-		this.publisher.submit(this.createEvent(book));
+		this.changePublisher.publishChanges(Book.class, book.getIsbn(), book, existingBook);
 	}
 
+
+	
+	/**
+	 * Save a list of books, TODO, add change notifications to bulk calls
+	 */
 	@Override
 	public void save(List<Book> books) {
 		mapper.save(books);
-		this.publisher.submitBatch(this.createEvents(books));
 	}
+	
+	
 
 	/**
 	 * Get a book from a library by bookId and LibraryId
@@ -91,6 +129,8 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 		return this.mapper.get(Book.class, id);
 	}
 
+	
+	
 	/** Get a page of books from a library **/
 	@Override
 	public List<Book> getList(String isbn) {
@@ -100,19 +140,31 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 				Book.GLOBAL_INDEX_ISBN, DEFAULT_PAGE_LIMIT);
 	}
 
+	
+	
+	
 	/** not implemented for book **/
 	@Override
 	protected Book get(String id, String libraryId) {
 		throw new RuntimeException("Not supported - for Book Repository");
 	}
 
+	
+	
+	/***
+	 * Get books that are checked out by the supplied user
+	 * @param user
+	 * @return checkedOutBooks
+	 */
 	public List<Book> getBooksCheckedOutByUser(String user) {
 		final Book book = new Book();
 		book.setCheckedOutBy(user);
 		return this.mapper.queryIndexHashKey(Book.class, book,
 				Book.GLOBAL_INDEX_CHECKED_OUT_BY, DEFAULT_PAGE_LIMIT);
 	}
+	
 
+	
 	/***
 	 * Save the book if the expected condition holds up, then fire a change
 	 * event
@@ -128,40 +180,9 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 		final ExpectedAttributeValue expected = new ExpectedAttributeValue();
 		expected.withComparisonOperator(operator);
 		expected.withValue(new AttributeValue(expectedValue));
-
+		
+		final Book existingBook = this.get(book.getBookId());
 		this.mapper.saveIf(book, null, attributeName, expected);
-		this.publisher.submit(this.createEvent(book));
-	}
-
-	/***
-	 * Create an event when a book changes
-	 * 
-	 * @param book
-	 * @return event
-	 */
-	private Event createEvent(Book book) {
-		try {
-			final byte[] eventData = this.objectMapper.writeValueAsBytes(book);
-			final Event event = new Event(
-					EventHandlers.TOPIC_BOOK_CHANGE_EVENT, book.getBookId(),
-					eventData);
-			return event;
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	/***
-	 * Create Events
-	 * 
-	 * @param books
-	 * @return events
-	 */
-	private List<Event> createEvents(List<Book> books) {
-		final List<Event> events = new ArrayList<Event>();
-		for (Book book : books) {
-			events.add(this.createEvent(book));
-		}
-		return events;
+		this.changePublisher.publishChanges(Book.class, book.getIsbn(), book, existingBook);
 	}
 }

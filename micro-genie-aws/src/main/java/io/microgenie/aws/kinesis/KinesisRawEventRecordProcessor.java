@@ -18,6 +18,7 @@ import com.amazonaws.services.kinesis.clientlibrary.interfaces.IRecordProcessorC
 import com.amazonaws.services.kinesis.clientlibrary.types.ShutdownReason;
 import com.amazonaws.services.kinesis.model.Record;
 import com.amazonaws.services.route53.model.ThrottlingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 
 /**
@@ -35,6 +36,8 @@ public class KinesisRawEventRecordProcessor  implements IRecordProcessor {
    private final String topic;
    private final EventHandler handler;
    
+   private final ObjectMapper mapper;
+   
    private String kinesisShardId;
    private long nextCheckpointTimeInMillis;		
    
@@ -42,10 +45,17 @@ public class KinesisRawEventRecordProcessor  implements IRecordProcessor {
    /**
     * Constructor.
     */
-   public KinesisRawEventRecordProcessor(final String topic, final EventHandler  handler) {
+   public KinesisRawEventRecordProcessor(final String topic, final EventHandler  handler, final ObjectMapper mapper) {
        this.topic = topic;
        this.handler = handler;
+       this.mapper = mapper;
    }
+   
+   
+
+	public String getTopic() {
+		return topic;
+	}
    
    
    
@@ -124,22 +134,16 @@ public class KinesisRawEventRecordProcessor  implements IRecordProcessor {
     * @return true - if successful, otherwise false
     */
 	private boolean processRecord(Record record) {
+		final ByteBuffer buffer = record.getData();
+		LOGGER.trace("sequence number: {}, partitionKey: {}, data:{}", record.getSequenceNumber(), record.getPartitionKey(), new String(buffer.array(), Charsets.UTF_8));
 		
-		try{
-			
-			final ByteBuffer buffer = record.getData();
-			final byte[] byteArray = buffer.array();
-			
-			LOGGER.trace("sequence number: {}, partitionKey: {}, data:{}", record.getSequenceNumber(), record.getPartitionKey(), new String(byteArray, Charsets.UTF_8));
-	         
-			final Event event = new Event(this.topic, record.getPartitionKey(), byteArray);
+		try {
+			Event event = this.mapper.readValue(buffer.array(), Event.class);
 			handler.handle(event);
-	        return true;			
-	        
-		}catch(Exception ex){
-			LOGGER.warn("Failed to process record with sequenceNumber: {} and partitionKey: {} - retries will be attempted", record.getSequenceNumber(), record.getPartitionKey());
+	        return true;
+		} catch (Exception ex) {
+			 LOGGER.error(ex.getMessage(), ex);
 		}
-		
 		return false;
 	}
 

@@ -3,15 +3,18 @@ package io.microgenie.examples.application;
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventFactory;
-import io.microgenie.application.events.Publisher;
+
+import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.application.events.Subscriber;
 import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.AwsConfig;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 import io.microgenie.examples.ExampleConfig;
+import io.microgenie.examples.application.EventHandlers.CheckoutBookRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -74,13 +78,13 @@ public class LibraryExample {
 		
 		
 		
-		try (ApplicationFactory app = new AwsApplicationFactory(aws)) {
+		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
 			
 			/** Create publisher  **/
-			final Publisher publisher = app.events().createPublisher(EventHandlers.DEFAULT_CLIENT_ID);
+			final StateChangePublisher publisher = app.events().createChangePublisher(EventHandlers.DEFAULT_CLIENT_ID);
 			
 			LOGGER.info("initializing book repository. This will create tables if they do not exist");
-			app.database().registerRepo(Book.class, new BookRepository(mapperRepository, MAPPER, publisher));
+			app.database().registerRepo(Book.class, new BookRepository(mapperRepository, publisher));
 			LOGGER.info("Executing library examples.....");
 
 			
@@ -123,15 +127,17 @@ public class LibraryExample {
 	 */
 	private static void subscribeToEvents(final EventFactory events, final BookRepository bookRepository, final String clientId) {
 		final Subscriber checkoutRequestSubscription = events.createSubscriber(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, clientId);
-		checkoutRequestSubscription.subscribe(new EventHandlers.CheckOutRequestEventHandler(MAPPER, bookRepository));
+		checkoutRequestSubscription.subscribe(new EventHandlers.CheckOutRequestEventHandler(bookRepository));
 		final Subscriber bookCheckedOutSubscription = events.createSubscriber(EventHandlers.TOPIC_BOOK_CHANGE_EVENT, clientId);
-		bookCheckedOutSubscription.subscribe(new EventHandlers.BookChangeEventHandler(MAPPER));
+		bookCheckedOutSubscription.subscribe(new EventHandlers.BookChangeEventHandler());
 	}
 
 
 
 	
-
+	private static final TypeReference<Map<String,Object>> TYPE_REFERENCE_MAP = new TypeReference<Map<String,Object>>() {
+	};
+	
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	
 	/***
@@ -146,9 +152,10 @@ public class LibraryExample {
 		final List<Book> books  = repository.getBooksFromLibrary(library, isbn);
 		for(Book book : books){
 			if(Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
-				final byte[] eventData = MAPPER.writeValueAsBytes(new EventHandlers.CheckoutBookRequest(book.getBookId(), USER));
-				final Event event = new Event(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, isbn, eventData);
-				events.publish(EventHandlers.DEFAULT_CLIENT_ID,event);
+				CheckoutBookRequest checkoutRequest = new EventHandlers.CheckoutBookRequest(book.getBookId(), USER);
+				final Map<String, Object> data = MAPPER.convertValue(checkoutRequest, TYPE_REFERENCE_MAP);				
+				final Event event = Event.create(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, isbn, data);
+				events.publish(EventHandlers.DEFAULT_CLIENT_ID, event);
 				return;
 			}
 		}
@@ -344,4 +351,6 @@ public class LibraryExample {
 		LOGGER.info("Completed saving books");
 		return books;
 	}
+	
+	
 }

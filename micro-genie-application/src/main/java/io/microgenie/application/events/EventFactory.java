@@ -11,32 +11,34 @@ import java.util.List;
  */
 public abstract class EventFactory implements Closeable {
 
+
 	/***
 	 * Constructor
 	 */
 	public EventFactory(){}
 	
-	
-	//public abstract void initialize();
-	
+
 	public abstract void publish(final Event event);
 	public abstract void publish(final List<Event> events);
 	
 	public abstract void publish(final String clientId, final Event event);
 	public abstract void publish(final String clientId, final List<Event> events);
 
-	
 	public abstract Publisher createPublisher(final String clientId);
 	public abstract Subscriber createSubscriber(final String topic, final String clientId);
 	
 	
-	public abstract void subcribe(final String topic, final String clientId, EventHandler handler);
+	public abstract StateChangePublisher createChangePublisher(String clientId);
 	
-	/**
-	 * Creates a subscription command
-	 * @param topic - The topic to subscribe to
-	 * @param properties - The Properties to initialize the event subscriber
+	/***
+	 * Subscribe to the given topic, providing an event handler that will process all
+	 * consumed events for this Subscriber
+	 * 
+	 * @param topic
+	 * @param clientId
+	 * @param handler
 	 */
+	public abstract void subcribe(final String topic, final String clientId, EventHandler handler);
 	
 
 	
