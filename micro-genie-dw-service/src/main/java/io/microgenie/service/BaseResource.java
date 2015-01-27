@@ -5,7 +5,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import com.wordnik.swagger.annotations.ApiModel;
+//import com.wordnik.swagger.annotations.ApiModel;
 
 
 /**
@@ -30,7 +30,7 @@ public abstract class BaseResource {
 	
 	
 	
-	@ApiModel(value="Api Error", description="An Api Error Response")
+	//@ApiModel(value="Api Error", description="An Api Error Response")
 	public static class ApiError{
 		private String message;
 		private String description;

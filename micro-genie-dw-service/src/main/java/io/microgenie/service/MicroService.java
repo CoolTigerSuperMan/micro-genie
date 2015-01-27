@@ -5,7 +5,7 @@ import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerDropwizard;
+//import io.federecio.dropwizard.swagger.SwaggerDropwizard;
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.service.bundle.AwsInitBundle;
 import io.microgenie.service.bundle.PublishJsonSchemaBundle;
@@ -33,7 +33,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 public abstract class MicroService<T extends AppConfiguration> extends Application<T>{
 	
 	
-	private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
+	//private final SwaggerDropwizard swaggerDropwizard = new SwaggerDropwizard();
 	
 	protected abstract ApplicationFactory createApplicationFactory(final T configuration, final Environment environment);
 	
@@ -75,7 +75,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 	 */
 	@Override
 	public synchronized void initialize(Bootstrap<T> bootstrap) {
-	    swaggerDropwizard.onInitialize(bootstrap);
+	   // swaggerDropwizard.onInitialize(bootstrap);
 		bootstrap.addBundle(new AwsInitBundle());
 		bootstrap.addBundle(new PublishJsonSchemaBundle());
 	    this.bootstrap(bootstrap);
@@ -111,7 +111,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 		this.registerResources(appFactory, configuration, environment.jersey());
 
         /** Configure API documentation **/
-        this.swaggerDropwizard.onRun(configuration, environment, configuration.getHost(), configuration.getPort());
+       // this.swaggerDropwizard.onRun(configuration, environment, configuration.getHost(), configuration.getPort());
         
         /** register the Health Check API endpoint **/
         environment.jersey().register(new HealthCheckResource(environment.healthChecks()));
