@@ -4,6 +4,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.microgenie.application.blob.FilePath;
+import io.microgenie.commands.util.CloseableUtil;
 import io.microgenie.service.AppConfiguration;
 import io.microgenie.service.AppConfiguration.SchemaContracts;
 
@@ -199,11 +200,15 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 					if(!Strings.isNullOrEmpty(json)){
 						byte[] bytes = json.getBytes(Charsets.UTF_8);
 						try(final InputStream inputStream = new ByteArrayInputStream(bytes)){
+							metadata.setContentLength(bytes.length);
+							
 							final PutObjectRequest putRequest = new PutObjectRequest(
 									this.path.getDrive(), 
 									this.fixPath(this.path.getPath(), pair.getModel()), inputStream, metadata);
 							
-							this.s3Client.putObject(putRequest);						
+							this.s3Client.putObject(putRequest);
+							CloseableUtil.closeQuietly(putRequest.getInputStream());
+							
 						}catch(Exception ex){
 							throw new RuntimeException(ex.getMessage(), ex);
 						}						
