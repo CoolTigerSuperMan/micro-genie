@@ -26,14 +26,10 @@
 
 
 		<!-- dropwizard -->
-		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
 		<io.dropwizard.metrics.version>3.1.0</io.dropwizard.metrics.version>
 
 
-		<!--  
-		<swagger-dropwizard.version>0.5.2</swagger-dropwizard.version>
-		<swagger-annotations.version>1.3.2</swagger-annotations.version>
-		-->
+		<!-- <swagger-dropwizard.version>0.5.2</swagger-dropwizard.version> <swagger-annotations.version>1.3.2</swagger-annotations.version> -->
 		<jjschema.version>0.6</jjschema.version>
 		<org.reflections>0.9.8</org.reflections>
 		<javax.ws.rs.version>2.0.1</javax.ws.rs.version>
@@ -55,6 +51,41 @@
 		<dependency>
 			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-application</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-dynamodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-kinesis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-sqs</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.argparse4j</groupId>
+			<artifactId>argparse4j</artifactId>
+			<version>0.4.4</version>
 		</dependency>
 
 
@@ -88,8 +119,14 @@
 			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-annotation</artifactId>
 		</dependency>
-
-
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-dynamodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+		</dependency>
 
 		<!-- miscellaneous -->
 		<dependency>
@@ -110,55 +147,21 @@
 		</dependency>
 
 
-		<!-- Swagger Documentation
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger-annotations.version}</version>
-		</dependency>
+		<!-- Swagger Documentation <dependency> <groupId>com.wordnik</groupId> 
+			<artifactId>swagger-annotations</artifactId> <version>${swagger-annotations.version}</version> 
+			</dependency> <dependency> <groupId>io.federecio</groupId> <artifactId>dropwizard-swagger</artifactId> 
+			<version>${swagger-dropwizard.version}</version> <exclusions> <exclusion> 
+			<groupId>io.dropwizard</groupId> <artifactId>dropwizard-views-freemarker</artifactId> 
+			</exclusion> <exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-core</artifactId> 
+			</exclusion> <exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-views</artifactId> 
+			</exclusion> <exclusion> <artifactId>jsr311-api</artifactId> <groupId>javax.ws.rs</groupId> 
+			</exclusion> <exclusion> <groupId>org.javassist</groupId> <artifactId>javassist</artifactId> 
+			</exclusion> <exclusion> <groupId>com.fasterxml.jackson.module</groupId> 
+			<artifactId>jackson-module-jsonSchema</artifactId> </exclusion> <exclusion> 
+			<groupId>xml-apis</groupId> <artifactId>xml-apis</artifactId> </exclusion> 
+			<exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-assets</artifactId> 
+			</exclusion> </exclusions> </dependency> -->
 
-
-		<dependency>
-			<groupId>io.federecio</groupId>
-			<artifactId>dropwizard-swagger</artifactId>
-			<version>${swagger-dropwizard.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>io.dropwizard</groupId>
-					<artifactId>dropwizard-views-freemarker</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.dropwizard</groupId>
-					<artifactId>dropwizard-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.dropwizard</groupId>
-					<artifactId>dropwizard-views</artifactId>
-				</exclusion>
-				<exclusion>
-					<artifactId>jsr311-api</artifactId>
-					<groupId>javax.ws.rs</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.javassist</groupId>
-					<artifactId>javassist</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.fasterxml.jackson.module</groupId>
-					<artifactId>jackson-module-jsonSchema</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.dropwizard</groupId>
-					<artifactId>dropwizard-assets</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- 		-->
- 		
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -180,13 +183,8 @@
 		</dependency>
 
 
-		<!-- Test Dependencies -->
-		<dependency>
-			<groupId>io.dropwizard</groupId>
-			<artifactId>dropwizard-testing</artifactId>
-			<scope>test</scope>
-		</dependency>
-
+		<!-- Test Dependencies <dependency> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-testing</artifactId> 
+			<scope>test</scope> </dependency> -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>

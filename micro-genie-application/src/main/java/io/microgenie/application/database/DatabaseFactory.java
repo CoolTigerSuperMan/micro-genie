@@ -23,10 +23,6 @@ public abstract class DatabaseFactory implements Closeable {
 	public DatabaseFactory(){}
 
 	
-	//public abstract void initialize();
-	
-	
-	
 	@SuppressWarnings("unchecked")
 	public <T,R extends EntityRepository<T, ?, ?>> R repos(Class<T> clazz) {
 		final EntityRepository<?,?,?> repo =  repositories.get(clazz);

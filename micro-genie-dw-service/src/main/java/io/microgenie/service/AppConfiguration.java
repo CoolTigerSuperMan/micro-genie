@@ -109,11 +109,11 @@ public class AppConfiguration extends Configuration {
 	}
 
 
-	@JsonProperty("host")
+	@JsonProperty("commands")
 	public CommandConfiguration getCommands() {
 		return commands;
 	}
-	@JsonProperty("host")
+	@JsonProperty("commands")
 	public void setCommands(CommandConfiguration commands) {
 		this.commands = commands;
 	}

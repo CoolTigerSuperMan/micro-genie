@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CommandConfiguration extends Configuration{
 
 	@JsonProperty(value="kinesisConsumer")
-	private KinesisConsumer kinesisConsumer;
+	private KinesisConsumerConfig kinesisConsumer;
 	
-	public static class KinesisConsumer{
+	public static class KinesisConsumerConfig{
 		private String topic;
 		private String clientId;
 		@JsonProperty(value="topic")
@@ -31,11 +31,11 @@ public class CommandConfiguration extends Configuration{
 	}
 
 	@JsonProperty(value="kinesisConsumer")
-	public KinesisConsumer getKinesisConsumer() {
+	public KinesisConsumerConfig getKinesisConsumer() {
 		return kinesisConsumer;
 	}
 	@JsonProperty(value="kinesisConsumer")
-	public void setKinesisConsumer(KinesisConsumer kinesisConsumer) {
+	public void setKinesisConsumer(KinesisConsumerConfig kinesisConsumer) {
 		this.kinesisConsumer = kinesisConsumer;
 	}
 }

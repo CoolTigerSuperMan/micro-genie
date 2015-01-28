@@ -16,12 +16,10 @@
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
 
 
-		<jersey.version>2.13</jersey.version>
-		<joda.version>2.7</joda.version>
-		<jackson.api.version>2.4.0</jackson.api.version>
-		<com.fasterxml>2.4.3</com.fasterxml>
-
-		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
+		<io.dropwizard.version>0.8.0-rc2</io.dropwizard.version>
+		<joda.version>2.5</joda.version>
+		<jackson.api.version>2.5.0</jackson.api.version>
+		<com.fasterxml>2.5.0</com.fasterxml>
 
 		<commons-io.version>2.4</commons-io.version>
 		<guava.version>18.0</guava.version>
@@ -32,6 +30,8 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<logback.version>1.1.2</logback.version>
 
+
+		<aws.sdk.version>1.9.7</aws.sdk.version>
 
 		<assertj.version>1.7.0</assertj.version>
 		<com.google.code.findbugs.version>3.0.0</com.google.code.findbugs.version>
@@ -196,6 +196,39 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>${common-lang3.version}</version>
 			</dependency>
+
+
+			<!-- aws -->
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-kinesis</artifactId>
+				<version>${aws.sdk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-sqs</artifactId>
+				<version>${aws.sdk.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-s3</artifactId>
+				<version>${aws.sdk.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amazonaws</groupId>
+				<artifactId>aws-java-sdk-dynamodb</artifactId>
+				<version>${aws.sdk.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${org.mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+
 
 			<!-- <dependency> <groupId>org.glassfish.jersey.bundles.repackaged</groupId> 
 				<artifactId>jersey-guava</artifactId> <version>${jersey.guava.version}</version> 
@@ -520,25 +553,25 @@
 					</archive>
 				</configuration>
 			</plugin>
-			
-			
-			 <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <formats>
-                    <format>xml</format>
-                    <format>html</format>
-                    </formats>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>2.2.0</version>
-            </plugin>
+
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<formats>
+						<format>xml</format>
+						<format>html</format>
+					</formats>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>2.2.0</version>
+			</plugin>
 		</plugins>
 	</build>
 
