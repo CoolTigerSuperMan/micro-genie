@@ -5,6 +5,7 @@ import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.StateChangeConfiguration;
 import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.AwsConfig;
+import io.microgenie.service.commands.CommandConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,9 @@ public class AppConfiguration extends Configuration {
 	private int port;
 	private SchemaContracts schemaContracts;
 	private StateChangeConfiguration stateChanges;
+	
+	
+	private CommandConfiguration commands;
 	
 	private String dateFormatPattern = ISO_8601_DATE_FORMAT;
 	private ApplicationFactory appFactory;
@@ -102,6 +106,16 @@ public class AppConfiguration extends Configuration {
 	@JsonProperty("stateChanges")
 	public void setStateChanges(StateChangeConfiguration stateChanges) {
 		this.stateChanges = stateChanges;
+	}
+
+
+	@JsonProperty("host")
+	public CommandConfiguration getCommands() {
+		return commands;
+	}
+	@JsonProperty("host")
+	public void setCommands(CommandConfiguration commands) {
+		this.commands = commands;
 	}
 
 

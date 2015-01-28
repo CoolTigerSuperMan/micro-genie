@@ -3,8 +3,8 @@ package io.microgenie.aws.sqs;
 import io.microgenie.application.queue.Consumer;
 import io.microgenie.application.queue.Message;
 import io.microgenie.application.queue.MessageHandler;
+import io.microgenie.application.util.CollectionUtil;
 import io.microgenie.aws.SqsConsumerConfig;
-import io.microgenie.commands.util.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,8 @@
 package io.microgenie.application.http;
 
-import io.microgenie.commands.util.CloseableUtil;
+
+
+import io.microgenie.application.util.CloseableUtil;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

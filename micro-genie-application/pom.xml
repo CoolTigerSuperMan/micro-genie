@@ -15,16 +15,6 @@
 	</properties>
 
 	<dependencies>
-
-
-		<dependency>
-			<groupId>io.microgenie</groupId>
-			<artifactId>micro-genie-commands</artifactId>
-			<version>${project.version}</version>
-
-		</dependency>
-
-
 		<dependency>
 			<groupId>com.github.fge</groupId>
 			<artifactId>json-patch</artifactId>

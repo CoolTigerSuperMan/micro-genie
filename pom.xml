@@ -13,7 +13,6 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
 
 
@@ -148,8 +147,6 @@
 				<artifactId>metrics-core</artifactId>
 				<version>${io.dropwizard.metrics.version}</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>io.dropwizard</groupId>
 				<artifactId>dropwizard-core</artifactId>

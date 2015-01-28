@@ -4,7 +4,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.microgenie.application.blob.FilePath;
-import io.microgenie.commands.util.CloseableUtil;
+import io.microgenie.application.util.CloseableUtil;
 import io.microgenie.service.AppConfiguration;
 import io.microgenie.service.AppConfiguration.SchemaContracts;
 

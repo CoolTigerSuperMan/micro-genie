@@ -22,17 +22,8 @@
 		<!-- micro-genie dependencies -->
 		<dependency>
 			<groupId>io.microgenie</groupId>
-			<artifactId>micro-genie-commands</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-application</artifactId>
-			<version>${project.version}</version>
 		</dependency>
-
-
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>

@@ -7,7 +7,7 @@ import io.microgenie.application.blob.FileStoreFactory;
 import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.queue.QueueFactory;
-import io.microgenie.commands.util.CloseableUtil;
+import io.microgenie.application.util.CloseableUtil;
 
 import java.io.IOException;
 

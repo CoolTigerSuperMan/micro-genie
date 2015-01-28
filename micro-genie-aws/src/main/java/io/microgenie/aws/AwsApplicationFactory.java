@@ -5,11 +5,11 @@ import io.microgenie.application.blob.FileStoreFactory;
 import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.queue.QueueFactory;
+import io.microgenie.application.util.CloseableUtil;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;
 import io.microgenie.aws.sqs.SqsFactory;
-import io.microgenie.commands.util.CloseableUtil;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -115,12 +115,6 @@ public class AwsApplicationFactory extends ApplicationFactory {
 		return (T)databases;
 	}
 
-//	@Override
-//	public ApplicationCommandFactory commands() {
-//		return commands;
-//	}
-
-
 	@Override
 	public void close() {
 
@@ -128,10 +122,6 @@ public class AwsApplicationFactory extends ApplicationFactory {
 		CloseableUtil.closeQuietly(files);
 		CloseableUtil.closeQuietly(queues);
 		CloseableUtil.closeQuietly(events);
-		
-//		CloseableUtil.closeQuietly(http);
-//		CloseableUtil.closeQuietly(commands);
-		
 		if (this.kinesisClient != null) {
 			this.kinesisClient.shutdown();
 		}

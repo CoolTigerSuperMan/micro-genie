@@ -1,6 +1,6 @@
 package io.microgenie.service.bundle;
 
-import io.microgenie.commands.util.CloseableUtil;
+import io.microgenie.application.util.CloseableUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
