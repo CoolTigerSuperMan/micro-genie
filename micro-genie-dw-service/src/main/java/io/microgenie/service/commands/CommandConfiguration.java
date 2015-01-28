@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CommandConfiguration extends Configuration{
 
-	@JsonProperty(value="kinesisConsumer")
+	@JsonProperty(value="consume")
 	private KinesisConsumerConfig kinesisConsumer;
 	
 	public static class KinesisConsumerConfig{

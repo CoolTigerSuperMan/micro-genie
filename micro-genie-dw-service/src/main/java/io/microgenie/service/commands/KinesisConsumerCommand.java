@@ -33,7 +33,7 @@ public class KinesisConsumerCommand extends ConfiguredCommand<AppConfiguration> 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(KinesisConsumerCommand.class);
 	public KinesisConsumerCommand() {
-		this("kinesisconsumer", "A command to consume from a kinesis topic");
+		this("consume", "A command to consume from a kinesis topic");
 	}
 	protected KinesisConsumerCommand(String name, String description) {
 		super(name, description);
