@@ -19,17 +19,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.codahale.metrics.annotation.Timed;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponses;
-import com.wordnik.swagger.annotations.ApiResponse;
+
 
 
 /***
  * @author shawn
  */
 @Path(value="books")
-@Api(value="books", description="Query, Create, Update, Read, Delete Books", consumes="application/json", produces="application/json")
 @Consumes(value="application/json")
 @Produces(value="application/json")
 public class BookResource extends BaseResource{
@@ -55,8 +51,6 @@ public class BookResource extends BaseResource{
 	*/
 	@Timed
 	@GET
-	@ApiOperation(value="Query Books by defined query filters",  response=Book[].class, nickname="Book")
-	@ApiResponses(value = {@ApiResponse(code=200, message = "Success", response=Book.class), @ApiResponse(code=404, message = "Book Not Found", response=ApiError.class)})
 	public List<Book> query(@QueryParam("isbn") String isbn){
 		final List<Book> books = bookRepository.getBooksByIsbn(isbn);
 		return books;
@@ -73,8 +67,6 @@ public class BookResource extends BaseResource{
 	@Timed
 	@GET
 	@Path(value = "/{id}")
-	@ApiOperation(value="Get a Book by Id", response=Book.class, nickname="Book")
-	@ApiResponses(value = {@ApiResponse(code=200, message = "Success", response=Book.class), @ApiResponse(code=404, message = "Book Not Found", response=ApiError.class)})
 	public Book get(@PathParam("id") String id){
 		final Book book = bookRepository.get(id);
 		super.throwNotFoundIfNull(book, String.format("UserId: %s not found", id));
@@ -93,9 +85,6 @@ public class BookResource extends BaseResource{
 	@Timed
 	@PUT
 	@Path(value = "/{id}")
-	@ApiOperation(value="Update a Book by Id", response=Book.class, nickname="Book")
-	@ApiResponses(value = {@ApiResponse(code=200, message = "Success", response=Book.class),
-			 			   @ApiResponse(code=404, message = "Book Not Found", response=ApiError.class)})
 	public Book update(@PathParam("id") String id, Book book){
 		book.setBookId(id);
 		bookRepository.save(book);
@@ -112,8 +101,6 @@ public class BookResource extends BaseResource{
 	*/
 	@Timed
 	@POST
-	@ApiOperation(value="Create a new Book", response=Book.class, nickname="Book")
-	@ApiResponses(value = { @ApiResponse(code=200, message = "Success", response=Book.class)})
 	public Book create(Book book){
 		book.setBookId(UUID.randomUUID().toString());
 		bookRepository.save(book);
@@ -132,7 +119,6 @@ public class BookResource extends BaseResource{
 	@Timed
 	@DELETE
 	@Path(value = "/{id}")
-	@ApiOperation(value="Delete a Book")
 	public Response delete(@PathParam("id") String id){
 		bookRepository.delete(new Book());
 		return Response.status(Status.OK).build();

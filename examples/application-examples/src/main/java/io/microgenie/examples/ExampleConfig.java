@@ -1,5 +1,7 @@
 package io.microgenie.examples;
 
+import io.microgenie.application.queue.Message;
+import io.microgenie.application.queue.MessageHandler;
 import io.microgenie.aws.AwsConfig;
 import io.microgenie.aws.DynamoDbConfig;
 import io.microgenie.aws.KinesisConfig;
@@ -8,7 +10,6 @@ import io.microgenie.aws.SqsConfig;
 import io.microgenie.aws.SqsConsumerConfig;
 import io.microgenie.aws.SqsQueueConfig;
 import io.microgenie.examples.application.EventHandlers;
-import io.microgenie.examples.commands.CommandExamples.OutputMessageHandler;
 import io.microgenie.examples.util.ExampleProperties;
 
 import java.io.IOException;
@@ -16,12 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 
 public class ExampleConfig {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExampleConfig.class);
 	
 	public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	
@@ -77,8 +82,18 @@ public class ExampleConfig {
 		final SqsConsumerConfig consumerConfig = new SqsConsumerConfig();
 		consumerConfig.setQueue(fileSavedQueueName);
 		consumerConfig.setThreads(3);
-		consumerConfig.setHandlerInstance(new OutputMessageHandler());
-		
+		consumerConfig.setHandlerInstance(new MessageHandler(){
+			@Override
+			public void handle(Message message) {
+				LOGGER.info("consumed message queue: {} - id: {} body:{}", message.getQueue(), message.getId(), message.getBody());
+			}
+			@Override
+			public void handleBatch(List<Message> messages) {
+				for(Message message : messages){
+					handle(message);
+				}
+			}
+		});
 		final SqsConfig sqs = new SqsConfig();
 		sqs.getQueues().add(queue);
 		sqs.getConsumers().add(consumerConfig);

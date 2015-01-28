@@ -15,10 +15,9 @@
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
 		
 		
-		<!-- application maven dependecy versions-->
-		<io.microgenie>0.0.1-SNAPSHOT</io.microgenie>
+		<!-- application maven dependency versions-->
 		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
-		<micro-genie.version>0.0.1-SNAPSHOT</micro-genie.version>
+		<micro-genie.version>0.0.3-SNAPSHOT</micro-genie.version>
 
 		<metrics3.version>3.1.0</metrics3.version>
 		<jersey.version>2.13</jersey.version>
@@ -45,13 +44,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.microgenie</groupId>
-			<artifactId>micro-genie-commands</artifactId>
-			<version>${micro-genie.version}</version>
-		</dependency>
-
-
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${com.fasterxml}</version>
@@ -74,7 +66,7 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
-			<!-- Use the explicitly set slf4j-api versioninstead -->
+			<!-- Use the explicitly set slf4j-api version instead -->
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
