@@ -13,9 +13,9 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-		
-		
-		<!-- application maven dependency versions-->
+
+
+		<!-- application maven dependency versions -->
 		<io.dropwizard.version>0.8.0-rc1</io.dropwizard.version>
 		<micro-genie.version>0.0.3-SNAPSHOT</micro-genie.version>
 
@@ -29,6 +29,7 @@
 		<logback.version>1.1.2</logback.version>
 		<guava.version>18.0</guava.version>
 
+		<java.assist.version>3.18.0-GA</java.assist.version>
 
 		<assertj.version>1.7.0</assertj.version>
 		<org.apache.http.client>4.3.6</org.apache.http.client>
@@ -41,6 +42,13 @@
 			<groupId>io.microgenie</groupId>
 			<artifactId>micro-genie-aws</artifactId>
 			<version>${micro-genie.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>${java.assist.version}</version>
 		</dependency>
 
 		<dependency>

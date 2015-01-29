@@ -9,6 +9,7 @@ import io.microgenie.application.events.Subscriber;
 import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.AwsConfig;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
+import io.microgenie.aws.kinesis.KinesisAdmin;
 import io.microgenie.examples.ExampleConfig;
 import io.microgenie.examples.application.EventHandlers.CheckoutBookRequest;
 
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,12 +73,13 @@ public class LibraryExample {
 	 */
 	public static void main(String[] args ) throws IOException, InterruptedException{
 
-		
-		
 		final AwsConfig aws  = ExampleConfig.createConfigForDatabaseExamples();
 		final DynamoMapperRepository mapperRepository = DynamoMapperRepository.create(new AmazonDynamoDBClient());
 		
-		
+		/** ensure topics are created **/
+		final KinesisAdmin admin = new KinesisAdmin(new AmazonKinesisClient());
+		admin.createTopic(EventHandlers.TOPIC_BOOK_CHANGE_EVENT, EventHandlers.TOPIC_BOOK_CHANGE_EVENT_SHARDS);
+		admin.createTopic(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS);
 		
 		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
 			

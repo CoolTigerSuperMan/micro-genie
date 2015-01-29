@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
  * @author shawn
  *
  */
-public class DynamoMapperRepository {
+public class DynamoMapperRepository  {
 
 
 	private final DynamoDBMapper mapper;

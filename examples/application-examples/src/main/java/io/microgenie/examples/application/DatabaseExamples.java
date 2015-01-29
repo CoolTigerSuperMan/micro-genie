@@ -1,12 +1,8 @@
 package io.microgenie.examples.application;
 
-import io.microgenie.application.ApplicationFactory;
-import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.database.EntityRepository;
-import io.microgenie.aws.AwsApplicationFactory;
-import io.microgenie.aws.AwsConfig;
+import io.microgenie.aws.dynamodb.DynamoAdmin;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
-import io.microgenie.examples.ExampleConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +29,8 @@ public class DatabaseExamples {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseExamples.class);
 	
-	
+	/** The amount of time dynamo admin will block waiting on tables to be created **/
+	private static final long TABLE_CREATION_BLOCK_TIME_SECONDS = 30L;
 	
 	/****
 	 * Execute example database calls using the dynamodb database factory
@@ -42,32 +39,29 @@ public class DatabaseExamples {
 	 */
 	public static void main(String[] args ) throws IOException{
 
-		final AwsConfig aws  = ExampleConfig.createConfigForDatabaseExamples();
+		final AmazonDynamoDBClient client= new AmazonDynamoDBClient();
+
 		
+		/** Create Tables by scanning for eligible models **/
+		final DynamoAdmin admin = new DynamoAdmin(client);
+		admin.scan(Book.class.getPackage().getName(), true, TABLE_CREATION_BLOCK_TIME_SECONDS);
+
 		
-		final DynamoMapperRepository mapperRepository = DynamoMapperRepository.create(new AmazonDynamoDBClient());
-		
-		
-		/*** TODO - Need to add the 'wait until table creation complete' logic **/
-		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
+		final BookRepository bookRepository = new BookRepository(DynamoMapperRepository.create(client));
 			
-			LOGGER.info("initializing book repository. This will create tables if they do not exist");
-			app.database().registerRepo(Book.class, new BookRepository(mapperRepository));
-			
-			LOGGER.info("initialization of book repository complete");
+		LOGGER.info("initialization of book repository complete");
 
 			
-			LOGGER.info("Executing create, read, update and delete examples.....");
-			final Book createdBook = DatabaseExamples.create(app.database());
-			final Book retrievedBook = DatabaseExamples.read(app.database(), createdBook.getLibraryId(), createdBook.getBookId());
-			final Book updatedBook = DatabaseExamples.update(app.database(), retrievedBook);
+		LOGGER.info("Executing create, read, update and delete examples.....");
+		final Book createdBook = DatabaseExamples.create(bookRepository);
+		final Book retrievedBook = DatabaseExamples.read(bookRepository, createdBook.getLibraryId(), createdBook.getBookId());
+		final Book updatedBook = DatabaseExamples.update(bookRepository, retrievedBook);
 			
-			/** Delete the updated book **/
-			DatabaseExamples.delete(app.database(), updatedBook);
-			LOGGER.info("Execution of examples complete, shuting down now");
-		}
-		
-		LOGGER.info("Shutdown complete for all resources...exiting now");
+		/** Delete the updated book **/
+		DatabaseExamples.delete(bookRepository, updatedBook);
+
+		LOGGER.info("Execution of examples complete, shuting down now");
+
 	}
 	
 
@@ -78,11 +72,11 @@ public class DatabaseExamples {
 	 * @param database
 	 * @return book
 	 */
-	private static Book create(final DatabaseFactory database) {
+	private static Book create(final BookRepository database) {
 
 		final String libraryId = UUID.randomUUID().toString();
 		final String bookId = UUID.randomUUID().toString();
-		final BookRepository bookRepository = database.repos(Book.class);
+		
 
 		final Book book = new Book();
 		book.setLibraryId(libraryId);
@@ -94,7 +88,7 @@ public class DatabaseExamples {
 		
 		LOGGER.info("saving book title {} for libraryId: {} with bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
 		
-		bookRepository.save(book);
+		database.save(book);
 		
 		LOGGER.info("successfully saved book title {} for libraryId: {} with bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
 		
@@ -111,12 +105,11 @@ public class DatabaseExamples {
 	 * @param bookId
 	 * @return book
 	 */
-	private static Book read(final DatabaseFactory database, String libraryId, String bookId) {
+	private static Book read(final BookRepository database, String libraryId, String bookId) {
 		
 		LOGGER.info("attempting to read book with libraryId: {} and bookId: {}", libraryId, bookId);
 		
-		final BookRepository bookRepo = database.repos(Book.class);
-		final Book book = bookRepo.get(libraryId, bookId);
+		final Book book = database.get(libraryId, bookId);
 		
 		if(book!=null){
 			LOGGER.info("successfully read book with libraryId: {} and bookId: {}", libraryId, bookId);	
@@ -138,14 +131,13 @@ public class DatabaseExamples {
 	 * @param retrievedBook
 	 * @return updatedBook
 	 */
-	private static Book update(final DatabaseFactory database, Book book) {
+	private static Book update(final BookRepository database, Book book) {
 
 		LOGGER.info("attempting to update book for libraryId: {} bookId: {} with title: {}", book.getLibraryId(), book.getBookId(), book.getTitle());	
 		
 		final String updatedTitle = book.getTitle() + " -  Updated";
 		book.setTitle(updatedTitle);
-		final BookRepository bookRepository = database.repos(Book.class);
-		bookRepository.save(book);
+		database.save(book);
 		
 		LOGGER.info("successfully updated book title to: '{}' for libraryId: {} bookId: {}", book.getTitle(), book.getLibraryId(), book.getBookId());
 		
@@ -162,13 +154,10 @@ public class DatabaseExamples {
 	 * @param database
 	 * @param updatedBook
 	 */
-	private static void delete(final DatabaseFactory database, final Book updatedBook) {
-		final BookRepository bookRepository = database.repos(Book.class);
+	private static void delete(final BookRepository database, final Book updatedBook) {
 		
 		LOGGER.info("attempting to delete book for libraryId: {} bookId: {}", updatedBook.getLibraryId(), updatedBook.getBookId());
-		
-		bookRepository.delete(updatedBook);
-		
+		database.delete(updatedBook);		
 		LOGGER.info("successfully deleted book for libraryId: {} bookId: {}", updatedBook.getLibraryId(), updatedBook.getBookId());
 	}
 

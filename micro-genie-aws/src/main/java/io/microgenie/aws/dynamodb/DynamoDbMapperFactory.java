@@ -24,8 +24,6 @@ public class DynamoDbMapperFactory extends DatabaseFactory {
 
 	
 	private final DynamoMapperRepository mapperRepo;
-//	private final DynamoAdmin admin;
-//	private final String packageScanPrefix;
 	
 	
 	/***
@@ -38,20 +36,8 @@ public class DynamoDbMapperFactory extends DatabaseFactory {
 	 */
 	public DynamoDbMapperFactory(final AmazonDynamoDBClient client) {
 		this.mapperRepo = DynamoMapperRepository.create(client);
-//		this.packageScanPrefix = packageScanPrefix;
-//		this.admin = new DynamoAdmin(client);
 	}
 
-	
-	
-	/***
-	 * The causes the models to be scanned for annotated classes that model dynamodb tables for object persistence
-	 */
-//	@Override
-//	public void initialize() {
-//		//this.admin.scan(this.packageScanPrefix);
-//	}
-	
 	
 	
 	public DynamoMapperRepository getMapperRepository(){
