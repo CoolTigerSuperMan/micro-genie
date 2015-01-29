@@ -125,9 +125,9 @@ public class LibraryExample {
 	 * @param bookRepository
 	 */
 	private static void subscribeToEvents(final EventFactory events, final BookRepository bookRepository, final String clientId) {
-		final Subscriber checkoutRequestSubscription = events.createSubscriber(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, clientId);
+		final Subscriber checkoutRequestSubscription = events.createSubscriber(clientId, EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST);
 		checkoutRequestSubscription.subscribe(new EventHandlers.CheckOutRequestEventHandler(bookRepository));
-		final Subscriber bookCheckedOutSubscription = events.createSubscriber(EventHandlers.TOPIC_BOOK_CHANGE_EVENT, clientId);
+		final Subscriber bookCheckedOutSubscription = events.createSubscriber(clientId, EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
 		bookCheckedOutSubscription.subscribe(new EventHandlers.BookChangeEventHandler());
 	}
 

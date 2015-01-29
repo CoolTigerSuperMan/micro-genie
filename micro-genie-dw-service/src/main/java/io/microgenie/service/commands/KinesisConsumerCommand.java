@@ -50,23 +50,29 @@ public class KinesisConsumerCommand extends ConfiguredCommand<AppConfiguration> 
 		Preconditions.checkNotNull(configuration.getCommands().getKinesisConsumer().getClientId(), "Kinesis consumer client id is required");
 		Preconditions.checkNotNull(configuration.getCommands().getKinesisConsumer().getTopic(), "Kinesis consumer topic is required in your yaml configuration file");
 
+		final KinesisConsumerConfig config = configuration.getCommands().getKinesisConsumer();
+		
 		final AmazonKinesisClient kinesis = new AmazonKinesisClient();
 		final AmazonDynamoDBClient dynamodb = new AmazonDynamoDBClient();
 		final AmazonCloudWatchClient cloudwatch = new AmazonCloudWatchClient();
 		
 		/** start the kinesis consumer **/
-		 
 		try(EventFactory events = new KinesisEventFactory(kinesis, dynamodb, cloudwatch, bootstrap.getObjectMapper())){
 			
 			final KinesisConsumerConfig kinesisConfig = configuration.getCommands().getKinesisConsumer();
-			final TopicConsumer consumer = new TopicConsumer(events.createSubscriber(kinesisConfig.getTopic(), kinesisConfig.getClientId()), bootstrap.getObjectMapper());
+			LOGGER.info("configuring kinesis consumer for clientId: {} - topicId: {}", config.getClientId(), config.getTopic());
+			
+			final TopicConsumer consumer = new TopicConsumer(events.createSubscriber(kinesisConfig.getClientId(), kinesisConfig.getTopic()), bootstrap.getObjectMapper());
 			final Thread thread = new Thread(consumer);
+			
+			LOGGER.info("starting consumer for client: {} - topic: {}", config.getClientId(), config.getTopic());
 			thread.start();
 			thread.join();	
 			
 		}catch(Exception ex){
 			LOGGER.error(ex.getMessage(), ex);
 		}finally{
+			LOGGER.info("shutting down consumer - client: {} - topic: {}", config.getClientId(), config.getTopic());
 			kinesis.shutdown();
 			dynamodb.shutdown();
 			cloudwatch.shutdown();

@@ -88,7 +88,7 @@ public class KinesisEventFactory extends EventFactory {
 	 * Create subscriber if it has not already been created
 	 */
 	@Override
-	public synchronized  Subscriber createSubscriber(final String topic, final String clientId) {
+	public synchronized  Subscriber createSubscriber(final String clientId, final String topic) {
 		
 		final String clientIdToUse = Strings.isNullOrEmpty(clientId)? DEFAULT_CLIENT_ID : clientId;
 		Subscriber subscriber = this.subscribers.get(topic);

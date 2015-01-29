@@ -29,12 +29,12 @@ public class StateChangePublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StateChangePublisher.class);
 	
 	/** default actions **/
-	public static final String DEFAULT_DATA_CHANGE_ACTION = "DataChange";
-	public static final String ADDED_ACTION = "Created";
+	public static final String CREATED_ACTION = "Created";
 	public static final String DELETED_ACTION = "Deleted";
 	public static final String MODIFIED_ACTION = "Updated";
 	
 	
+	/** json path fields **/
 	private static final String OP = "op";
 	private static final String PATH = "path";
 	private static final String VALUE = "value";
@@ -42,6 +42,7 @@ public class StateChangePublisher {
 	private static final String ADD = "add";
 	private static final String REMOVE = "remove";
 	private static final String REPLACE = "replace";
+	
 	
 	private final StateChangeConfiguration config;
 	private final Publisher publisher;
@@ -117,7 +118,7 @@ public class StateChangePublisher {
 	 * @return wasPublished - True if the item was published, otherwise false
 	 */
 	public boolean publishCreated(final String key, final Object submitted) {
-		return this.publishAction(submitted.getClass(), ADDED_ACTION, key, 
+		return this.publishAction(submitted.getClass(), CREATED_ACTION, key, 
 				Preconditions.checkNotNull(submitted, "unable to publish the created event for key: %s since submitted is null"));
 	}
 	
@@ -154,7 +155,7 @@ public class StateChangePublisher {
 	/***
 	 * Create and publish data changes as an event to the configured topic for all any interested consumers
 	 * 
-	 * @param clazz - The class used as a lookup for topic and event action configuration
+	 * @param clazz - The class is used as a lookup for topic and event action configuration
 	 * @param key
 	 * @param submitted
 	 * @param existing
@@ -169,19 +170,21 @@ public class StateChangePublisher {
 		
 		/** item was deleted **/
 		if (submitted == null){ 
-			event = this.createItemDeletedEvent(clazz, key, existing);
-
+			event = this.createItemChangeEvent(clazz, DELETED_ACTION, key, new HashMap<String, Object>(), existing);
 		/** item was created **/
 		}else if (existing == null){
-			event = this.createItemCreatedEvent(clazz, key, submitted);
-		
+			event = this.createItemChangeEvent(clazz, CREATED_ACTION, key, submitted, new HashMap<String, Object>());
 		/** item was modified **/
 		}else {
-			event = this.createItemModifiedEvent(clazz, MODIFIED_ACTION, key, submitted, existing);
+			event = this.createItemChangeEvent(clazz, MODIFIED_ACTION, key, submitted, existing);
 		}
+		
+		
 		if(event==null){
+			LOGGER.debug("state change publisher did not detect any changes for item key: {}", key);
 			return false;
 		}else{
+			LOGGER.debug("state change publisher has detected item key: {} has been {}", key, event.getEventData().getAction());
 			this.publisher.submit(event);
 			return true;			
 		}
@@ -209,37 +212,8 @@ public class StateChangePublisher {
 			throw new RuntimeException(ex);
 		}
 	}
-	
-	
-	
-	/**
-	 * Creates an event for items that are being deleted
-	 * 
-	 * @param class - The class used as a lookup for the topic configuration
-	 * @param key - The partition key for the topic
-	 * @param existing - The item containing the data that already exists (from the database) 
-	 * @return event - The event holding the change state
-	 */
-	private Event createItemDeletedEvent(Class<?> clazz, String key, Object existing) {
-		return this.createItemModifiedEvent(clazz, DELETED_ACTION, key, new HashMap<String, Object>(), existing);
-	}
-
 
 	
-	/***
-	 * Creates an event for items that are being created
-	 * 
-	 * @param clazz - The class used as a lookup for the topic configuration
-	 * @param key - The partition key for the topic
-	 * @param submitted - The item containing the data being submitted, ie, the item being saved
-	 * @return event - The event holding the change state
-	 */
-	private Event createItemCreatedEvent(Class<?> clazz, String key, Object submitted) {
-		return this.createItemModifiedEvent(clazz, ADDED_ACTION, key, submitted, new HashMap<String, Object>());
-	}
-	
-
-
 	
 	/***
 	 * Creates an Event that reveals fields that have been modified
@@ -250,7 +224,7 @@ public class StateChangePublisher {
 	 * @param existing - The existing item, if the item already exists, null if this is an item being created
 	 * @return event - The event holding the change state
 	 */
-	private Event createItemModifiedEvent(final Class<?> clazz, final String action, final String key, final Object submitted, final Object existing){
+	private Event createItemChangeEvent(final Class<?> clazz, final String action, final String key, final Object submitted, final Object existing){
 		final Map<String, Object> submittedMap = this.mapper.convertValue(submitted, MAP_TYPE_REFERENCE);
 		final Map<String, Object> existingMap = this.mapper.convertValue(existing, MAP_TYPE_REFERENCE);
 		final JsonNode diffNode = this.diff(submittedMap, existingMap);

@@ -27,7 +27,7 @@ public abstract class EventFactory implements Closeable {
 	public abstract void publish(final String clientId, final List<Event> events);
 
 	public abstract Publisher createPublisher(final String clientId);
-	public abstract Subscriber createSubscriber(final String topic, final String clientId);
+	public abstract Subscriber createSubscriber(final String clientId, final String topic);
 	
 	public abstract StateChangePublisher createChangePublisher(final String clientId, final StateChangeConfiguration stateChangeConfig);
 	

@@ -125,12 +125,6 @@ public class DynamoMapperRepository {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 	/***
 	 * Query and Index by hash key only, expecting multiple results.
 	 * <br>
