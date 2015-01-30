@@ -9,8 +9,8 @@ public class FilePath {
 	private final String drive;
 	private final String path;
 	protected FilePath(final String drive, final String path){
-		this.drive = drive;
-		this.path = path;
+		this.drive = this.fix(drive);
+		this.path = this.fix(path);
 	}
 	public String getDrive() {
 		return drive;
@@ -20,5 +20,11 @@ public class FilePath {
 	}
 	public static FilePath as(String drive, String path) {
 		return new FilePath(drive,path);
+	}
+	private String fix(final String segment){
+		if(segment!=null){
+			return segment.trim();
+		}
+		return segment;
 	}
 }

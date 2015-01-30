@@ -203,12 +203,10 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 							metadata.setContentLength(bytes.length);
 							
 							final PutObjectRequest putRequest = new PutObjectRequest(
-									this.path.getDrive(), 
-									this.fixPath(this.path.getPath(), pair.getModel()), inputStream, metadata);
-							
+									this.path.getDrive().trim(), 
+									this.fixPath(this.path.getPath().trim(), pair.getModel()), inputStream, metadata);
 							this.s3Client.putObject(putRequest);
 							CloseableUtil.closeQuietly(putRequest.getInputStream());
-							
 						}catch(Exception ex){
 							throw new RuntimeException(ex.getMessage(), ex);
 						}						

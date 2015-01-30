@@ -3,10 +3,8 @@ package io.microgenie.service.healthchecks;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -19,8 +17,6 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 
 //@Api(value="health", consumes="application/json", produces="application/json", description="Application Health Check")
 @Path(value="health")
-@Consumes(value="application/json")
-@Produces(value="application/json")
 public class HealthCheckResource {
 
 	private HealthCheckRegistry health;
