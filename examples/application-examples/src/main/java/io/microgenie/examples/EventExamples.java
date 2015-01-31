@@ -1,4 +1,4 @@
-package io.microgenie.examples.application;
+package io.microgenie.examples;
 
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventData;
@@ -7,6 +7,7 @@ import io.microgenie.application.events.EventHandler;
 import io.microgenie.aws.kinesis.KinesisAdmin;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.examples.ExampleConfig;
+import io.microgenie.examples.application.EventHandlers;
 
 import java.io.IOException;
 import java.util.List;

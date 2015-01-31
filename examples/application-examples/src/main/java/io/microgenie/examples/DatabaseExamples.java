@@ -1,4 +1,4 @@
-package io.microgenie.examples.application;
+package io.microgenie.examples;
 
 import io.microgenie.application.database.EntityRepository;
 import io.microgenie.aws.dynamodb.DynamoAdmin;
