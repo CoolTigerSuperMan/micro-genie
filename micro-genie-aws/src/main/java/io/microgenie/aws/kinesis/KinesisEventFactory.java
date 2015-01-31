@@ -63,20 +63,20 @@ public class KinesisEventFactory extends EventFactory {
 	}
 	
 	@Override
-	public void publish(Event event) {
+	public void publish(final Event event) {
 		this.publish(DEFAULT_CLIENT_ID, event);
 	}
 	@Override
-	public void publish(List<Event> events) {
+	public void publish(final List<Event> events) {
 		this.publish(DEFAULT_CLIENT_ID, events);
 	}
 	@Override
-	public void publish(final String clientId, Event event) {
+	public void publish(final String clientId, final Event event) {
 		Publisher publisher = this.createPublisher(clientId);
 		publisher.submit(event);
 	}
 	@Override
-	public void publish(final String clientId, List<Event> events) {
+	public void publish(final String clientId, final List<Event> events) {
 		Publisher publisher = this.createPublisher(clientId);
 		publisher.submitBatch(events);
 	}
@@ -94,7 +94,7 @@ public class KinesisEventFactory extends EventFactory {
 		Subscriber subscriber = this.subscribers.get(topic);
 		if(subscriber == null){
 			LOGGER.debug("creating kinsis subscriber for topic {} - clientId: {}", topic, clientIdToUse);
-			final KinesisClientLibConfiguration config = createConsumerConfig(topic, clientIdToUse);
+			final KinesisClientLibConfiguration config = createConsumerConfig(clientIdToUse, topic);
 			subscriber = new KinesisConsumer(topic, config, this.kinesisClient, this.dynamoDbClient, this.cloudwatchClient, this.mapper);
 			this.subscribers.put(topic, subscriber);
 		}
@@ -134,8 +134,8 @@ public class KinesisEventFactory extends EventFactory {
 	
 
 	@Override
-	public void subcribe(String topic, String clientId, EventHandler handler) {
-		final Subscriber subscriber = this.createSubscriber(topic, clientId);
+	public void subcribe(final String clientId, final String topic, final EventHandler handler) {
+		final Subscriber subscriber = this.createSubscriber(clientId, topic);
 		subscriber.subscribe(handler);
 	}
 	
@@ -145,7 +145,7 @@ public class KinesisEventFactory extends EventFactory {
 	/***
 	 * Create consumer configurations
 	 */
-	private KinesisClientLibConfiguration createConsumerConfig(final String topic, final String clientId) {
+	private KinesisClientLibConfiguration createConsumerConfig(final String clientId, final String topic) {
 		
 		final String kinesisApplication = String.format(WORKER_ID_TEMPLATE, topic, clientId);
 		final KinesisClientLibConfiguration clientConfig = 

@@ -40,7 +40,7 @@ public abstract class EventFactory implements Closeable {
 	 * @param clientId
 	 * @param handler
 	 */
-	public abstract void subcribe(final String topic, final String clientId, EventHandler handler);
+	public abstract void subcribe(final String clientId, final String topic, final EventHandler handler);
 	
 
 	

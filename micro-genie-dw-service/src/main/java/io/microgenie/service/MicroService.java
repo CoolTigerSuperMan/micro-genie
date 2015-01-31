@@ -18,6 +18,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 
 
 
+
 /***
  * Abstract Service Application class. The purpose is to handle initialization, service bootstrapping
  * and other common service tasks while just letting the services themselves define application factory, 
@@ -112,13 +113,10 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 
         /** Configure API documentation **/
        // this.swaggerDropwizard.onRun(configuration, environment, configuration.getHost(), configuration.getPort());
-        
         /** register the Health Check API endpoint **/
         environment.jersey().register(new HealthCheckResource(environment.healthChecks()));
 	}
 	
-
-
 
 
 	

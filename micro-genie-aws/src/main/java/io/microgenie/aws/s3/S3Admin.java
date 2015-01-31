@@ -65,6 +65,7 @@ public class S3Admin {
 	 * Create an amazon bucket in the specified region
 	 * @param bucket - The s3 bucket name
 	 * @param region - The S3 region the bucket should be created in
+	 * @param accessList - The access control list settings for the bucket
 	 */
 	public void createBucket(final String bucket, 
 				final Region region, 

@@ -1,11 +1,11 @@
 package io.microgenie.examples.application;
 
-import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventData;
+import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.events.EventHandler;
-import io.microgenie.aws.AwsApplicationFactory;
-import io.microgenie.aws.AwsConfig;
+import io.microgenie.aws.kinesis.KinesisAdmin;
+import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.examples.ExampleConfig;
 
 import java.io.IOException;
@@ -18,10 +18,25 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.google.common.collect.Maps;
 
+
+/***
+ * 
+ * @author shawn
+ *
+ */
 public class EventExamples {
 	
+
+	private static final AmazonKinesisClient kinesis = new AmazonKinesisClient();
+	private static final AmazonCloudWatchClient cloudwatch = new AmazonCloudWatchClient();
+	private static final AmazonDynamoDBClient dynamodb = new AmazonDynamoDBClient();
+
+	private static final int EVENT_COUNT = 500;
 	
 	/***
 	 * Run Event Examples
@@ -33,35 +48,48 @@ public class EventExamples {
 	 */
 	public static void main(String[] args) throws TimeoutException,ExecutionException, IOException, InterruptedException {
 
-		final int eventCount = 1000;
-		
-		
-		final AwsConfig config  = ExampleConfig.createConfigForEventExamples();
 		final Properties props  = ExampleConfig.getProperties(ExampleConfig.EVENT_PROPERTY_FILE_NAME);
-		
 		final String topicOne = props.getProperty(ExampleConfig.TOPIC_1_NAME);
 		final String topicTwo = props.getProperty(ExampleConfig.TOPIC_2_NAME);
 		
-		try (ApplicationFactory app = new AwsApplicationFactory(config, ExampleConfig.OBJECT_MAPPER)) {
-			app.events().subcribe(topicOne, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicOne));
-			app.events().subcribe(topicTwo, EventHandlers.DEFAULT_CLIENT_ID, new ExampleEventHandler(topicTwo));
+		/** create streams **/
+		final KinesisAdmin admin = new KinesisAdmin(kinesis);
+		admin.createTopic(topicOne, 1);
+		admin.createTopic(topicTwo, 1);
+		
+		
+		
+		try (EventFactory events = new KinesisEventFactory(kinesis, dynamodb, cloudwatch, ExampleConfig.OBJECT_MAPPER)) {
+		
+			/** subscribe **/
+			events.subcribe(EventHandlers.DEFAULT_CLIENT_ID, topicOne,  new ExampleEventHandler(topicOne));
+			events.subcribe(EventHandlers.DEFAULT_CLIENT_ID, topicTwo, new ExampleEventHandler(topicTwo));
 
+			
 			/** Publish Events to both topics **/
-			for(int i=0;i<eventCount; i++){
+			for(int i=0;i<EVENT_COUNT; i++){
 				
 				final Event topic1Event = Event.create(topicOne, String.valueOf(i), createMap("data", String.format("topic %s event - event item %d", topicOne, i)));
-				final Event topic2Event = Event.create(topicOne, String.valueOf(i), createMap("data", String.format("topic %s event - event item %d", topicTwo, i)));
+				final Event topic2Event = Event.create(topicTwo, String.valueOf(i), createMap("data", String.format("topic %s event - event item %d", topicTwo, i)));
 				
-				app.events().publish(EventHandlers.DEFAULT_CLIENT_ID, topic1Event);
-				app.events().publish(EventHandlers.DEFAULT_CLIENT_ID, topic2Event);
+				events.publish(EventHandlers.DEFAULT_CLIENT_ID, topic1Event);
+				events.publish(EventHandlers.DEFAULT_CLIENT_ID, topic2Event);
 			}
 			
-			//finish consuming
-			Thread.sleep(10000);
+			Thread.currentThread().join(10000);
+			
+		}finally{
+			kinesis.shutdown();
+			dynamodb.shutdown();
+			cloudwatch.shutdown();
 		}
 	}
 	
 	
+	/**
+	 * Event Handler, consumes events
+	 * @author shawn
+	 */
 	public static class ExampleEventHandler implements EventHandler{
 		private String handlerId;
 		

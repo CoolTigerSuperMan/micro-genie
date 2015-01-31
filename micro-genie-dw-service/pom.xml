@@ -89,7 +89,6 @@
 		</dependency>
 
 
-
 		<!-- dropwizard -->
 
 		<dependency>
@@ -118,14 +117,6 @@
 		<dependency>
 			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-annotation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk-dynamodb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
 		</dependency>
 
 		<!-- miscellaneous -->
