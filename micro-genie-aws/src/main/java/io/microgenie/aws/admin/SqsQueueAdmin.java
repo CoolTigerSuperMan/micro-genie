@@ -1,8 +1,8 @@
-package io.microgenie.aws.sqs;
+package io.microgenie.aws.admin;
 
 import io.microgenie.application.util.CollectionUtil;
-import io.microgenie.aws.SqsConfig;
-import io.microgenie.aws.SqsQueueConfig;
+import io.microgenie.aws.config.SqsConfig;
+import io.microgenie.aws.config.SqsQueueConfig;
 
 import java.util.List;
 import java.util.Map;

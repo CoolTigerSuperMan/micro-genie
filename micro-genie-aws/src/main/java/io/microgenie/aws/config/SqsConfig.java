@@ -1,9 +1,10 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 
 /***
  * SQS Queue Configuration
@@ -47,5 +48,24 @@ public class SqsConfig {
 	@JsonProperty(value="blockUntilReady")
 	public void setBlockUntilReady(boolean blockUntilReady) {
 		this.blockUntilReady = blockUntilReady;
+	}
+	
+	
+	
+	public SqsConfig withProduces(boolean producers){
+		this.produces = producers;
+		return this;
+	}
+	public SqsConfig withBlockUntilReader(boolean block){
+		this.blockUntilReady = block;
+		return this;
+	}
+	public SqsConfig withQueues(SqsQueueConfig ...queues){
+		this.queues.addAll(Lists.newArrayList(queues));
+		return this;
+	}
+	public SqsConfig withConsumers(SqsConsumerConfig ...consumers){
+		this.consumers.addAll(Lists.newArrayList(consumers));
+		return this;
 	}
 }

@@ -3,8 +3,8 @@ package io.microgenie.service.bundle;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.microgenie.aws.S3Config;
-import io.microgenie.aws.s3.S3Admin;
+import io.microgenie.aws.admin.S3Admin;
+import io.microgenie.aws.config.S3Config;
 import io.microgenie.service.AppConfiguration;
 
 import org.slf4j.Logger;

@@ -2,13 +2,13 @@ package io.microgenie.examples;
 
 import io.microgenie.application.queue.Message;
 import io.microgenie.application.queue.MessageHandler;
-import io.microgenie.aws.AwsConfig;
-import io.microgenie.aws.DynamoDbConfig;
-import io.microgenie.aws.KinesisConfig;
-import io.microgenie.aws.S3Config;
-import io.microgenie.aws.SqsConfig;
-import io.microgenie.aws.SqsConsumerConfig;
-import io.microgenie.aws.SqsQueueConfig;
+import io.microgenie.aws.config.AwsConfig;
+import io.microgenie.aws.config.DynamoDbConfig;
+import io.microgenie.aws.config.KinesisConfig;
+import io.microgenie.aws.config.S3Config;
+import io.microgenie.aws.config.SqsConfig;
+import io.microgenie.aws.config.SqsConsumerConfig;
+import io.microgenie.aws.config.SqsQueueConfig;
 import io.microgenie.examples.application.EventHandlers;
 import io.microgenie.examples.util.ExampleProperties;
 

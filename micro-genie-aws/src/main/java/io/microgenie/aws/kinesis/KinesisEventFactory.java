@@ -72,7 +72,7 @@ public class KinesisEventFactory extends EventFactory {
 	}
 	@Override
 	public void publish(final String clientId, final Event event) {
-		Publisher publisher = this.createPublisher(clientId);
+		final Publisher publisher = this.createPublisher(clientId);
 		publisher.submit(event);
 	}
 	@Override

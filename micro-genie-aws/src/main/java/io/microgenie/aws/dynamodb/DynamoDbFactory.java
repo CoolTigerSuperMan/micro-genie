@@ -2,7 +2,7 @@ package io.microgenie.aws.dynamodb;
 
 import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.database.KeyValueRepository;
-import io.microgenie.aws.DynamoDbConfig;
+import io.microgenie.aws.config.DynamoDbConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

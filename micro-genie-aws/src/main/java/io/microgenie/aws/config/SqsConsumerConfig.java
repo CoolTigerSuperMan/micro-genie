@@ -1,4 +1,4 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import io.microgenie.application.queue.MessageHandler;
 
@@ -23,6 +23,11 @@ public class SqsConsumerConfig{
 	public void setQueue(String queue) {
 		this.queue = queue;
 	}
+	public SqsConsumerConfig withQueue(final String queue) {
+		this.queue = queue;
+		return this;
+	}
+	
 	@JsonProperty("threads")
 	public int getThreads() {
 		return threads;
@@ -31,6 +36,12 @@ public class SqsConsumerConfig{
 	public void setThreads(int threads) {
 		this.threads = threads;
 	}
+	public SqsConsumerConfig withThreads(final int threads) {
+		this.threads = threads;
+		return this;
+	}
+	
+	
 	@JsonProperty("handler")
 	public String getHandlerKey() {
 		return handlerKey;
@@ -39,6 +50,9 @@ public class SqsConsumerConfig{
 	public void setHandlerKey(String handler) {
 		this.handlerKey = handler;
 	}
+
+	
+	
 	@JsonProperty("shutdownWaitMs")
 	public int getShutdownTimeMS() {
 		return shutdownTimeMS;
@@ -47,13 +61,20 @@ public class SqsConsumerConfig{
 	public void setShutdownTimeMS(int shutdownTimeMS) {
 		this.shutdownTimeMS = shutdownTimeMS;
 	}
-	
+	public SqsConsumerConfig withHandler(final int shutdownTimeMS) {
+		this.shutdownTimeMS = shutdownTimeMS;
+		return this;
+	}
 	
 	public MessageHandler getHandlerInstance() {
 		return handlerInstance;
 	}
 	public void setHandlerInstance(MessageHandler handlerInstance) {
 		this.handlerInstance = handlerInstance;
+	}
+	public SqsConsumerConfig withHandler(final MessageHandler handler) {
+		this.handlerInstance = handler;
+		return this;
 	}
 	
 	/***

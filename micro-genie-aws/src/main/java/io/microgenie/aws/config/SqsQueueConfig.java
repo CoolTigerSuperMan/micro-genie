@@ -1,4 +1,4 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,8 +68,10 @@ public class SqsQueueConfig {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-
+	public SqsQueueConfig withName(final String name){
+		this.name = name;
+		return this;
+	}
 	
 	/**
 	 * When publishing messages to a queue where delay seconds is set, the queue will act as a delayed queue
@@ -82,6 +84,10 @@ public class SqsQueueConfig {
 	@JsonProperty("delaySeconds")
 	public void setDelaySeconds(int delaySeconds) {
 		this.delaySeconds = delaySeconds;
+	}
+	public SqsQueueConfig withDelay(final int seconds){
+		this.delaySeconds = seconds;
+		return this;
 	}
 	
 	
@@ -97,6 +103,10 @@ public class SqsQueueConfig {
 	public void setMaximumMessageSize(int maximumMessageSize) {
 		this.maximumMessageSize = maximumMessageSize;
 	}
+	public SqsQueueConfig withMaxMessageSize(final int maxMessageSize){
+		this.maximumMessageSize = maxMessageSize;
+		return this;
+	}
 	
 	
 	/**
@@ -111,7 +121,10 @@ public class SqsQueueConfig {
 	public void setMessageRetentionPeriod(int messageRetentionPeriod) {
 		this.messageRetentionPeriod = messageRetentionPeriod;
 	}
-	
+	public SqsQueueConfig withMessageRetentionPeriod(final int retention){
+		this.messageRetentionPeriod = retention;
+		return this;
+	}
 	
 	
 	/**
@@ -127,6 +140,10 @@ public class SqsQueueConfig {
 	public void setVisibilityTimeout(int visibilityTimeout) {
 		this.visibilityTimeout = visibilityTimeout;
 	}
+	public SqsQueueConfig withVisibilityTimeout(final int timeout){
+		this.visibilityTimeout = timeout;
+		return this;
+	}
 	
 	@JsonProperty("queueCreationTimeoutMS")
 	public int getQueueCreationTimeoutMS() {
@@ -136,6 +153,10 @@ public class SqsQueueConfig {
 	@JsonProperty("queueCreationTimeoutMS")
 	public void setQueueCreationTimeoutMS(int queueCreationTimeoutMS) {
 		this.queueCreationTimeoutMS = queueCreationTimeoutMS;
+	}
+	public SqsQueueConfig withQueueCreationTimeout(final int queueCreationTimeoutMS){
+		this.queueCreationTimeoutMS = queueCreationTimeoutMS;
+		return this;
 	}
 	
 	

@@ -4,7 +4,7 @@ import io.dropwizard.Configuration;
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.StateChangeConfiguration;
 import io.microgenie.aws.AwsApplicationFactory;
-import io.microgenie.aws.AwsConfig;
+import io.microgenie.aws.config.AwsConfig;
 import io.microgenie.service.commands.CommandConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

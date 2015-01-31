@@ -3,8 +3,8 @@ package io.microgenie.service.bundle;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.microgenie.aws.KinesisConfig;
-import io.microgenie.aws.kinesis.KinesisAdmin;
+import io.microgenie.aws.admin.KinesisAdmin;
+import io.microgenie.aws.config.KinesisConfig;
 import io.microgenie.service.AppConfiguration;
 
 import java.util.List;

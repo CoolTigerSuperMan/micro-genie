@@ -6,6 +6,7 @@ import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.application.util.CloseableUtil;
+import io.microgenie.aws.config.AwsConfig;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.aws.s3.S3BlobFactory;

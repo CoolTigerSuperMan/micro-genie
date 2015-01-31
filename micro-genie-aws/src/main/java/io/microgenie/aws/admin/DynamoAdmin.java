@@ -1,8 +1,8 @@
-package io.microgenie.aws.dynamodb;
+package io.microgenie.aws.admin;
 
-import io.microgenie.aws.DynamoDbConfig;
-import io.microgenie.aws.DynamoDbConfig.Key;
-import io.microgenie.aws.DynamoDbConfig.Table;
+import io.microgenie.aws.config.DynamoDbConfig;
+import io.microgenie.aws.config.DynamoDbConfig.Key;
+import io.microgenie.aws.config.DynamoDbConfig.Table;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -720,7 +720,7 @@ public class DynamoAdmin {
 
 
 
-	private List<AttributeDefinition> createAttributeDefinitions(final List<io.microgenie.aws.DynamoDbConfig.AttributeDefinition> attributeDefinitions) {
+	private List<AttributeDefinition> createAttributeDefinitions(final List<io.microgenie.aws.config.DynamoDbConfig.AttributeDefinition> attributeDefinitions) {
 		
 		List<AttributeDefinition> attributeDefs = null;
 		
@@ -745,7 +745,7 @@ public class DynamoAdmin {
 	 * @param globalSecondaryIndexes
 	 * @return globalSecondaryIndexList
 	 */
-	private List<GlobalSecondaryIndex> createGlobalSecondaryIndexes(final List<io.microgenie.aws.DynamoDbConfig.GlobalSecondaryIndex> globalSecondaryIndexes) {
+	private List<GlobalSecondaryIndex> createGlobalSecondaryIndexes(final List<io.microgenie.aws.config.DynamoDbConfig.GlobalSecondaryIndex> globalSecondaryIndexes) {
 		List<GlobalSecondaryIndex> indexes = null;
 		if(globalSecondaryIndexes!=null){
 			indexes = new ArrayList<GlobalSecondaryIndex>();
@@ -771,7 +771,7 @@ public class DynamoAdmin {
 	 * @param projection
 	 * @return projection
 	 */
-	private Projection createProjection(final io.microgenie.aws.DynamoDbConfig.Projection projection) {
+	private Projection createProjection(final io.microgenie.aws.config.DynamoDbConfig.Projection projection) {
 
 		final Projection p = new Projection();
 		p.withNonKeyAttributes(projection.getNonKeyAttributes());
@@ -787,7 +787,7 @@ public class DynamoAdmin {
 	 * @param localSecondaryIndexes
 	 * @return localIndexList
 	 */
-	private List<LocalSecondaryIndex> createLocalSecondaryIndexes(List<io.microgenie.aws.DynamoDbConfig.LocalSecondaryIndex> localSecondaryIndexes) {
+	private List<LocalSecondaryIndex> createLocalSecondaryIndexes(List<io.microgenie.aws.config.DynamoDbConfig.LocalSecondaryIndex> localSecondaryIndexes) {
 		List<LocalSecondaryIndex>  indexes = null;
 		if(localSecondaryIndexes!=null){
 			indexes = new ArrayList<LocalSecondaryIndex>();	

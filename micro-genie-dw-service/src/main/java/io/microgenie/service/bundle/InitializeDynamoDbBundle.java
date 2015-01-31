@@ -3,8 +3,8 @@ package io.microgenie.service.bundle;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.microgenie.aws.DynamoDbConfig;
-import io.microgenie.aws.dynamodb.DynamoAdmin;
+import io.microgenie.aws.admin.DynamoAdmin;
+import io.microgenie.aws.config.DynamoDbConfig;
 import io.microgenie.service.AppConfiguration;
 
 import org.slf4j.Logger;

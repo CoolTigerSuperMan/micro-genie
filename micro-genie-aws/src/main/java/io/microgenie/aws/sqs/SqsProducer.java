@@ -2,6 +2,7 @@ package io.microgenie.aws.sqs;
 
 import io.microgenie.application.queue.Message;
 import io.microgenie.application.queue.Producer;
+import io.microgenie.aws.admin.SqsQueueAdmin;
 
 import java.util.ArrayList;
 import java.util.HashMap;

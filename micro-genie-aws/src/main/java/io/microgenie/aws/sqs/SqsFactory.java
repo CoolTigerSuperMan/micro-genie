@@ -6,9 +6,10 @@ import io.microgenie.application.queue.MessageHandler;
 import io.microgenie.application.queue.Producer;
 import io.microgenie.application.queue.QueueFactory;
 import io.microgenie.application.util.CollectionUtil;
-import io.microgenie.aws.SqsConfig;
-import io.microgenie.aws.SqsConsumerConfig;
-import io.microgenie.aws.SqsQueueConfig;
+import io.microgenie.aws.admin.SqsQueueAdmin;
+import io.microgenie.aws.config.SqsConfig;
+import io.microgenie.aws.config.SqsConsumerConfig;
+import io.microgenie.aws.config.SqsQueueConfig;
 
 import java.util.List;
 import java.util.Map;

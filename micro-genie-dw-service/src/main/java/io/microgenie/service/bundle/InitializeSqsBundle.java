@@ -3,8 +3,8 @@ package io.microgenie.service.bundle;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.microgenie.aws.SqsConfig;
-import io.microgenie.aws.sqs.SqsQueueAdmin;
+import io.microgenie.aws.admin.SqsQueueAdmin;
+import io.microgenie.aws.config.SqsConfig;
 import io.microgenie.service.AppConfiguration;
 
 import org.slf4j.Logger;

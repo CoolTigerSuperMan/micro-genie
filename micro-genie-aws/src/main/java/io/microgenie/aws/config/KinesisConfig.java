@@ -1,4 +1,4 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,7 +24,10 @@ public class KinesisConfig {
 	public void setTopic(String topic) {
 		this.topic = topic;
 	}
-	
+	public KinesisConfig withTopic(final String topic){
+		this.topic = topic;
+		return this;
+	}
 	
 	
 	@JsonProperty("shards")
@@ -34,5 +37,9 @@ public class KinesisConfig {
 	@JsonProperty("shards")
 	public void setShards(int shards) {
 		this.shards = shards;
+	}
+	public KinesisConfig withShards(final int shards){
+		this.shards = shards;
+		return this;
 	}
 }

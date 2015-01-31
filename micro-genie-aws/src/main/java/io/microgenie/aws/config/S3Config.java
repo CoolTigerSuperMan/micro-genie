@@ -1,9 +1,10 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -31,9 +32,6 @@ public class S3Config {
 	public void setDefaultDrive(final String drive){
 		this.defaultDrive = drive;
 	}
-
-	
-	
 	@JsonProperty("buckets")
 	public List<String> getBuckets() {
 		return buckets;
@@ -41,5 +39,15 @@ public class S3Config {
 	@JsonProperty("buckets")
 	public void setBuckets(List<String> buckets) {
 		this.buckets = buckets;
+	}
+	
+	
+	public S3Config withDefaultBucket(final String bucket){
+		this.defaultDrive = bucket;
+		return this;
+	}
+	public S3Config withBuckets(final String ... buckets){
+		this.buckets.addAll(Lists.newArrayList(buckets));
+		return this;
 	}
 }

@@ -2,22 +2,29 @@ package io.microgenie.examples.application;
 
 import io.microgenie.application.ApplicationFactory;
 import io.microgenie.application.StateChangeConfiguration;
+import io.microgenie.application.database.DatabaseFactory;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.application.events.Subscriber;
 import io.microgenie.aws.AwsApplicationFactory;
-import io.microgenie.aws.AwsConfig;
+import io.microgenie.aws.admin.AwsAdmin;
+import io.microgenie.aws.config.AwsConfig;
+import io.microgenie.aws.config.AwsConfig.AwsConfigBuilder;
+import io.microgenie.aws.config.DynamoDbConfig;
+import io.microgenie.aws.config.KinesisConfig;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
-import io.microgenie.aws.kinesis.KinesisAdmin;
 import io.microgenie.examples.ExampleConfig;
 import io.microgenie.examples.application.EventHandlers.CheckoutBookRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 
@@ -40,11 +48,18 @@ public class LibraryExample {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LibraryExample.class);
 	
+	private static final TypeReference<Map<String,Object>> TYPE_REFERENCE_MAP = new TypeReference<Map<String,Object>>() {};
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
+	private static final AwsAdmin AWS_ADMIN = new AwsAdmin();
+	
+	
 	/** Libraries **/
 	private static final String NORTH_GOTHAM_LIBRARY = "North Gotham";
 	private static final String SOUTH_GOTHAM_LIBRARY = "South Gotham";
 	private static final String EAST_GOTHAM_LIBRARY = "East Gotham";
 	private static final String WEST_GOTHAM_LIBRARY = "West Gotham";
+	
 	
 	/** Published Book ISBNs **/
 	private static final String OLD_MAN_IN_SEA_ISBN = "978-0684801223";
@@ -55,6 +70,7 @@ public class LibraryExample {
 	/** Number of copies for each library **/
 	private static final int NUMBER_OF_BOOK_COPIES = 5;
 	
+	
 	/** User to check book out **/
 	private static final String USER = "shagwood";
 	
@@ -63,39 +79,44 @@ public class LibraryExample {
 	
 	
 	
-	
-	
 	/****
 	 * Execute example database calls using the dynamodb database factory
 	 * @param args
 	 * @throws IOException
 	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 * @throws ExecutionException 
 	 */
-	public static void main(String[] args ) throws IOException, InterruptedException{
+	public static void main(String[] args ) throws IOException, InterruptedException, ExecutionException, TimeoutException{
 
-		final AwsConfig aws  = ExampleConfig.createConfigForDatabaseExamples();
+		final AwsConfig aws = LibraryExample.buildConfig();
+		
+		/** Initialize Kinesis Streams and dynamo db tables **/
+		AWS_ADMIN.createKinesisAdmin(new AmazonKinesisClient()).initialize(aws.getKinesis());
+		AWS_ADMIN.createDynamoAdmin(new AmazonDynamoDBClient()).scan(aws.getDynamo().getPackagePrefix(), true, 60);
+
+
 		final DynamoMapperRepository mapperRepository = DynamoMapperRepository.create(new AmazonDynamoDBClient());
 		
-		/** ensure topics are created **/
-		final KinesisAdmin admin = new KinesisAdmin(new AmazonKinesisClient());
-		admin.createTopic(EventHandlers.TOPIC_BOOK_CHANGE_EVENT, EventHandlers.TOPIC_BOOK_CHANGE_EVENT_SHARDS);
-		admin.createTopic(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST, EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS);
 		
 		try (ApplicationFactory app = new AwsApplicationFactory(aws, ExampleConfig.OBJECT_MAPPER)) {
 			
-			/** Create publisher  **/
-			final StateChangePublisher publisher = app.events().createChangePublisher(EventHandlers.DEFAULT_CLIENT_ID, new StateChangeConfiguration());
-			
-			LOGGER.info("initializing book repository. This will create tables if they do not exist");
-			app.database().registerRepo(Book.class, new BookRepository(mapperRepository, publisher));
-			LOGGER.info("Executing library examples.....");
-			
 			final EventFactory events = app.events();
-			final BookRepository bookRepository = app.database().repos(Book.class);
+			final DatabaseFactory database = app.database();
+			
+			LOGGER.info("initializing book repository with change publisher. This will create tables if they do not exist");
+			
+			/** Create the book repository and the book change event publisher **/
+			final StateChangePublisher changePublisher = LibraryExample.createChangePublisher(events);
+			database.registerRepo(Book.class, new BookRepository(mapperRepository, changePublisher));
+			final BookRepository bookRepository = database.repos(Book.class);
 			
 			
 			/** Subscribe to event event streams **/
 			LibraryExample.subscribeToEvents(events, bookRepository, EventHandlers.DEFAULT_CLIENT_ID);
+			
+			
+			LOGGER.info("Executing library examples.....");
 			
 			/** Create the libraries and stock each libraries with copies of our books **/
 			final Set<String> libraries = LibraryExample.generateLibraries();
@@ -106,16 +127,49 @@ public class LibraryExample {
 			LibraryExample.queryByLibraryId(bookRepository, libraries);
 			LibraryExample.queryByLibraryIdAndISBN(bookRepository, libraries, publishedBooks);	
 			
+			
 			/** Check out our favorite book from the North Gotham Library **/
 			LibraryExample.checkOutBook(bookRepository, events, NORTH_GOTHAM_LIBRARY, OLD_MAN_IN_SEA_ISBN);
 
 			/** Determine which books a user has checked out **/
 			LibraryExample.queryAllLibrariesForBooksCheckedOutByUser(bookRepository, USER);
-			LOGGER.info("Execution of examples complete, shuting down now");
+			
+			LOGGER.info("Execution of examples waiting for all events to be consumed");
+
+			Thread.currentThread().join(10000);
 		}
-		
-		Thread.sleep(10000);
 		LOGGER.info("Shutdown complete for all resources...exiting now");
+	}
+
+
+
+
+	/***
+	 * Build configuration for dynamodb tables and kinesis topics
+	 * @return awsConfig
+	 */
+	private static AwsConfig buildConfig() {
+		final AwsConfigBuilder configBuilder = new AwsConfigBuilder()
+		.withKinesis(
+				new KinesisConfig().withTopic(EventHandlers.TOPIC_BOOK_CHANGE_EVENT).withShards(EventHandlers.TOPIC_BOOK_CHANGE_EVENT_SHARDS),
+				new KinesisConfig().withTopic(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST).withShards(EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS))
+		.withDynamo(new DynamoDbConfig().withScanPackage(Book.class.getPackage().getName()).withBlockingUntilReady(true));
+		
+		return configBuilder.build();
+	}
+
+
+
+
+	/**
+	 * createChangePublisher
+	 * @param events
+	 * @return
+	 */
+	private static StateChangePublisher createChangePublisher(final EventFactory events) {
+		final StateChangeConfiguration changeConfig = LibraryExample.createChangeConfig(events);
+		final StateChangePublisher changePublisher = events.createChangePublisher(EventHandlers.DEFAULT_CLIENT_ID, changeConfig);
+		return changePublisher;
 	}
 	
 
@@ -128,19 +182,15 @@ public class LibraryExample {
 	 * @param bookRepository
 	 */
 	private static void subscribeToEvents(final EventFactory events, final BookRepository bookRepository, final String clientId) {
+		
 		final Subscriber checkoutRequestSubscription = events.createSubscriber(clientId, EventHandlers.TOPIC_CHECKOUT_BOOK_REQUEST);
 		checkoutRequestSubscription.subscribe(new EventHandlers.CheckOutRequestEventHandler(bookRepository));
+		
 		final Subscriber bookCheckedOutSubscription = events.createSubscriber(clientId, EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
 		bookCheckedOutSubscription.subscribe(new EventHandlers.BookChangeEventHandler());
 	}
 
 
-
-	
-	private static final TypeReference<Map<String,Object>> TYPE_REFERENCE_MAP = new TypeReference<Map<String,Object>>() {
-	};
-	
-	private static final ObjectMapper MAPPER = new ObjectMapper();
 	
 	/***
 	 * Query the given library for a particular book by ISBN, then check out the first one available
@@ -163,8 +213,33 @@ public class LibraryExample {
 		}
 	}
 
+	
+	
+	
+	/***
+	 * Create the State Change event Configuration
+	 * @param events
+	 * @return stateChangeConfig
+	 */
+	private static StateChangeConfiguration createChangeConfig(final EventFactory events){
+		
+		final Map<String, Map<String, String>> stateChangeActions = new HashMap<String, Map<String, String>>();
+
+		/** Book Changed Actions all get published to the BookChanged topic **/
+		final Map<String, String> bookChangedActions = Maps.newHashMap();
+		bookChangedActions .put("Created", EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
+		bookChangedActions .put("Updated", EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
+		bookChangedActions .put("Deleted", EventHandlers.TOPIC_BOOK_CHANGE_EVENT);
+		stateChangeActions.put(Book.class.getName(), bookChangedActions);
+		
+		final StateChangeConfiguration changeConfig = new StateChangeConfiguration();
+		changeConfig.setEvents(stateChangeActions);
+		return changeConfig;
+	}
 
 
+	
+	
 
 	private static Set<String> generateLibraries() {
 		final Set<String> libraries = Sets.newHashSet();
@@ -353,6 +428,4 @@ public class LibraryExample {
 		LOGGER.info("Completed saving books");
 		return books;
 	}
-	
-	
 }

@@ -1,4 +1,4 @@
-package io.microgenie.aws;
+package io.microgenie.aws.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +13,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DynamoDbConfig {
 
 	private String scanPackage;
-	private List<Table> tables = new ArrayList<Table>();
 	private boolean blockUntilReady = true;
-	
-	
+
+	/** TODO - Remove this **/
+	private List<Table> tables = new ArrayList<Table>();
+
 	@JsonProperty(value="blockUntilReady")
 	public boolean isBlockUntilReady() {
 		return blockUntilReady;
@@ -24,6 +25,16 @@ public class DynamoDbConfig {
 	@JsonProperty(value="blockUntilReady")
 	public void setBlockUntilReady(boolean blockUntilReady) {
 		this.blockUntilReady = blockUntilReady;
+	}
+	
+	
+	public DynamoDbConfig withScanPackage(final String scanPackage){
+		this.scanPackage = scanPackage;
+		return this;
+	}
+	public DynamoDbConfig withBlockingUntilReady(final boolean block){
+		this.blockUntilReady = block;
+		return this;
 	}
 	
 	

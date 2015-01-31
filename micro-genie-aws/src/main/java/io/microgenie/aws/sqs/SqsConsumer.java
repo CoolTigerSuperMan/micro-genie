@@ -2,7 +2,8 @@ package io.microgenie.aws.sqs;
 
 import io.microgenie.application.queue.Consumer;
 import io.microgenie.application.queue.MessageHandler;
-import io.microgenie.aws.SqsConsumerConfig;
+import io.microgenie.aws.admin.SqsQueueAdmin;
+import io.microgenie.aws.config.SqsConsumerConfig;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;

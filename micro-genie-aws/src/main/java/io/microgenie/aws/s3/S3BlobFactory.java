@@ -5,6 +5,7 @@ import io.microgenie.application.blob.FileContentStream;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.blob.FileStore;
 import io.microgenie.application.blob.FileStoreFactory;
+import io.microgenie.aws.admin.S3Admin;
 
 import java.io.IOException;
 

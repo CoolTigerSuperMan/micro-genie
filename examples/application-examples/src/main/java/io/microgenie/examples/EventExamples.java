@@ -4,7 +4,7 @@ import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventData;
 import io.microgenie.application.events.EventFactory;
 import io.microgenie.application.events.EventHandler;
-import io.microgenie.aws.kinesis.KinesisAdmin;
+import io.microgenie.aws.admin.KinesisAdmin;
 import io.microgenie.aws.kinesis.KinesisEventFactory;
 import io.microgenie.examples.ExampleConfig;
 import io.microgenie.examples.application.EventHandlers;

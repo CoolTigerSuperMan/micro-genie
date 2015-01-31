@@ -23,6 +23,8 @@ public class EventHandlers {
 	
 	
 	public static final String DEFAULT_CLIENT_ID = "default-example-client";
+	
+	
 
 	public static final String TOPIC_CHECKOUT_BOOK_REQUEST = "CheckoutBookRequest";
 	public static final int TOPIC_CHECKOUT_BOOK_REQUEST_SHARDS = 1;
@@ -50,7 +52,6 @@ public class EventHandlers {
 				final String userId = new String(eventData.getData().get("userId").toString());
 				
 				final Book book = this.repository.get(bookId);
-				
 				if(Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
 					book.setCheckedOutBy(userId);
 					this.repository.saveIf(book,ComparisonOperator.EQ, "checkedOutBy", Book.CHECKED_OUT_BY_NOBODY);

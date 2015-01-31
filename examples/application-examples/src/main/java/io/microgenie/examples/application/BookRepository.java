@@ -6,12 +6,14 @@ import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 /***
  * Example Book Repository
@@ -116,7 +118,17 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 	 */
 	@Override
 	public void save(List<Book> books) {
+		final Map<String, Book> bookLookup = Maps.newHashMap();
+		final List<Book> booksFromDb = mapper.getList(books);
+		if(books!=null){
+			for(Book book : booksFromDb){
+				bookLookup.put(book.getBookId(), book);
+			}
+		}
 		mapper.save(books);
+		for(Book book: books){
+			this.changePublisher.publishChanges(Book.class, book.getBookId(), book, bookLookup.get(book.getBookId()));
+		}
 	}
 	
 	

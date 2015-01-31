@@ -1,7 +1,7 @@
 package io.microgenie.examples;
 
 import io.microgenie.application.database.EntityRepository;
-import io.microgenie.aws.dynamodb.DynamoAdmin;
+import io.microgenie.aws.admin.DynamoAdmin;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 
 import java.io.IOException;
