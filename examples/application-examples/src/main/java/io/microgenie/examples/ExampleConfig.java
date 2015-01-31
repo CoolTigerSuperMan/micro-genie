@@ -61,6 +61,7 @@ public class ExampleConfig {
 		return appProperties.getProperties(propertyFileName);
 	}
 	
+	
 	/***
 	 * Create the aws Configuration
 	 * @param properties 

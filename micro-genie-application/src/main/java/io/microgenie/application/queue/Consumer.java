@@ -5,7 +5,8 @@ package io.microgenie.application.queue;
  * @author shawn
  */
 public interface Consumer {
-	public void start(MessageHandler handler);
+	public void start();
 	public void stop();
 	public boolean isRunning();
+	
 }

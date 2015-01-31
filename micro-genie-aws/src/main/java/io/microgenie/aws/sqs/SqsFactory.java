@@ -43,9 +43,8 @@ public class SqsFactory extends QueueFactory{
 	
 	private final AmazonSQSClient sqs;
 	private final SqsQueueAdmin admin;
-	
-	
 	private final SqsConfig config;
+	
 	
 	/** internal maps to store configuration for queues, consumer config and consumers **/
 	private final Map<String, SqsQueueConfig> queueConfigMap = Maps.newHashMap();
@@ -60,11 +59,16 @@ public class SqsFactory extends QueueFactory{
 	 * @param config
 	 */
 	public SqsFactory(final AmazonSQSClient sqsClient, final SqsConfig config){
+		
 		this.sqs = sqsClient;
 		this.config = config;
 		this.admin = new SqsQueueAdmin(this.sqs);
 		this.mapQueueConfig(config.getQueues());
 		this.createConsumers(config.getConsumers());
+		
+		if(config.isProduces()){
+			this.producer = new SqsProducer(this.sqs, admin);
+		}
 	}
 
 
@@ -97,42 +101,20 @@ public class SqsFactory extends QueueFactory{
 	 */
 	@Override
 	public synchronized void consume(final String queue, final int threads, final MessageHandler handler) {
+		
 		Consumer consumer = this.consumers.get(queue);
 		if(consumer==null){
 			this.createQueueAndConfigIfNotExists(queue, handler);
-			/** now that the queue has been created, create the consumer and store the new configuration in the queue -> configuration maps **/
 			final SqsConsumerConfig consumerConfig = new SqsConsumerConfig();
 			consumerConfig.setQueue(queue);
 			consumerConfig.setHandlerInstance(handler);
 			consumerConfig.setThreads(threads);
-			
-			consumer = new SqsConsumer(this.sqs, this.admin, consumerConfig);
-			this.consumers.put(queue, consumer);
-			this.consumerConfigMap.put(queue, consumerConfig);
-			this.createConsumer(consumerConfig);
+			consumer = this.createAndSetConsumer(consumerConfig);
 		}
-		consumer.start(handler);
+		consumer.start();
 	}
 
 
-	
-	/***
-	 * Start all configured consumers if they have not been started
-	 */
-	public synchronized void startConsumers(){
-		try{
-			if(this.consumerConfigMap!=null){
-				for(Entry<String, SqsConsumerConfig> consumerConfigEntry : this.consumerConfigMap.entrySet()){
-					final String key = consumerConfigEntry.getKey();
-					final SqsConsumerConfig config = consumerConfigEntry.getValue();
-					this.consumers.get(key).start(config.createHandler());
-				}
-			}	
-		}catch(Exception ex){
-			throw new RuntimeException(ex.getMessage(), ex);
-		}
-	}
-	
 	
 
 
@@ -142,7 +124,11 @@ public class SqsFactory extends QueueFactory{
 	@Override
 	public synchronized void close(){
 		LOGGER.info("shutting down admin client");
-		this.admin.shutdown();
+		
+		if(this.admin!=null){
+			this.admin.shutdown();	
+		}
+		
 		if(this.consumers !=null && this.consumers.size()>0){
 			int i = 0;
 			for(Entry<String, Consumer> c : consumers.entrySet()){
@@ -152,8 +138,7 @@ public class SqsFactory extends QueueFactory{
 			}
 			this.consumers.clear();
 		}
-		
-		if(!this.consumerConfigMap.isEmpty()){
+		if(this.consumerConfigMap !=null && !this.consumerConfigMap.isEmpty()){
 			this.consumerConfigMap.clear();
 		}
 	}
@@ -170,7 +155,7 @@ public class SqsFactory extends QueueFactory{
 	private void createConsumers(final List<SqsConsumerConfig> consumers)  {
 		if(CollectionUtil.hasElements(consumers)){
 			for(SqsConsumerConfig config: consumers){
-				this.createConsumer(config);
+				this.createAndSetConsumer(config);
 			}
 		}
 	}
@@ -181,10 +166,11 @@ public class SqsFactory extends QueueFactory{
 	 * Create the {@link SqsConsumer} and map the consumerConfiguration
 	 * @param consumerConfig
 	 */
-	private void createConsumer(SqsConsumerConfig consumerConfig) {
+	private Consumer createAndSetConsumer(final SqsConsumerConfig consumerConfig) {
 		final Consumer consumer = new SqsConsumer(this.sqs, this.admin, consumerConfig);
 		this.consumers.put(consumerConfig.getQueue(), consumer);
 		this.consumerConfigMap.put(consumerConfig.getQueue(), consumerConfig);
+		return consumer;
 	}
 	
 
@@ -197,7 +183,7 @@ public class SqsFactory extends QueueFactory{
 	 *  
 	 * @param queues
 	 */
-	private void mapQueueConfig(List<SqsQueueConfig> queues) {
+	private void mapQueueConfig(final List<SqsQueueConfig> queues) {
 		if(CollectionUtil.hasElements(queues)){
 			for(SqsQueueConfig config : queues){
 				this.queueConfigMap.put(config.getName(), config);

@@ -85,7 +85,7 @@ public class SqsConsumerConfig{
 		config.setHandlerKey(this.handlerKey);
 		config.setQueue(this.queue);
 		config.setThreads(this.threads);
-		config.setThreads(shutdownTimeMS);
+		config.setShutdownTimeMS(this.shutdownTimeMS);
 		return config;
 	}
 }

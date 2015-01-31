@@ -1,28 +1,21 @@
 package io.microgenie.aws.sqs;
 
 import io.microgenie.application.queue.Consumer;
-import io.microgenie.application.queue.Message;
 import io.microgenie.application.queue.MessageHandler;
-import io.microgenie.application.util.CollectionUtil;
 import io.microgenie.aws.SqsConsumerConfig;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.AbortedException;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
-import com.amazonaws.services.sqs.model.DeleteMessageBatchRequestEntry;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 
 
@@ -32,157 +25,92 @@ import com.google.common.collect.Maps;
  * 
  * @author shawn
  */
-public class SqsConsumer implements Consumer, Runnable{
+public class SqsConsumer implements Consumer{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqsConsumer.class);
+	
 	private final AmazonSQSClient client;
 	private final SqsQueueAdmin queueAdmin;
 	private final SqsConsumerConfig config;
-	private MessageHandler handler;
-	private volatile boolean running;
-	private String queueUrl;
-	private final Thread[] threads;
-
 	
+	private final List<Poller> pollers;
+	private final ExecutorService executor;
+
+	private final AtomicBoolean running = new AtomicBoolean();
 	
 	
 	/***
-	 * Constructor for SQS Consumer
+	 * Constructor for SQSConsumer
+	 * 
 	 * @param client
+	 * @param admin
 	 * @param config
 	 */
-	public SqsConsumer(final AmazonSQSClient client, final SqsQueueAdmin queueAdmin, final SqsConsumerConfig config) {
-		
-		this.queueAdmin = queueAdmin;
+	public SqsConsumer(final AmazonSQSClient client, final SqsQueueAdmin admin, final SqsConsumerConfig config)  {
 		this.client = Preconditions.checkNotNull(client, "AmazonSQSClient cannot be null");
-		
-		Preconditions.checkNotNull(config, "SqsConsumerConfig cannot be null");
-		this.config = Preconditions.checkNotNull(config.copy(), "The SqsConsumerConfig copy cannot be null");
-		this.threads  = new Thread[this.config.getThreads()];
+		this.queueAdmin = Preconditions.checkNotNull(admin, "SqsQueueAdmin cannot be null");
+		this.config = Preconditions.checkNotNull(config, "SqsConsumerConfig cannot be null");;
+		this.pollers = this.createPollers(config);
+		this.executor = Executors.newFixedThreadPool(this.pollers.size());
 	}
 	
 	
+	
 	/***
-	 * Start the Sqs Consumer
-	 * @param handler
+	 * Create runnable {@link Poller} list to consume from sqs
+	 * where the count of poller are equal to config thread count
+	 * 
+	 * @param config
+	 * @return pollerList
+	 */
+	private List<Poller> createPollers(final SqsConsumerConfig config){
+		final List<Poller>  pollers = Lists.newArrayList();
+		final String url = this.queueAdmin.getQueueUrl(config.getQueue());
+		MessageHandler handler = null;
+		try{
+			  handler = config.createHandler();
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}	
+		for(int i =0; i < config.getThreads();  i++){
+			pollers.add(new Poller(config.getQueue(), url, handler, this.client, this.running));
+		}
+		return pollers;
+	}
+	
+	
+	
+	/***
+	 * Start the sqs consumer
 	 */
 	@Override
-	public synchronized void start(final MessageHandler handler) {
-		this.running = true;
-		this.queueUrl = this.queueAdmin.getQueueUrl(this.config.getQueue());
-		this.handler = handler;
-		for(int i = 0;i < threads.length; i++){
-			threads[i] = new Thread(this);
-			threads[i].start();
-		}
-	}
-	
-	
-	
-	/**
-	 * Start polling the queue and pump messages to the handler
-	 * @param handler
-	 */
-	private void poll(final  MessageHandler handler) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(this.queueUrl), "Queue URL must be evaludated in order to consume messages from queue %s", this.config.getQueue());
-		this.running = true;
-		while(running){
-			try{		
-				final ReceiveMessageRequest request = new ReceiveMessageRequest(this.queueUrl);
-				final ReceiveMessageResult result = this.client.receiveMessage(request);
-				if(result !=null && CollectionUtil.hasElements(result.getMessages())){
-					final List<com.amazonaws.services.sqs.model.Message> sqsMessages = result.getMessages();		
-					this.handleMessages(this.config.getQueue(), sqsMessages);	
-				}
-			}catch(AbortedException ex){
-				LOGGER.debug("Aborted threadId: {} - message: {} Thread isRunning: {}", Thread.currentThread().getId(),ex.getMessage(), this.running);
-				if(!running){
-					return;
-				}
-			}catch(Exception ex){
-				LOGGER.error(ex.getMessage(), ex);
-			}
-		}
-	}
-	
-	
-	/***
-	 * Handle Messages
-	 * @param queue
-	 * @param sqsMessages
-	 */
-	private void handleMessages(final String queue, final List<com.amazonaws.services.sqs.model.Message> sqsMessages) {
-		
-		final List<Message> messages =  fromSqsMessages(queue, sqsMessages);
-		if(CollectionUtil.hasElements(messages)){
-			
-			this.handler.handleBatch(messages);
-			final List<DeleteMessageBatchRequestEntry> deleteEntries = new ArrayList<DeleteMessageBatchRequestEntry>();
-
-			/*** TODO Allow the caller to specify messages to delete **/
-			for(com.amazonaws.services.sqs.model.Message sqsMessage : sqsMessages){
-				final DeleteMessageBatchRequestEntry entry = new DeleteMessageBatchRequestEntry(sqsMessage.getMessageId(), sqsMessage.getReceiptHandle());
-				deleteEntries.add(entry);
-			}
-			/** Delete the message batch - TODO - This should actually Respect the feedback given from the handler on which messages to delete**/ 
-			this.client.deleteMessageBatch(
-					new DeleteMessageBatchRequest(this.queueUrl)
-					.withEntries(deleteEntries));
+	public void start() {
+		if(!this.running.getAndSet(true)){
+			for(Poller poller : this.pollers){
+				this.executor.execute(poller);
+			}			
+			LOGGER.info("{} consuming threads have been started for queue: {}", this.config.getThreads(), this.config.getQueue());
+		}else{
+			LOGGER.info("consumer for queue: {} is already running - thread count: {}. This call has no effect", this.config.getQueue(), this.config.getThreads());	
 		}
 	}
 
 	
 	/***
-	 * Transform to out message format
-	 * @param sqsMessages
-	 * @return messages
+	 * Stop the consumer, which includes all running consuming threads
 	 */
-	private List<Message> fromSqsMessages(final String queue, final List<com.amazonaws.services.sqs.model.Message> sqsMessages){
-		
-		final List<Message> messages = Lists.newArrayList();
-		
-		for(com.amazonaws.services.sqs.model.Message sqsMessage : sqsMessages){
-			final String messageId = sqsMessage.getMessageId();
-			final Map<String, String> headers = Maps.newHashMap(sqsMessage.getAttributes());
-			final String body = sqsMessage.getBody();
-			
-			/** Construct the message for the application **/
-			final Message message = new Message() {
-				@Override
-				public String getQueue() {
-					return queue;
-				}
-				@Override
-				public String getId() {
-					return messageId;
-				}
-				@Override
-				public Map<String, String> getHeaders() {
-					return headers;
-				}
-				@Override
-				public String getBody() {
-					return body;
-				}
-			};
-			messages.add(message);
-		}
-		return messages;	
-	}
-
-	
 	@Override
 	public void stop() {
-		this.running = false;
-		try {
-			LOGGER.debug("waiting {} milliseconds for SQS consumer threads to shutdown", config.getShutdownTimeMS());
-			Thread.sleep(config.getShutdownTimeMS());
-		} catch (InterruptedException e) {}		
-		for(Thread t : this.threads){
-			LOGGER.info("stopping threadId: {}", t.getId());
-			if(!t.isInterrupted()){
-				t.interrupt();
+		if(this.running.getAndSet(false)){
+			try {
+				LOGGER.info("waiting {} milliseconds for SQS consumer threads to shutdown", config.getShutdownTimeMS());
+				if(!this.executor.awaitTermination(config.getShutdownTimeMS(),TimeUnit.MILLISECONDS)){
+					this.executor.shutdownNow();
+				}
+			} catch (Exception e) {		
+				this.executor.shutdownNow();
 			}
+			LOGGER.info("{} consuming threads have been stopped for queue: {}", this.config.getThreads(), this.config.getQueue());
 		}
 	}
 
@@ -192,14 +120,7 @@ public class SqsConsumer implements Consumer, Runnable{
 	 */
 	@Override
 	public boolean isRunning() {
-		return this.running;
-	}
-
-
-	@Override
-	public void run() {
-		this.poll(this.handler);
-		LOGGER.debug("The sqs consumer has stopped polling");
+		return this.running.get();
 	}
 }
 
