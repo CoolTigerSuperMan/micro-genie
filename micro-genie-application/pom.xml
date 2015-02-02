@@ -31,14 +31,6 @@
 			<artifactId>httpcore</artifactId>
 		</dependency>
 
-
-
-
-		<!-- Found to be unused by running: mvn dependency:analyze-only <dependency> 
-			<groupId>commons-io</groupId> <artifactId>commons-io</artifactId> </dependency> 
-			<dependency> <groupId>com.google.code.findbugs</groupId> <artifactId>jsr305</artifactId> 
-			</dependency> -->
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -64,6 +56,5 @@
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>
