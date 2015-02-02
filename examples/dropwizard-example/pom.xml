@@ -23,7 +23,7 @@
 		
 		
 		<!-- application maven dependency versions-->
-		<io.microgenie>0.0.3-SNAPSHOT</io.microgenie>
+		<io.microgenie>0.0.4-SNAPSHOT</io.microgenie>
 		<io.dropwizard.version>0.8.0-rc2</io.dropwizard.version>
 	</properties>
 

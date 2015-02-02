@@ -11,7 +11,7 @@
 		<relativePath>..</relativePath>
 		<groupId>io.microgenie</groupId>
 		<artifactId>micro-genie</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.0.4-SNAPSHOT</version>
 	</parent>
 
 	<name>Micro Genie Dropwizard Service</name>
@@ -138,21 +138,6 @@
 		</dependency>
 
 
-		<!-- Swagger Documentation <dependency> <groupId>com.wordnik</groupId> 
-			<artifactId>swagger-annotations</artifactId> <version>${swagger-annotations.version}</version> 
-			</dependency> <dependency> <groupId>io.federecio</groupId> <artifactId>dropwizard-swagger</artifactId> 
-			<version>${swagger-dropwizard.version}</version> <exclusions> <exclusion> 
-			<groupId>io.dropwizard</groupId> <artifactId>dropwizard-views-freemarker</artifactId> 
-			</exclusion> <exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-core</artifactId> 
-			</exclusion> <exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-views</artifactId> 
-			</exclusion> <exclusion> <artifactId>jsr311-api</artifactId> <groupId>javax.ws.rs</groupId> 
-			</exclusion> <exclusion> <groupId>org.javassist</groupId> <artifactId>javassist</artifactId> 
-			</exclusion> <exclusion> <groupId>com.fasterxml.jackson.module</groupId> 
-			<artifactId>jackson-module-jsonSchema</artifactId> </exclusion> <exclusion> 
-			<groupId>xml-apis</groupId> <artifactId>xml-apis</artifactId> </exclusion> 
-			<exclusion> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-assets</artifactId> 
-			</exclusion> </exclusions> </dependency> -->
-
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -174,8 +159,6 @@
 		</dependency>
 
 
-		<!-- Test Dependencies <dependency> <groupId>io.dropwizard</groupId> <artifactId>dropwizard-testing</artifactId> 
-			<scope>test</scope> </dependency> -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
@@ -192,7 +175,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 
 	<!-- build -->
 	<build>
