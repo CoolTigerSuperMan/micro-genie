@@ -643,7 +643,7 @@
 	<!-- child modules -->
 	<modules>
 		<module>micro-genie-application</module>
-		<module>micro-genie-application</module>
+		<module>micro-genie-aws</module>
 		<module>micro-genie-dw-service</module>
 	</modules>
 </project>
