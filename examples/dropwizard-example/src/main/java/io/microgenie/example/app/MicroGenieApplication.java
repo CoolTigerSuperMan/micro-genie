@@ -1,6 +1,5 @@
 package io.microgenie.example.app;
 
-import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.microgenie.application.ApplicationFactory;
@@ -79,11 +78,11 @@ public class MicroGenieApplication extends MicroService<AppConfiguration> {
 	 * Register Jersey Rest API resources
 	 */
 	@Override
-	protected void registerResources(final ApplicationFactory appFactory, final AppConfiguration configuration, final JerseyEnvironment jersey) {
+	protected void registerResources(final ApplicationFactory appFactory, final AppConfiguration configuration, final Environment environment) {
 		
 		/** Inject the book repository into the book resources **/
 		final BookRepository bookRepository = appFactory.database().repos(Book.class);
-		jersey.register(new BookResource(bookRepository));
+		environment.jersey().register(new BookResource(bookRepository));
 	}
 
 

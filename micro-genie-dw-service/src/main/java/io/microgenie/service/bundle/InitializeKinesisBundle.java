@@ -9,10 +9,14 @@ import io.microgenie.service.AppConfiguration;
 
 import java.util.List;
 
+import jersey.repackaged.com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.kinesis.AmazonKinesisClient;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 
 /***
@@ -36,9 +40,17 @@ public class InitializeKinesisBundle implements ConfiguredBundle<AppConfiguratio
 				LOGGER.info("Executing configured kinesis bundle");
 				final List<KinesisConfig> kinesisConfigs = configuration.getAws().getKinesis();
 				final KinesisAdmin admin = new KinesisAdmin(client);
+				
+				final List<ListenableFuture<?>> futures = Lists.newArrayList();
+				
 				for(KinesisConfig kinesisConfig : kinesisConfigs){
-					admin.createTopic(kinesisConfig.getTopic(), kinesisConfig.getShards());
+					ListenableFuture<?> future = admin.createTopic(kinesisConfig.getTopic(), kinesisConfig.getShards());
+					if(future!=null){
+						futures.add(future);
+					}
 				}			
+				final ListenableFuture<List<Object>> allAsList = Futures.allAsList(futures);
+				allAsList.get();
 				LOGGER.info("Completed kinesis bundle execution");
 			}catch(Exception ex){
 				LOGGER.error(ex.getMessage(), ex);
