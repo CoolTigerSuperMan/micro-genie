@@ -5,6 +5,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.util.CloseableUtil;
+import io.microgenie.aws.admin.S3Admin;
 import io.microgenie.service.AppConfiguration;
 import io.microgenie.service.AppConfiguration.SchemaContracts;
 
@@ -47,7 +48,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	
 	private Set<Class<?>> models;
 	private FilePath path;
-	private AmazonS3Client s3Client;
+	private final S3Admin s3;
 	
 	private boolean shutdownS3Client = false;
 	
@@ -74,10 +75,38 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 * 
 	 */
 	public PublishJsonSchemaBundle(){
-		this(new AmazonS3Client());
+		this(new S3Admin(new AmazonS3Client()));
 		this.shutdownS3Client = true;
 	}
 	
+	
+	/***
+	 * Using this constructor, the {@link #run(AppConfiguration, Environment)} method relies on the value of the scanPackage
+	 * property found in {@link SchemaContracts#getScanPackage()}.
+	 * <p>
+	 * Any classes annotated with the annotation {@link Attributes} are used to generate JsonSchema from the class definition. Results are then
+	 * published to the location found in {@link SchemaContracts#getDrive()} and {@link SchemaContracts#getPath()}. Where drive is the s3 bucket
+	 * to publish to and path is the s3 key prefix the generated keys will be saved under when the generated schemas are published to S3
+	 *<p>
+	 * The configuration item should be placed in your dropwizard configuration yaml file.
+	 * 
+	 *<pre>
+	 * 
+	 *		schemaContracts:
+	 *			drive: mycompany-schemas   
+	 *			path: services/myservice/resources
+	 *			scanPackage: com.mycompany.api.contracts
+	 *
+	 *</pre>
+	 *
+	 *@param client - {@link AmazonS3Client} 
+	 *@param path - {@link FilePath}
+	 *@param models - Set<Class<?>> - The Classes that JsonSchema should be generated for.
+	 */
+	public PublishJsonSchemaBundle(final AmazonS3Client client, final FilePath path, final Set<Class<?>> models){
+		this(new S3Admin(client), path, models);
+		this.shutdownS3Client = true;
+	}
 	
 	
 	/***
@@ -99,10 +128,36 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 *
 	 *</pre>
 	 * 
-	 * @param s3Client - {@link AmazonS3Client}
+	 * @param client - {@link S3Admin}
 	 */
-	public PublishJsonSchemaBundle(final AmazonS3Client s3Client){
-		this(Preconditions.checkNotNull(s3Client, "s3Client is required but was found to be null"), null, null);
+	public PublishJsonSchemaBundle(final AmazonS3Client client){
+		this(Preconditions.checkNotNull(new S3Admin(client), "S3Admin is required but was found to be null"), null, null);
+	}
+	
+	
+	/***
+	 * Using this constructor, the {@link #run(AppConfiguration, Environment)} method relies on the value of the scanPackage
+	 * property found in {@link SchemaContracts#getScanPackage()}.
+	 * <p>
+	 * Any classes annotated with the annotation {@link Attributes} are used to generate JsonSchema from the class definition. Results are then
+	 * published to the location found in {@link SchemaContracts#getDrive()} and {@link SchemaContracts#getPath()}. Where drive is the s3 bucket
+	 * to publish to and path is the s3 key prefix the generated keys will be saved under when the generated schemas are published to S3
+	 *<p>
+	 * The configuration item should be placed in your dropwizard configuration yaml file.
+	 * 
+	 *<pre>
+	 * 
+	 *		schemaContracts:
+	 *			drive: mycompany-schemas   
+	 *			path: services/myservice/resources
+	 *			scanPackage: com.mycompany.api.contracts
+	 *
+	 *</pre>
+	 * 
+	 * @param s3 - {@link S3Admin}
+	 */
+	public PublishJsonSchemaBundle(final S3Admin s3){
+		this(Preconditions.checkNotNull(s3, "S3Admin is required but was found to be null"), null, null);
 	}
 	
 	
@@ -112,13 +167,13 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 * Generate JsonSchema for the supplied classes. Generated Schema is published to the location found in the
 	 * path parameter, {@link FilePath}.
 	 *
-	 *@param s3Client - An initialized instance of {@link AmazonS3Client}
+	 *@param s3 - An initialized instance of {@link S3Admin}
 	 *@param path - {@link FilePath} - path contains the S3 Bucket and the directory 
 	 *			location (S3 Bucket Key Prefix) the schemas should be deployed to
 	 *@param models - Set<Class<?>> - The Classes that JsonSchema should be generated for.
 	 */
-	public PublishJsonSchemaBundle(final AmazonS3Client s3Client, final FilePath path, final Set<Class<?>> models){
-		this.s3Client = Preconditions.checkNotNull(s3Client, "s3Client is required but was found to be null");
+	public PublishJsonSchemaBundle(final S3Admin s3, final FilePath path, final Set<Class<?>> models){
+		this.s3 = Preconditions.checkNotNull(s3, "s3Client is required but was found to be null");
 		this.path = path;
 		this.models = models;
 	}
@@ -193,7 +248,12 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 		
 		if(schemaPairs!=null && schemaPairs.size()>0){
 			try{
+				
+				/** Always ensure the bucket exists **/
+				this.s3.createBucket(this.path.getDrive());
+				
 				for(SchemaModelPair pair : schemaPairs){
+					
 					final ObjectMetadata metadata = new ObjectMetadata();
 					metadata.setContentType(ContentType.APPLICATION_JSON.getMimeType());
 					final String json = pair.getSchema().toString();
@@ -201,11 +261,10 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 						byte[] bytes = json.getBytes(Charsets.UTF_8);
 						try(final InputStream inputStream = new ByteArrayInputStream(bytes)){
 							metadata.setContentLength(bytes.length);
-							
 							final PutObjectRequest putRequest = new PutObjectRequest(
 									this.path.getDrive().trim(), 
 									this.fixPath(this.path.getPath().trim(), pair.getModel()), inputStream, metadata);
-							this.s3Client.putObject(putRequest);
+							this.s3.getClient().putObject(putRequest);
 							CloseableUtil.closeQuietly(putRequest.getInputStream());
 						}catch(Exception ex){
 							throw new RuntimeException(ex.getMessage(), ex);
@@ -215,7 +274,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 			}finally{
 				/** If we created the S3 client in this instance, shut it down **/
 				if(shutdownS3Client){
-					this.s3Client.shutdown();	
+					this.s3.shutdown();	
 				}
 			}
 		}

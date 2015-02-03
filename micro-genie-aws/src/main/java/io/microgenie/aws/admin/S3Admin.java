@@ -81,5 +81,15 @@ public class S3Admin {
 			request.withAccessControlList(accessList);	
 		}
 		this.client.createBucket(request);
+	}
+
+
+	public AmazonS3Client getClient() {
+		return this.client;
+	}
+
+
+	public void shutdown() {
+		this.client.shutdown();
 	}	
 }
