@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -117,6 +120,14 @@ public abstract class EntityDatabusRepository<T> extends EntityRepository<T> {
 		public void setRange(final String range) {
 			this.range = range;
 		}
+		@Override
+		public int hashCode(){
+			return HashCodeBuilder.reflectionHashCode(this);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			return EqualsBuilder.reflectionEquals(this, obj);
+		 } 
 	}
 	
 	public static class PartitionedDataKey extends Key{
@@ -137,6 +148,14 @@ public abstract class EntityDatabusRepository<T> extends EntityRepository<T> {
 		public static final PartitionedDataKey create(final String partitionKey, final String hash, final String range){
 			return new PartitionedDataKey(partitionKey, hash, range);
 		}
+		@Override
+		public int hashCode(){
+			return HashCodeBuilder.reflectionHashCode(this);
+		}
+		@Override
+		public boolean equals(Object obj) {
+			return EqualsBuilder.reflectionEquals(this, obj);
+		 } 
 	}
 	
 	public static class PartitionedDataKeyWithItem<T> extends PartitionedDataKey{
@@ -171,5 +190,13 @@ public abstract class EntityDatabusRepository<T> extends EntityRepository<T> {
 		public static <T> PartitionedDataKeyWithItem<T> create(final String partitionKey, final String hash, final String range, T item){
 			return new PartitionedDataKeyWithItem<T>(partitionKey, hash, range, item);
 		}
+		@Override
+		public int hashCode(){
+			   return HashCodeBuilder.reflectionHashCode(this);
+		}
+		@Override
+		public boolean equals(final Object obj) {
+			return EqualsBuilder.reflectionEquals(this, obj);
+		} 
 	}
 }
