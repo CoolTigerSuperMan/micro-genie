@@ -1,5 +1,6 @@
 package io.microgenie.resources;
 
+import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.example.data.BookRepository;
 import io.microgenie.models.Book;
 
@@ -68,7 +69,7 @@ public class BookResource extends BaseResource{
 	@GET
 	@Path(value = "/{id}")
 	public Book get(@PathParam("id") String id){
-		final Book book = bookRepository.get(id);
+		final Book book = bookRepository.get(Key.create(id));
 		super.throwNotFoundIfNull(book, String.format("UserId: %s not found", id));
 		return book;
 	}

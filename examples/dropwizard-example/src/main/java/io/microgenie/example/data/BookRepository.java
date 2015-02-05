@@ -1,15 +1,14 @@
 package io.microgenie.example.data;
 
-import java.util.List;
-
-import org.apache.commons.lang3.NotImplementedException;
-
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-
+import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.application.database.EntityRepository;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 import io.microgenie.models.Book;
+
+import java.util.List;
+
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 
 
 /***
@@ -20,7 +19,7 @@ import io.microgenie.models.Book;
  * DynamoDb book Repository
  * @author shawn
  */
-public class BookRepository extends EntityRepository<Book, String, String>{
+public class BookRepository extends EntityRepository<Book>{
 	
 	public static int DEFAULT_PAGE_LIMIT = 20;
 	
@@ -67,10 +66,6 @@ public class BookRepository extends EntityRepository<Book, String, String>{
 		final List<Book> books = this.mapper.queryIndexHashKey(Book.class, book, Book.GLOBAL_INDEX_ISBN_STATUS, DEFAULT_PAGE_LIMIT);
 		return books;
 	}
-	
-	
-	
-	
 	@Override
 	public void delete(Book book) {
 		mapper.delete(book);
@@ -83,30 +78,29 @@ public class BookRepository extends EntityRepository<Book, String, String>{
 	public void save(List<Book> books) {
 		mapper.save(books);
 	}
-	
-	
-	/**
-	 * Get a book from a library by bookId and LibraryId
-	 */
 	@Override
-	public Book get(String id) {
-		return this.mapper.get(Book.class, id);
+	public Book get(final Key key) {
+		return this.mapper.get(Book.class, key);
 	}
 	
 	
-	
-	/** Get a page of books from a library **/
-	@Override
 	public List<Book> getList(String libraryId) {
 		final Book book = new Book();
 		book.setLibraryId(libraryId);
 		return this.mapper.queryIndexHashKey(Book.class, book, Book.GLOBAL_INDEX_LIBRARY_ID, DEFAULT_PAGE_LIMIT);
 	}
-	
-	
-	/** not implemented for book **/
+
+
 	@Override
-	protected Book get(String id, String libraryId) {
-		throw new NotImplementedException("Not supported - for Book Repository");
+	protected List<Book> getList(List<Book> items) {
+		return this.mapper.getList(items);
+	}
+
+
+	@Override
+	public void delete(Key key) {
+		final Book b = new Book();
+		b.setBookId(key.getHash());
+		this.mapper.delete(b);
 	}
 }

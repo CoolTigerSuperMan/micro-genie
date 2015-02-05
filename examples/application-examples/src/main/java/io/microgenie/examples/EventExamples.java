@@ -23,6 +23,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.kinesis.AmazonKinesisClient;
 import com.google.common.collect.Maps;
+import com.google.common.util.concurrent.ListenableFuture;
 
 
 /***
@@ -55,9 +56,13 @@ public class EventExamples {
 		
 		/** create streams **/
 		final KinesisAdmin admin = new KinesisAdmin(kinesis);
-		admin.createTopic(topicOne, 1);
-		admin.createTopic(topicTwo, 1);
 		
+		ListenableFuture<?>  t1Future = admin.createTopic(topicOne, 1);
+		ListenableFuture<?>  t2Future = admin.createTopic(topicTwo, 1);
+		
+		/** Block until created **/
+		t1Future.get();
+		t2Future.get();
 		
 		
 		try (EventFactory events = new KinesisEventFactory(kinesis, dynamodb, cloudwatch, ExampleConfig.OBJECT_MAPPER)) {

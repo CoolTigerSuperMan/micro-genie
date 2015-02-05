@@ -1,19 +1,18 @@
 package io.microgenie.examples.application;
 
+import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.application.database.EntityRepository;
 import io.microgenie.application.events.StateChangePublisher;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 /***
  * Example Book Repository
@@ -21,7 +20,7 @@ import com.google.common.collect.Maps;
  * @author shawn
  *
  */
-public class BookRepository extends EntityRepository<Book, String, String> {
+public class BookRepository extends EntityRepository<Book> {
 
 	public static final String TOPIC_BOOK_CHANGE = "BookChange";
 	
@@ -93,7 +92,7 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 	 */
 	@Override
 	public void delete(Book book) {
-		final Book existing = this.get(book.getBookId());
+		final Book existing = this.get(Key.create(book.getBookId()));
 		mapper.delete(book);
 		this.changePublisher.publishDeleted(book.getIsbn(), existing);
 	}
@@ -106,9 +105,7 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 	 */
 	@Override
 	public void save(Book book) {
-		final Book existingBook = mapper.get(Book.class, book.getIsbn());
 		mapper.save(book);
-		this.changePublisher.publishChanges(Book.class, book.getIsbn(), book, existingBook);
 	}
 
 
@@ -118,17 +115,7 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 	 */
 	@Override
 	public void save(List<Book> books) {
-		final Map<String, Book> bookLookup = Maps.newHashMap();
-		final List<Book> booksFromDb = mapper.getList(books);
-		if(books!=null){
-			for(Book book : booksFromDb){
-				bookLookup.put(book.getBookId(), book);
-			}
-		}
 		mapper.save(books);
-		for(Book book: books){
-			this.changePublisher.publishChanges(Book.class, book.getBookId(), book, bookLookup.get(book.getBookId()));
-		}
 	}
 	
 	
@@ -137,30 +124,20 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 	 * Get a book from a library by bookId and LibraryId
 	 */
 	@Override
-	public Book get(String id) {
-		return this.mapper.get(Book.class, id);
+	public Book get(final Key key) {
+		return this.mapper.get(Book.class, key);
 	}
 
 	
 	
 	/** Get a page of books from a library **/
-	@Override
 	public List<Book> getList(String isbn) {
 		final Book book = new Book();
 		book.setIsbn(isbn);
-		return this.mapper.queryIndexHashKey(Book.class, book,
-				Book.GLOBAL_INDEX_ISBN, DEFAULT_PAGE_LIMIT);
+		return this.mapper.queryIndexHashKey(Book.class, book,Book.GLOBAL_INDEX_ISBN, DEFAULT_PAGE_LIMIT);
 	}
 
 	
-	
-	
-	/** not implemented for book **/
-	@Override
-	protected Book get(String id, String libraryId) {
-		throw new RuntimeException("Not supported - for Book Repository");
-	}
-
 	
 	
 	/***
@@ -192,9 +169,18 @@ public class BookRepository extends EntityRepository<Book, String, String> {
 		final ExpectedAttributeValue expected = new ExpectedAttributeValue();
 		expected.withComparisonOperator(operator);
 		expected.withValue(new AttributeValue(expectedValue));
-		
-		final Book existingBook = this.get(book.getBookId());
+		final Book existingBook = this.get(Key.create(book.getBookId()));
 		this.mapper.saveIf(book, null, attributeName, expected);
 		this.changePublisher.publishChanges(Book.class, book.getIsbn(), book, existingBook);
+	}
+	@Override
+	protected List<Book> getList(List<Book> items) {
+		return this.mapper.getList(items);
+	}
+	@Override
+	public void delete(Key key) {
+		final Book b = new Book();
+		b.setBookId(key.getHash());
+		this.delete(b);
 	}
 }

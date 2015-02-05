@@ -11,7 +11,7 @@
 		<relativePath>..</relativePath>
 		<groupId>io.microgenie</groupId>
 		<artifactId>micro-genie</artifactId>
-		<version>0.0.4-SNAPSHOT</version>
+		<version>0.0.5-SNAPSHOT</version>
 	</parent>
 
 	<name>Micro Genie Dropwizard Service</name>

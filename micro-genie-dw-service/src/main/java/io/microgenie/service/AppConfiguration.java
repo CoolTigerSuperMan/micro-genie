@@ -73,15 +73,15 @@ public class AppConfiguration extends Configuration {
 	}
 	/**
 	 * API Documentation configuration
-	 * @param documentation
+	 * @param api
 	 */
 	@JsonProperty("api")
 	public void setApi(ApiConfiguration api) {
 		this.api = api;
 	}
 	/***
-	 * The date format to use with Json date fields, unless specifically overriden by other configurations
-	 * @return
+	 * The date format to use with Json date fields, unless specifically overridden by other configurations
+	 * @return dateFormat
 	 */
 	@JsonProperty("dateFormat")
 	public String getDateFormat() {

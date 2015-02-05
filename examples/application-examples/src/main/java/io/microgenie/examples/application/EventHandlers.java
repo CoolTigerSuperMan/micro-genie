@@ -1,5 +1,6 @@
 package io.microgenie.examples.application;
 
+import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.application.events.Event;
 import io.microgenie.application.events.EventData;
 import io.microgenie.application.events.EventHandler;
@@ -48,10 +49,11 @@ public class EventHandlers {
 			final EventData eventData = event.getEventData();
 			
 			try {
+				
 				final String bookId = new String(eventData.getData().get("bookId").toString());
 				final String userId = new String(eventData.getData().get("userId").toString());
 				
-				final Book book = this.repository.get(bookId);
+				final Book book = this.repository.get(Key.create(bookId));
 				if(Book.CHECKED_OUT_BY_NOBODY.equals(book.getCheckedOutBy())){
 					book.setCheckedOutBy(userId);
 					this.repository.saveIf(book,ComparisonOperator.EQ, "checkedOutBy", Book.CHECKED_OUT_BY_NOBODY);

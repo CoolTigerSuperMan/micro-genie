@@ -1,5 +1,7 @@
 package io.microgenie.aws.dynamodb;
 
+import io.microgenie.application.database.EntityDatabusRepository.Key;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ConditionalOperator;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -51,11 +54,17 @@ public class DynamoMapperRepository  {
 	/***
 	 * Get the item with the given hash key
 	 * @param clazz
-	 * @param id
+	 * @param key
 	 * @return item - Of type T
 	 */
-	public <T> T get(final Class<T> clazz, final Object id) {
-		return this.mapper.load(clazz, id);
+	public <T> T get(final Class<T> clazz, final Key key) {
+		if(!Strings.isNullOrEmpty(key.getHash()) && !Strings.isNullOrEmpty(key.getRange())){
+			return this.mapper.load(clazz, key.getHash(), key.getRange());	
+		}else if(!Strings.isNullOrEmpty(key.getHash())){
+			return this.mapper.load(clazz, key.getHash());
+		}else {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	
@@ -82,19 +91,7 @@ public class DynamoMapperRepository  {
 		}
 		return results;
 	}
-	
-	
-	/**
-	 * Get the Item with the given hash key and range key
-	 * @param clazz
-	 * @param id
-	 * @param rangeKey
-	 * @return item - of Type T
-	 */
-	public <T> T get(final Class<T> clazz, Object id, final Object rangeKey) {
-		return this.mapper.load(clazz, id, rangeKey);
-	}
-	
+
 	
 	/**
 	 * Save the given item To DynamoDb

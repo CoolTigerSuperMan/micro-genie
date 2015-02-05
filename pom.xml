@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.microgenie</groupId>
 	<artifactId>micro-genie</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Micro Genie Parent POM</name>
 	<description>Micro Genie is a collection of Java modules used to enable faster development of distributed systems in cloud native architectures, primarily micro services. </description>

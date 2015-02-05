@@ -1,11 +1,11 @@
 package io.microgenie.examples;
 
+import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.application.database.EntityRepository;
 import io.microgenie.aws.admin.DynamoAdmin;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -109,7 +109,7 @@ public class DatabaseExamples {
 		
 		LOGGER.info("attempting to read book with libraryId: {} and bookId: {}", libraryId, bookId);
 		
-		final Book book = database.get(libraryId, bookId);
+		final Book book = database.get(Key.create(libraryId, bookId));
 		
 		if(book!=null){
 			LOGGER.info("successfully read book with libraryId: {} and bookId: {}", libraryId, bookId);	
@@ -233,27 +233,36 @@ public class DatabaseExamples {
 	 * DynamoDb book Repository
 	 * @author shawn
 	 */
-	public static class BookRepository extends EntityRepository<Book, String, String>{
+	public static class BookRepository extends EntityRepository<Book>{
+		
 		private final DynamoMapperRepository mapper;
+		
 		public BookRepository(DynamoMapperRepository mapper){
 			this.mapper = mapper;
 		}
-		@Override
-		protected Book get(String id) {
-			return this.mapper.get(Book.class, id);
-		}
-		@Override
-		protected Book get(String id, String rangeKey) {
-			return this.mapper.get(Book.class, id, rangeKey);
-		}
-		@Override
-		protected List<Book> getList(String hashKey) {
-			final List<Book> books = new ArrayList<Book>();
-			final Book book =new Book();
-			book.setBookId(hashKey);
-			books.add(book);
-			return this.mapper.getList(books);
-		}
+//		
+//		
+//		
+//		@Override
+//		protected Book get(final Key key) {
+//			if(!Strings.isNullOrEmpty(key.getHash()) && !Strings.isNullOrEmpty(key.getRange())){
+//				return this.mapper.get(Book.class, key.getHash(), key.getRange());	
+//			}else if(!Strings.isNullOrEmpty(key.getHash())){
+//				return this.mapper.get(Book.class, key.getHash(), key.getRange());
+//			}else{
+//				throw new IllegalArgumentException("Key must specify a hashKey and optionally a rangeKey if this entity table supports range keys");
+//			}
+//		}
+		
+//		
+//		@Override
+//		protected List<Book> getList(String hash) {
+//			final List<Book> books = new ArrayList<Book>();
+//			final Book book =new Book();
+//			book.setBookId(hash);
+//			books.add(book);
+//			return this.mapper.getList(books);
+//		}
 		@Override
 		public void delete(final Book book) {
 			this.mapper.delete(book);
@@ -265,6 +274,18 @@ public class DatabaseExamples {
 		@Override
 		public void save(final List<Book> books) {
 			this.mapper.save(books);
+		}
+		protected List<Book> getList(List<Book> items) {
+			return this.mapper.getList(items);
+		}
+		@Override
+		public void delete(final Key key) {
+			final Book b = new Book();
+			this.mapper.delete(b);
+		}
+		@Override
+		public Book get(Key key) {
+			return this.mapper.get(Book.class, key);
 		}
 	}
 }
