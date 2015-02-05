@@ -93,29 +93,38 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 	@Override
 	public void run(T configuration, final Environment environment) throws Exception {
 
+		final SimpleDateFormat globalDateFormat = new SimpleDateFormat(configuration.getDateFormat());
+		
 		/** set object mapper data format pattern **/
-		environment.getObjectMapper()
-        .setDateFormat(new SimpleDateFormat(configuration.getDateFormatPattern()));
+		environment.getObjectMapper().setDateFormat(globalDateFormat);
 
 		/** Initialize the application factory **/
 		final ApplicationFactory appFactory = this.createApplicationFactory(configuration, environment);
 		this.manageApplicationFactory(appFactory, environment);
 		
+		
 		/** register metrics, healthchecks and jersey resources **/
 		this.registerMetrics(appFactory, configuration, environment.metrics());
 		this.registerHealthChecks(appFactory, configuration, environment.healthChecks());
 		this.registerResources(appFactory, configuration, environment);
+		
         /** register the Health Check API endpoint **/
         environment.jersey().register(new HealthCheckResource(environment.healthChecks()));
 	}
 	
 
 
-	
+	/***
+	 * Manage the {@link ApplicationFactory} in terms of starting up and shutting down resources.
+	 * <p>
+	 * @param appFactory - The application factory to manage
+	 * @param environment - The environment
+	 */
 	protected void manageApplicationFactory(final ApplicationFactory appFactory, final Environment environment){
 		final Managed managedAppFactory = new Managed() {
 			@Override
 			public void start() throws Exception {
+				
 			}
 			@Override
 			public void stop() throws Exception {

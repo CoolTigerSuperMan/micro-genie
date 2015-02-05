@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.util.CloseableUtil;
 import io.microgenie.service.AppConfiguration;
+import io.microgenie.service.AppConfiguration.ApiConfiguration;
 import io.microgenie.service.AppConfiguration.SchemaContracts;
 import io.microgenie.service.bundle.SchemaTestUtil.Cat;
 import io.microgenie.service.bundle.SchemaTestUtil.Dog;
@@ -100,7 +101,10 @@ public class PublishJsonSchemaBundleTest {
     	/** execute and run with values set in config settings**/
     	final PublishJsonSchemaBundle bundle = new PublishJsonSchemaBundle(mockS3Client);
     	final SchemaContracts contractConfig = new SchemaContracts(MOCK_PUBLISH_DRIVE, MOCK_PUBLISH_PATH, SCAN_PACKAGE);
-    	this.appConfig.setSchemaContracts(contractConfig);
+    	final ApiConfiguration apiConfig = new ApiConfiguration();
+    	apiConfig.setSchemaContracts(contractConfig);
+    	
+    	this.appConfig.setApi(apiConfig);
     	bundle.run(this.appConfig, this.mockEnvironment);
 
     	

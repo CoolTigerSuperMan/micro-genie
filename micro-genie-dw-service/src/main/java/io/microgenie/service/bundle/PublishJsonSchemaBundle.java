@@ -188,8 +188,9 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	@Override
 	public void run(final AppConfiguration configuration, final Environment environment) throws Exception {
 		
-		if(this.models==null && this.path == null && configuration.getSchemaContracts() == null){
-			LOGGER.debug("exiting Json Schema Publisher, json schema contract publishing has not been configured");
+		if(this.models==null && this.path == null && 
+			(configuration.getApi() == null || configuration.getApi().getSchemaContracts() == null)){
+			LOGGER.debug("exiting Json Schema Publisher, No configuration was found for JsonSchema publisher");
 			return;
 		}
 		
@@ -212,9 +213,14 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	 */
 	private void initialize(final AppConfiguration configuration) {
 
-		final SchemaContracts schemaContracts = configuration.getSchemaContracts();
+		/** Get the publish location for the apiDocumentation config if it exists **/
+		SchemaContracts schemaContracts = null;
+		if(configuration.getApi() !=null){
+			schemaContracts = configuration.getApi().getSchemaContracts();
+		}
+
 		if(this.path==null && schemaContracts != null && schemaContracts.getPath() != null){
-			this.path = FilePath.as(configuration.getSchemaContracts().getDrive(), configuration.getSchemaContracts().getPath());
+			this.path = FilePath.as(schemaContracts.getDrive(), schemaContracts.getPath());
 		}
 		if(this.models==null && schemaContracts != null && !Strings.isNullOrEmpty(schemaContracts.getScanPackage())){
 			final Reflections reflections = new Reflections(schemaContracts.getScanPackage());

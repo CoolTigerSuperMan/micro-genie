@@ -12,67 +12,103 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /***
- * Evidint Application Configuration Factory
+ * Application Configuration Factory
+ * <p>
+ * This class contains common configuration elements to configure micro-genie service
+ * functionality
  * @author shawn
  */
 public class AppConfiguration extends Configuration {
 
 	private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
-	private String host;
-	private int port;
-	private SchemaContracts schemaContracts;
+	private String dateFormat = ISO_8601_DATE_FORMAT; /** default to ISO 8601 UTC date format **/
+	private ApiConfiguration api;
 	private StateChangeConfiguration stateChanges;
-	
-	
 	private CommandConfiguration commands;
-	
-	private String dateFormatPattern = ISO_8601_DATE_FORMAT;
-	private ApplicationFactory appFactory;
-
 	private AwsConfig aws;
 	
+	private ApplicationFactory appFactory;
+
 	
-	@JsonProperty("host")
-	public String getHost() {
-		return this.host;
-	}
-	@JsonProperty("host")
-	public void setHost(String host) {
-		this.host = host;
-	}
-	@JsonProperty("port")
-	public int getPort(){
-		return this.port;
-	}	
-	@JsonProperty("port")
-	public void setPort(int port) {
-		this.port = port;
-	}
-	@JsonProperty("dateFormat")
-	public String getDateFormatPattern() {
-		return dateFormatPattern;
-	}
-	@JsonProperty("dateFormat")
-	public void setDateFormatPattern(String dateFormatPattern) {
-		this.dateFormatPattern = dateFormatPattern;
-	}
+	/***
+	 * AWS related configuration
+	 * @return awsConfig
+	 */
 	@JsonProperty("aws")
 	public AwsConfig getAws() {
 		return aws;
 	}
+	/***
+	 * AWS related configuration
+	 * @param aws
+	 */
 	@JsonProperty("aws")
 	public void setAws(AwsConfig aws) {
 		this.aws = aws;
 	}
-	@JsonProperty("schemaContracts")
-	public SchemaContracts getSchemaContracts() {
-		return schemaContracts;
+	/***
+	 * State Change Configuration
+	 * @return stateChangeConfiguration
+	 */
+	@JsonProperty("stateChanges")
+	public StateChangeConfiguration getStateChanges() {
+		return stateChanges;
 	}
-	@JsonProperty("schemaContracts")
-	public void setSchemaContracts(SchemaContracts schemaContracts) {
-		this.schemaContracts = schemaContracts;
+	/**
+	 * State Change Configuration
+	 * @param stateChanges
+	 */
+	@JsonProperty("stateChanges")
+	public void setStateChanges(StateChangeConfiguration stateChanges) {
+		this.stateChanges = stateChanges;
 	}
+	/***
+	 * API Documentation configuration
+	 * @return apiDocumentation configuration
+	 */
+	@JsonProperty("api")
+	public ApiConfiguration getApi() {
+		return this.api;
+	}
+	/**
+	 * API Documentation configuration
+	 * @param documentation
+	 */
+	@JsonProperty("api")
+	public void setApi(ApiConfiguration api) {
+		this.api = api;
+	}
+	/***
+	 * The date format to use with Json date fields, unless specifically overriden by other configurations
+	 * @return
+	 */
+	@JsonProperty("dateFormat")
+	public String getDateFormat() {
+		return dateFormat;
+	}
+	@JsonProperty("dateFormat")
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+	/**
+	 * Command Configuration
+	 * @return commandConfiguration
+	 */
+	@JsonProperty("commands")
+	public CommandConfiguration getCommands() {
+		return commands;
+	}
+	/***
+	 * Command Configuration
+	 * @param commands - Set command configuration
+	 */
+	@JsonProperty("commands")
+	public void setCommands(CommandConfiguration commands) {
+		this.commands = commands;
+	}
+	
+	
 	
 	
 	/**
@@ -82,9 +118,6 @@ public class AppConfiguration extends Configuration {
 	public ApplicationFactory getAppFactory() {
 		return appFactory;
 	}
-
-	
-	
     /**
      * Build the application factory
      * @return appFactory
@@ -99,45 +132,71 @@ public class AppConfiguration extends Configuration {
 	}
 
 
-	@JsonProperty("stateChanges")
-	public StateChangeConfiguration getStateChanges() {
-		return stateChanges;
-	}
-	@JsonProperty("stateChanges")
-	public void setStateChanges(StateChangeConfiguration stateChanges) {
-		this.stateChanges = stateChanges;
-	}
 
 
-	@JsonProperty("commands")
-	public CommandConfiguration getCommands() {
-		return commands;
-	}
-	@JsonProperty("commands")
-	public void setCommands(CommandConfiguration commands) {
-		this.commands = commands;
-	}
 
-
+	/**
+	 * Api documentation configuration
+	 * <p>
+	 * Configuration to configure api documentation. The host property defaults
+	 * to localhost and the port defaults to 8080
+	 *</p>
+	 * @author shawn
+	 */
+	public static class ApiConfiguration{
+		private String host = "localhost";
+		private int port = 8080;
+		private SchemaContracts schemaContracts;
+		private String dateFormat = ISO_8601_DATE_FORMAT;
+		@JsonProperty("host")
+		public String getHost() {
+			return this.host;
+		}
+		@JsonProperty("host")
+		public void setHost(final String host) {
+			this.host = host;
+		}
+		@JsonProperty("port")
+		public int getPort(){
+			return this.port;
+		}	
+		@JsonProperty("port")
+		public void setPort(final int port) {
+			this.port = port;
+		}
+		@JsonProperty("dateFormat")
+		public String getDateFormat() {
+			return dateFormat;
+		}
+		@JsonProperty("dateFormat")
+		public void setDateFormat(String dateFormat) {
+			this.dateFormat = dateFormat;
+		}
+		@JsonProperty("schemaContracts")
+		public SchemaContracts getSchemaContracts() {
+			return schemaContracts;
+		}
+		@JsonProperty("schemaContracts")
+		public void setSchemaContracts(final SchemaContracts schemaContracts) {
+			this.schemaContracts = schemaContracts;
+		}
+	}
+	
 
 	/***
 	 * Used to publish schema contracts from this service for other services and / or code generation
 	 * @author shawn
 	 */
 	public static class SchemaContracts{
-		
 		private String publishDrive;
 		private String publishPath;
 		private String scanPackage;
-		
 		protected SchemaContracts(){}
-		
 		public SchemaContracts(final String drive, final String path, final String scanPackage){
 			this.publishDrive = drive;
 			this.publishPath = path;
 			this.scanPackage = scanPackage;
 		}
-		
 		@JsonProperty("drive")
 		public String getDrive() {
 			return publishDrive;
