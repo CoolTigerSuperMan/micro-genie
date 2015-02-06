@@ -3,7 +3,7 @@ package io.microgenie.example.data;
 import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.application.database.EntityRepository;
 import io.microgenie.aws.dynamodb.DynamoMapperRepository;
-import io.microgenie.models.Book;
+import io.microgenie.example.models.Book;
 
 import java.util.List;
 

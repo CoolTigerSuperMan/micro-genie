@@ -256,8 +256,6 @@ public class DynamoAdmin {
 			DynamoDBRangeKey rangeKeyAnno = rangeKeyMember.getAnnotation(DynamoDBRangeKey.class);	
 			rangeKeyName = this.getAnnotationValue(rangeKeyAnno, "attributeName", String.class);
 		}
-		
-
 		final Set<Method> hashKeyIndexFields = this.getMethodsAnnotatedWith(DynamoDBIndexHashKey.class, clazz);
 		final Set<Method> rangeKeyIndexFields = this.getMethodsAnnotatedWith(DynamoDBIndexRangeKey.class, clazz);
 		

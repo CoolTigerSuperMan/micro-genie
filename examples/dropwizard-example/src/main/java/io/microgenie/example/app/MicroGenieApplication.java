@@ -7,8 +7,8 @@ import io.microgenie.aws.AwsApplicationFactory;
 import io.microgenie.aws.dynamodb.DynamoDbMapperFactory;
 import io.microgenie.example.data.BookRepository;
 import io.microgenie.example.health.BookServiceHealthCheck;
-import io.microgenie.models.Book;
-import io.microgenie.resources.BookResource;
+import io.microgenie.example.models.Book;
+import io.microgenie.example.resources.BookResource;
 import io.microgenie.service.AppConfiguration;
 import io.microgenie.service.MicroService;
 

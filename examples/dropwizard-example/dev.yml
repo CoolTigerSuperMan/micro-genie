@@ -1,40 +1,86 @@
+#   The state change configuration is meant to configure topic look ups whenever a particular action happens to a given model. 
+#   
+#   Model:  model represents the changed data
+#   Action: action represents the event or action that happened upon the data
+#   Topic:  topic represents the kinesis or Kafka topic where data changes are published when a given action
+#           happens against a model. 
+#
+#   The following configuration configures a lookup mapping that allows changed data to be published to a configured topic when model and action are known
+#
+#   ModelName:
+#        Action: Topic
+#
+# 
+#  
+#    In the example below, anytime an instance of 'com.mycompany.Product' is published
+#    to the state change handler for Created Action, the data will be published to ProductChangeTopic
+#
+#    In the next example, anytime an instance of 'com.mycompany.Category' is published
+#    to the state change handler for Updated Action, the data will be published to CategoryUpdatedTopic
+#
+#    com.mycompany.Product
+#            CreatedAction: ProductChangeTopic
+#            UpdatedAction: ProductChangeTopic  
+#            DeletedAction: ProductChangeTopic  
+# 
+#    com.mycompany.Category
+#            CreatedAction: CategoryAddedTopic
+#            UpdatedAction: CategoryUpdatedTopic  
+#            DeletedAction: CategoryDeletedTopic  
+#
+#
+#    In this service we publish state changes for:
+#    1. Organization Chagnes
+#    2. Study Visits
+#    3. Study Activities
+#
+#    For Created, Updated, and Deleted actions for the models Organization, StudyVisit and StudyActivity
+#
+stateChanges:
+    events:
+        io.microgenie.example.models.Book:
+            Deleted: BookTopic
+            Created: BookTopic
+            Updated: BookTopic
+        io.microgenie.example.models.Library:
+            Deleted: LibraryTopic
+            Created: LibraryTopic
+            Updated: LibraryTopic
 
-## AWS Configuration
 
-host: mysite.com
-port: 8080
-
+#
+#
+#   AWS configuration 
+#   -------------------------
+# 
+#   AWS configuration is available for s3, dynamodb, kinesis, and sqs
 aws:
     region: us-east
-  
-  # S3 Configuration - TODO - add other basic S3 Config Settings
-    s3:
-      defaultBucket: shagwood-io
-  
-  
-    #SQS Configuration - TODO - add ability to specify more queue infomation
-    sqs:
-        queues:
-            - name: "CheckOutRequest"
-        produces: true
-        consumers:
-            - queue: CheckOutRequest
-              threads: 3
- 
- 
-    #DynamoDb Config - The package prefix to scan for DynamoDb mapper annotations
-    dynamo:
-       scanPackage: "io.microgenie"
        
-    # Kinesis Event - Pub / Sub Configuration
+    # The default bucket is used for blob storage if no bucket is specified. If this bucket does not  exist it will be created
+    s3:
+      defaultBucket: evidint-study  
+      
+    # The specified package prefix is scanned for models that represent dynamo tables. Tables and indexes are created from these models
+    dynamo:
+       scanPackage: "com.evidint"
+ 
+    # Kinesis Event - Pub / Sub Configuration, Ensure the following topics are initiallly created with the given shared count
     kinesis:
-       - topic: "BookChangeEvent"
-         shards: 1
+        - topic: "Book"
+          shards: 1
+        - topic: "Library"
+          shards: 1
 
     
-## Standard Dropwizard Configurations
-
-# Server Settings
+    
+# 
+#
+#   Dropwizard Configuration
+#   -------------------------
+# 
+#   Server Settings (Dropwizard settings)
+#   See:  https://dropwizard.github.io/dropwizard/manual/configuration.html#servers
 server:
   applicationConnectors:
     - type: http
@@ -45,17 +91,20 @@ server:
       port: 8081
 
 
-# Logging settings.
+#
+#   Logging Configuration 
+#   ----------------------
+#   Logging settings
+#   See:  https://dropwizard.github.io/dropwizard/manual/configuration.html#logging
 logging:
-
-  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
-
-  # Logger-specific levels.
   loggers:
-
-    # Sets the level for 'com.example.app' to DEBUG.
-    io.microgenie.dw: DEBUG
-
+      "io.microgenie": DEBUG
+  
   appenders:
     - type: console
+    - type: file
+      currentLogFilename: ./logs/dw-example-service.log
+      archivedLogFilenamePattern: ./logs/dw-example-service-%d.log.gz
+      archivedFileCount: 5
+      timeZone: UTC

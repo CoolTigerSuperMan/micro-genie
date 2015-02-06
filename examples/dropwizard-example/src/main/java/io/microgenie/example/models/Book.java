@@ -1,4 +1,4 @@
-package io.microgenie.models;
+package io.microgenie.example.models;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
@@ -12,11 +12,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
  * 
  * @author shawn
  */
-@DynamoDBTable(tableName="dw-book-table")
+@DynamoDBTable(tableName="dw-example-book")
 public class Book {
 
-	
-	
 	public static final String GLOBAL_INDEX_LIBRARY_ID = "library-index";
 	public static final String GLOBAL_INDEX_LIBRARY_ISBN = "library-isbn-index";
 	public static final String GLOBAL_INDEX_ISBN = "library-isbn-index";

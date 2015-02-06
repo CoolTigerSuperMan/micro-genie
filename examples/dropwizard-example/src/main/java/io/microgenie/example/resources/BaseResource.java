@@ -1,4 +1,4 @@
-package io.microgenie.resources;
+package io.microgenie.example.resources;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

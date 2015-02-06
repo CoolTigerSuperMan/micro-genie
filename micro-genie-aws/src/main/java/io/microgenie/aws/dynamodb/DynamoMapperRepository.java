@@ -10,18 +10,17 @@ import java.util.Map.Entry;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.ConditionalOperator;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -224,6 +223,39 @@ public class DynamoMapperRepository  {
 		}
 	}
 	
+	
+	
+	/***
+	 * Get range keys for a given hashKey
+	 * @param clazz
+	 * @param itemHash
+	 * @return rangeKeys
+	 */
+	public <T> List<T> getRanges(final Class<T> clazz, final T itemHash){
+		return this.getRanges(clazz, itemHash, 0, null);		
+	}
+	
+	
+	
+	/***
+	 * Get range keys for a given hashKey
+	 * @param clazz
+	 * @param itemHash
+	 * @return rangeKeys
+	 */
+	public <T> List<T> getRanges(final Class<T> clazz, final T itemHash, int limit, Map<String, AttributeValue> startKey){
+		
+		final Map<String, AttributeValue> starKey = Maps.newHashMap();
+		final DynamoDBQueryExpression<T> query = new DynamoDBQueryExpression<T>();
+		query.withHashKeyValues(itemHash);
+		if(limit>0 && starKey!=null){
+			query.withLimit(limit);
+			query.withExclusiveStartKey(starKey);
+		}
+		return this.mapper.query(clazz, query);		
+	}
+	
+
 	
 	
 	
