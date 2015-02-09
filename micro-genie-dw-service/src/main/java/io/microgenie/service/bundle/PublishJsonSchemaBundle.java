@@ -267,11 +267,11 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 						byte[] bytes = json.getBytes(Charsets.UTF_8);
 						try(final InputStream inputStream = new ByteArrayInputStream(bytes)){
 							metadata.setContentLength(bytes.length);
-							final PutObjectRequest putRequest = new PutObjectRequest(
-									this.path.getDrive().trim(), 
-									this.fixPath(this.path.getPath().trim(), pair.getModel()), inputStream, metadata);
+							final String fullPath = this.fixPath(this.path.getPath().trim(), pair.getModel());
+							final PutObjectRequest putRequest = new PutObjectRequest(this.path.getDrive().trim(), fullPath, inputStream, metadata);
 							this.s3.getClient().putObject(putRequest);
 							CloseableUtil.closeQuietly(putRequest.getInputStream());
+							LOGGER.info("Published Json Schema for class: {} to s3://{}/{}", pair.getModel(), path.getDrive(), fullPath);
 						}catch(Exception ex){
 							throw new RuntimeException(ex.getMessage(), ex);
 						}						
