@@ -196,8 +196,9 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 		
 		this.initialize(configuration);
 		if(this.models!=null && this.path!=null){
-			final JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
-			v4generator.setAutoPutVersion(true);
+			JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
+			
+
 			final Set<SchemaModelPair> schemasModelPairs = this.generateSchema(v4generator, this.models);
 			this.publish(schemasModelPairs);			
 		}else{
@@ -239,7 +240,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	private Set<SchemaModelPair> generateSchema(final JsonSchemaGenerator v4generator, final Set<Class<?>> classes) {
 		final Set<SchemaModelPair> schemaModelPairs = Sets.newHashSet();
 		for(Class<?> clazz : classes){
-			final JsonNode schema = v4generator.generateSchema(clazz);	
+			final JsonNode schema = v4generator.generateSchema(clazz);
 			schemaModelPairs.add(SchemaModelPair.create(clazz, schema));
 		}
 		return schemaModelPairs;
@@ -253,6 +254,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 	private void publish(final Set<SchemaModelPair> schemaPairs){
 		
 		if(schemaPairs!=null && schemaPairs.size()>0){
+			
 			try{
 				
 				/** Always ensure the bucket exists **/
@@ -263,6 +265,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 					final ObjectMetadata metadata = new ObjectMetadata();
 					metadata.setContentType(ContentType.APPLICATION_JSON.getMimeType());
 					final String json = pair.getSchema().toString();
+					
 					if(!Strings.isNullOrEmpty(json)){
 						byte[] bytes = json.getBytes(Charsets.UTF_8);
 						try(final InputStream inputStream = new ByteArrayInputStream(bytes)){
@@ -285,7 +288,6 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 			}
 		}
 	}
-	
 	
 	
 	

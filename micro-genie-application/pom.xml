@@ -11,15 +11,23 @@
 	</parent>
 
 	<properties>
-		<com.github.fge.version>1.9</com.github.fge.version>
+		<com.github.reinert>0.6</com.github.reinert>
+		<com.github.reinert.patch.version>1.9</com.github.reinert.patch.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
+			<groupId>com.github.reinert</groupId>
+			<artifactId>jjschema</artifactId>
+			<version>${com.github.reinert}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.github.fge</groupId>
 			<artifactId>json-patch</artifactId>
-			<version>${com.github.fge.version}</version>
+			<version>${com.github.reinert.patch.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>

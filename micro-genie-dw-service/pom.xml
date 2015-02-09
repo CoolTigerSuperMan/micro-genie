@@ -132,11 +132,11 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.github.reinert</groupId>
 			<artifactId>jjschema</artifactId>
 		</dependency>
-
 
 		<!-- jackson -->
 		<dependency>
@@ -175,15 +175,15 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
-	
+
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>oss-snapshot</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 
 	<!-- build -->
 	<build>
@@ -198,11 +198,11 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			
-			
-			
-			
-			
+
+
+
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -228,10 +228,10 @@
 					</archive>
 				</configuration>
 			</plugin>
-			
-			
-			
-			
+
+
+
+
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -257,15 +257,15 @@
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
 			</plugin>
-			
-			
-			
-			
+
+
+
+
 		</plugins>
 	</build>
-	
-	
-	
+
+
+
 	<!-- profiles -->
 
 	<profiles>
