@@ -12,10 +12,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheck.Result;
 import com.codahale.metrics.health.HealthCheckRegistry;
-//import com.wordnik.swagger.annotations.Api;
-//import com.wordnik.swagger.annotations.ApiOperation;
 
-//@Api(value="health", consumes="application/json", produces="application/json", description="Application Health Check")
 @Path(value="health")
 public class HealthCheckResource {
 
@@ -34,7 +31,6 @@ public class HealthCheckResource {
 	@Path(value="/check")
 	@GET
 	@Timed
-	//@ApiOperation(value="CheckHealth")
 	public Response check(){
 		final SortedMap<String, HealthCheck.Result> results = this.health.runHealthChecks();
 		for(Entry<String, Result> entryResult : results.entrySet()){

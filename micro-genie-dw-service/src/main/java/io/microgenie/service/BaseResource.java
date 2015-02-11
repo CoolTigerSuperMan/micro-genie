@@ -5,7 +5,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-//import com.wordnik.swagger.annotations.ApiModel;
 
 
 /**
@@ -29,8 +28,19 @@ public abstract class BaseResource {
 	}
 	
 	
+	/***
+	 * 
+	 * @param obj
+	 * @param message
+	 * @throws WebApplicationException
+	 */
+	public void throwBadRequest(final String message, final String description) throws WebApplicationException{
+		final ApiError error = new ApiError(message, description);
+		throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(error).type(MediaType.APPLICATION_JSON).build());
+	}
 	
-	//@ApiModel(value="Api Error", description="An Api Error Response")
+	
+
 	public static class ApiError{
 		private String message;
 		private String description;
