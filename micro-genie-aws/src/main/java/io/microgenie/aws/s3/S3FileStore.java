@@ -48,7 +48,7 @@ public class S3FileStore implements FileStore{
 	 * Save File content to S3
 	 */
 	@Override
-	public FilePath save(FileContent content) {
+	public FilePath save(final FileContent content) {
 		
 		Preconditions.checkNotNull(content, "FileContent is null, unable to save file");
 		Preconditions.checkNotNull(content.getContent(), "the FileContent byte buffer cannot be null, unable to save file");

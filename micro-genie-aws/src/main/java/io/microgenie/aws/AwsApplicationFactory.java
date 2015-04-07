@@ -46,7 +46,7 @@ public class AwsApplicationFactory extends ApplicationFactory {
 	 * Default Constructor to close thread group factory
 	 * 
 	 * @param config
-	 *            - Aws configuration
+	 *            - AWS configuration
 	 */
 	public AwsApplicationFactory(final AwsConfig config,final ObjectMapper mapper) {
 		this.config = config;
@@ -57,7 +57,7 @@ public class AwsApplicationFactory extends ApplicationFactory {
 	/***
 	 * Implementations that subclass {@link AwsApplicationFactory} should
 	 * override this method to create implementation specific factories for
-	 * events, http, queues, etc.. where an aws service is not being used.
+	 * events, http, queues, etc.. where an AWS service is not being used.
 	 * 
 	 * @param config
 	 */
@@ -123,6 +123,7 @@ public class AwsApplicationFactory extends ApplicationFactory {
 		CloseableUtil.closeQuietly(files);
 		CloseableUtil.closeQuietly(queues);
 		CloseableUtil.closeQuietly(events);
+		
 		if (this.kinesisClient != null) {
 			this.kinesisClient.shutdown();
 		}

@@ -5,6 +5,7 @@ import io.microgenie.application.blob.FileContentStream;
 import io.microgenie.application.blob.FilePath;
 import io.microgenie.application.blob.FileStore;
 import io.microgenie.application.blob.FileStoreFactory;
+import io.microgenie.application.util.CloseableUtil;
 import io.microgenie.aws.admin.S3Admin;
 
 import java.io.IOException;
@@ -39,19 +40,19 @@ public class S3BlobFactory extends FileStoreFactory{
 	
 
 	@Override
-	public FileContent read(FilePath path) throws IOException {
+	public FileContent read(final FilePath path) throws IOException {
 		return this.fileStore.read(path.getDrive(),path.getPath());
 	}
 	@Override
-	public FileContentStream readStream(FilePath path) {
+	public FileContentStream readStream(final FilePath path) {
 		return this.fileStore.readStream(path.getDrive(), path.getPath());
 	}
 	@Override
-	public FilePath delete(FilePath path) {
+	public FilePath delete(final FilePath path) {
 		return this.fileStore.delete(path.getDrive(), path.getPath());
 	}
 	@Override
-	public FilePath save(FileContent file) {
+	public FilePath save(final FileContent file) {
 		return this.fileStore.save(file);
 	}
 	
@@ -72,6 +73,6 @@ public class S3BlobFactory extends FileStoreFactory{
 	 */
 	@Override
 	public void close() throws IOException{
-		this.fileStore.close();
+		CloseableUtil.closeQuietly(this.fileStore);
 	}
 }

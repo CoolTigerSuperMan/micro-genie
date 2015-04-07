@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 
 /***
- * Aws Initialization Bundle
+ * AWS Initialization Bundle
  * @author shawn
  *
  */

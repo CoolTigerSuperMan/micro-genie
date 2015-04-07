@@ -22,8 +22,9 @@ public class InitializeSqsBundle implements ConfiguredBundle<AppConfiguration>{
 	private static Logger LOGGER = LoggerFactory.getLogger(InitializeSqsBundle.class);
 
 	@Override
-	public void run(AppConfiguration configuration, Environment environment)throws Exception {
-		if(configuration!=null && configuration.getAws()!=null && configuration.getAws().getSqs()!=null){
+	public void run(final AppConfiguration configuration, final Environment environment) throws Exception {
+		
+		if(configuration!=null && configuration.getAws() !=null && configuration.getAws().getSqs() !=null){
 			final AmazonSQSClient client = new AmazonSQSClient();
 			try{
 					LOGGER.info("Executing configured sqs bundle");
@@ -31,7 +32,6 @@ public class InitializeSqsBundle implements ConfiguredBundle<AppConfiguration>{
 					final SqsConfig sqsConfig = configuration.getAws().getSqs();
 					admin.initializeQueues(sqsConfig.getQueues(), sqsConfig.isBlockUntilReady());	
 					LOGGER.info("Completed sqs bundle execution");
-				
 			}catch(Exception ex){
 				LOGGER.error(ex.getMessage(), ex);
 			}finally{

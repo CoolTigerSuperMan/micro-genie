@@ -19,7 +19,6 @@
 		<dependency>
 			<groupId>com.github.reinert</groupId>
 			<artifactId>jjschema</artifactId>
-			<version>${com.github.reinert}</version>
 		</dependency>
 
 		<dependency>

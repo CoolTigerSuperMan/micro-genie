@@ -129,9 +129,11 @@ public class SqsProducer implements Producer{
 	 * Logging Failures
 	 * @param failed 
 	 */
-	private void logFailures(List<BatchResultErrorEntry> failed) {
-		for(BatchResultErrorEntry batchError :  failed){
-			LOGGER.error("Failed to submit sqs batch message entry - Id: {} - Code: {} - Message: {}, isSenders fault: {}",  batchError.getId(), batchError.getCode(), batchError.getMessage(), batchError.getSenderFault());
+	private void logFailures(final List<BatchResultErrorEntry> failed) {
+		if(failed != null){
+			for(BatchResultErrorEntry batchError :  failed){
+				LOGGER.error("Failed to submit sqs batch message entry - Id: {} - Code: {} - Message: {}, isSenders fault: {}",  batchError.getId(), batchError.getCode(), batchError.getMessage(), batchError.getSenderFault());
+			}			
 		}
 	}
 

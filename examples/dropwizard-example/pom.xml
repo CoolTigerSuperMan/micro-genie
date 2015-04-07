@@ -18,7 +18,7 @@
 		<!-- maven stuff -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
 		<mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
 		
 		
@@ -118,6 +118,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<!-- You'll probably want to remove this for your project. I'm just using 
 					it here so that micro-genie-example doesn't get deployed as a library. -->
@@ -128,6 +129,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<!-- You'll probably want to remove this for your project. I'm just using 
 					it here so that micro-genie-example site doesn't get staged and deployed. -->

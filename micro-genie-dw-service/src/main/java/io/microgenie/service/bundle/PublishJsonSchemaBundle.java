@@ -34,8 +34,8 @@ import com.google.common.collect.Sets;
 
 
 /***
- * A dropwizard bundle that is capable of generating Json Schema and publishing the generated 
- * Json schema to S3
+ * A dropwizard bundle that is capable of generating JSON Schema and publishing the generated 
+ * JSON schema to S3
  * 
  * @author shawn
  *
@@ -183,7 +183,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 
 	
 	/***
-	 * Generates json schema for each of the models registered with this bundle
+	 * Generates JSON schema for each of the models registered with this bundle
 	 */
 	@Override
 	public void run(final AppConfiguration configuration, final Environment environment) throws Exception {
@@ -195,10 +195,9 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 		}
 		
 		this.initialize(configuration);
-		if(this.models!=null && this.path!=null){
-			JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
-			
-
+		
+		if(this.models!=null && this.path!=null){	
+			final JsonSchemaGenerator v4generator = SchemaGeneratorBuilder.draftV4Schema().build();
 			final Set<SchemaModelPair> schemasModelPairs = this.generateSchema(v4generator, this.models);
 			this.publish(schemasModelPairs);			
 		}else{
@@ -209,7 +208,7 @@ public class PublishJsonSchemaBundle implements ConfiguredBundle<AppConfiguratio
 
 
 	/***
-	 * Initialize Json schema publisher
+	 * Initialize JSON schema publisher
 	 * @param configuration
 	 */
 	private void initialize(final AppConfiguration configuration) {

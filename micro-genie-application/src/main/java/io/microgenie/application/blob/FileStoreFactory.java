@@ -13,9 +13,9 @@ import java.io.IOException;
 public abstract class FileStoreFactory implements Closeable {
 
 	public FileStoreFactory(){}
-	public abstract FileContent read(FilePath path) throws IOException;
-	public abstract FileContentStream readStream(FilePath path);
-	public abstract FilePath delete(FilePath path);
-	public abstract FilePath save(FileContent file); 
+	public abstract FileContent read(final FilePath path) throws IOException;
+	public abstract FileContentStream readStream(final FilePath path);
+	public abstract FilePath delete(final FilePath path);
+	public abstract FilePath save(final FileContent file); 
 	public abstract String getDefaultDrive();
 }

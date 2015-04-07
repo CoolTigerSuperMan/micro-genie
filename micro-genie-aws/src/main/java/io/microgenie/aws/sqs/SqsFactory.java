@@ -30,9 +30,9 @@ import com.google.common.collect.Maps;
  * a standard message queue interface.
  * <p>
  * 
- * Queue consumers are asynchronous and multithreaded and can be configured with an
+ * Queue consumers are asynchronous and multi threaded and can be configured with an
  * {@link SqsQueueConfig} instance. The SqsQueuefactory is also capable of initializing the 
- * sqs Queues at start up by invoking methods on an internal {@link SqsQueueAdmin} instance.
+ * SQS Queues at start up by invoking methods on an internal {@link SqsQueueAdmin} instance.
  * <p>
  * Calling the {@link SqsFactory#close()} method will start up background consumers. 
  * 

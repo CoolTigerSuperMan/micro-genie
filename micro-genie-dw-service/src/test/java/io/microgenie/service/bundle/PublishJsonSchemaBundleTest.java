@@ -47,7 +47,6 @@ public class PublishJsonSchemaBundleTest {
 	
 	private static final String MOCK_PUBLISH_DRIVE = "my-s3-bucket";
 	private static final String MOCK_PUBLISH_PATH = "api/contracts/animals";
-	
 	private static final String SCAN_PACKAGE = PublishJsonSchemaBundleTest.class.getPackage().getName();
 	
 	
@@ -70,7 +69,7 @@ public class PublishJsonSchemaBundleTest {
     
 
     /***
-     * The bundle for json schema is optional, it should exit cleanly when it is not configured
+     * The bundle for JSON schema is optional, it should exit cleanly when it is not configured
      * @throws Exception 
      */
     @Test
@@ -113,7 +112,7 @@ public class PublishJsonSchemaBundleTest {
     	verify(mockS3Client, times(expectedSchemas.size())).putObject(putRequestArgumentCaptor.capture());
     	
     	
-    	/** Assert that expected and actual json schemas are the same **/
+    	/** Assert that expected and actual JSON schemas are the same **/
     	final List<PutObjectRequest> allCaputredPutRequests = putRequestArgumentCaptor.getAllValues();
     
     	/** assert that our responses match are expected schema count **/ 
@@ -132,7 +131,7 @@ public class PublishJsonSchemaBundleTest {
     
     
     /***
-     * Should Generate Json Schema for supplied models
+     * Should Generate JSON Schema for supplied models
      * @throws Exception
      */
     @Test
@@ -158,13 +157,13 @@ public class PublishJsonSchemaBundleTest {
         	final ArgumentCaptor<PutObjectRequest> putRequestArgumentCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
         	verify(mockS3Client, times(1)).putObject(putRequestArgumentCaptor.capture());
 
-        	/** Assert that expected and actual json schemas are the same **/
+        	/** Assert that expected and actual JSON schemas are the same **/
         	actualInputStream = putRequestArgumentCaptor.getValue().getInputStream();
         	assertThat(actualInputStream).hasContentEqualTo(expectedInputStream);
 	
     	}finally{
     		CloseableUtil.closeQuietly(actualInputStream);
-    		CloseableUtil.closeQuietly(actualInputStream);
+    		CloseableUtil.closeQuietly(expectedInputStream);
     	}	
     }
 }

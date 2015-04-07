@@ -2,7 +2,6 @@ package io.microgenie.example.resources;
 
 import io.microgenie.application.database.EntityDatabusRepository.Key;
 import io.microgenie.example.data.LibraryRepository;
-import io.microgenie.example.models.Book;
 import io.microgenie.example.models.Library;
 
 import javax.ws.rs.Consumes;
@@ -39,5 +38,4 @@ public class LibraryResource extends BaseResource{
 		super.throwNotFoundIfNull(library, String.format("LibraryId: %s not found", id));
 		return library;
 	}
-
 }

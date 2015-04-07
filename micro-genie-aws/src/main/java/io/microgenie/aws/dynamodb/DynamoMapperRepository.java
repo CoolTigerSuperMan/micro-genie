@@ -74,7 +74,7 @@ public class DynamoMapperRepository  {
 	 * @return itemList
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> List<T> getList(List<T> itemKeys) {
+	public <T> List<T> getList(final List<T> itemKeys) {
 		final List<T> results = new ArrayList<T>();
 		final List<Object> itemsToGet = new ArrayList<Object>();
 		for(T item : itemKeys){
@@ -280,7 +280,7 @@ public class DynamoMapperRepository  {
 	 * @param scanExpression - The dynamoDb query expression
 	 * @return paginatedScanList
 	 */
-	public <T> PaginatedScanList<T> query(final Class<T> clazz, DynamoDBScanExpression scanExpression){
+	public <T> PaginatedScanList<T> query(final Class<T> clazz, final DynamoDBScanExpression scanExpression){
 		final PaginatedScanList<T> itemList = mapper.scan(clazz, scanExpression);
 		return itemList;
 	}

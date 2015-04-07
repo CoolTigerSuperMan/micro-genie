@@ -58,12 +58,13 @@ aws:
     region: us-east
        
     # The default bucket is used for blob storage if no bucket is specified. If this bucket does not  exist it will be created
+    # NOTE: S3 Buckets must be unique across all AWS buckets this must be changed to a unique bucket name for you
     s3:
-      defaultBucket: evidint-study  
+      defaultBucket: mg-example-library  
       
     # The specified package prefix is scanned for models that represent dynamo tables. Tables and indexes are created from these models
     dynamo:
-       scanPackage: "com.evidint"
+       scanPackage: "com.microgenie.example.models"
  
     # Kinesis Event - Pub / Sub Configuration, Ensure the following topics are initiallly created with the given shared count
     kinesis:

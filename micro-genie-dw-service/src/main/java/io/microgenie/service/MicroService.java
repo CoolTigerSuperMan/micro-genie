@@ -88,7 +88,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 	/***
 	 * Run the application
 	 * @param configuration - {@link AppConfiguration} - application configuration
-	 * @param environment - {@link Environment} - Dropwizard Environment
+	 * @param environment - {@link Environment} - dropwizard Environment
 	 */
 	@Override
 	public void run(T configuration, final Environment environment) throws Exception {
@@ -103,7 +103,7 @@ public abstract class MicroService<T extends AppConfiguration> extends Applicati
 		this.manageApplicationFactory(appFactory, environment);
 		
 		
-		/** register metrics, healthchecks and jersey resources **/
+		/** register metrics, health checks and jersey resources **/
 		this.registerMetrics(appFactory, configuration, environment.metrics());
 		this.registerHealthChecks(appFactory, configuration, environment.healthChecks());
 		this.registerResources(appFactory, configuration, environment);

@@ -80,7 +80,7 @@ public class AppConfiguration extends Configuration {
 		this.api = api;
 	}
 	/***
-	 * The date format to use with Json date fields, unless specifically overridden by other configurations
+	 * The date format to use with JSON date fields, unless specifically overridden by other configurations
 	 * @return dateFormat
 	 */
 	@JsonProperty("dateFormat")
@@ -136,10 +136,10 @@ public class AppConfiguration extends Configuration {
 
 
 	/**
-	 * Api documentation configuration
+	 * API documentation configuration
 	 * <p>
-	 * Configuration to configure api documentation. The host property defaults
-	 * to localhost and the port defaults to 8080
+	 * Configuration to configure API documentation. The host property defaults
+	 * to localhost and the port default of 8080
 	 *</p>
 	 * @author shawn
 	 */

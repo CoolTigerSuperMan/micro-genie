@@ -12,7 +12,7 @@ class SchemaIndex {
 	
 	
 	/***
-	 * Create the index page for published Json Schemas
+	 * Create the index page for published JSON Schemas
 	 * @param schemas
 	 * @return
 	 */

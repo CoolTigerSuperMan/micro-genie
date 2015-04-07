@@ -7,7 +7,7 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 
 
 /***
- * Aws Admin Utilities used to create resources
+ * AWS Admin Utilities used to create resources
  * @author shawn
  *
  */
@@ -25,7 +25,6 @@ public class AwsAdmin {
 	public SqsQueueAdmin createSqsAdmin(final AmazonSQSClient sqsClient){
 		return new SqsQueueAdmin(sqsClient);
 	}
-	
 	public static AwsAdmin create(){
 		return new AwsAdmin();
 	}

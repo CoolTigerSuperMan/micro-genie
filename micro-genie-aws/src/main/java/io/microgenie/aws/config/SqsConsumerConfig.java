@@ -5,7 +5,7 @@ import io.microgenie.application.queue.MessageHandler;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Sqs Consumer Configuration
+ * SQS Consumer Configuration
  * @author shawn
  */
 public class SqsConsumerConfig{
@@ -20,7 +20,7 @@ public class SqsConsumerConfig{
 		return queue;
 	}
 	@JsonProperty("queue")
-	public void setQueue(String queue) {
+	public void setQueue(final String queue) {
 		this.queue = queue;
 	}
 	public SqsConsumerConfig withQueue(final String queue) {
@@ -33,7 +33,7 @@ public class SqsConsumerConfig{
 		return threads;
 	}
 	@JsonProperty("threads")
-	public void setThreads(int threads) {
+	public void setThreads(final int threads) {
 		this.threads = threads;
 	}
 	public SqsConsumerConfig withThreads(final int threads) {

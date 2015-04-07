@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response.Status;
 
 
 /**
- * Base Rest resource providing helper methods common to rest api endpoints
+ * Base Rest resource providing helper methods common to rest API endpoints
  * @author shawn
  */
 public abstract class BaseResource {

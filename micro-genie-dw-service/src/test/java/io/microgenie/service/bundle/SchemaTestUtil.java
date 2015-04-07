@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 
 
 /****
- * Json Schema Test Utility methods
+ * JSON Schema Test Utility methods
  * @author shawn
  *
  */
@@ -81,7 +81,7 @@ public class SchemaTestUtil {
     
     /***
      * Converts a list of {@link InputStream} into a list of string contents
-     * NOTE: This will close the stream
+     * NOTE: This will close the streams
      * @param streams
      * @return streamContents
      */
